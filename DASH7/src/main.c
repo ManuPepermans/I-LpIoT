@@ -1,4 +1,13 @@
 /**
+  * @}
+  */
+
+/**
+  * @}
+*/
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/**
   ******************************************************************************
   * File Name          : main.c
   * Description        : Main program body
@@ -39,6 +48,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+//#define getLength(x)  (sizeof(x) / sizeof((x)[0]))
+#define FRAME_LENGTH 8
+#define SERIAL 7
+
 
 
 /* Private variables ---------------------------------------------------------*/
@@ -46,8 +59,9 @@ UART_HandleTypeDef huart1;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
-void DASH7Message(uint8_t message[]);
-
+void DASH7Message();
+void *array_concat(const void *a, size_t an,
+               const void *b, size_t bn, size_t s);
 
 int main(void)
 {
@@ -65,8 +79,8 @@ int main(void)
   while (1)
   {
 	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-	  uint8_t uartTest [] = "TEST";
-	  DASH7Message(uartTest);
+	  //uint8_t uartTest [] = {0x74};
+	  DASH7Message();
 	  HAL_Delay(1000);
   }
 }
@@ -141,10 +155,31 @@ static void MX_USART1_UART_Init(void)
 
 }
 
-void DASH7Message(uint8_t message[])
+void *array_concat(const void *a, size_t an,
+               const void *b, size_t bn, size_t s)
 {
-	 HAL_UART_Transmit(&huart1,message , sizeof(message),HAL_MAX_DELAY);
-	}
+    char *p = malloc(s * (an + bn));
+    memcpy(p, a, an*s);
+    memcpy(p + an*s, b, bn*s);
+    return p;
+}
+
+void DASH7Message()
+{
+	//Making an ALP message
+	uint8_t ALP[] = {
+		 0x41, 0x54, 0x24, 0x44, 0xc0, 0x00, // SERIAL INTERFACE
+		 0x12, //ALP CMD LENGTH
+		 0x32, 0xd7, 0x01, 0x00, 0x10, 0x01, //FORWARD + OPERAND D7
+		 0x20, 0x01, 0x00,
+		 0x04, //LENGTH
+		 0x74, 0x65, 0x73, 0x74 //DATA: test
+		 };
+
+	//transmit over UART
+	HAL_UART_Transmit(&huart1, ALP, sizeof(ALP),HAL_MAX_DELAY);
+}
+
 
 static void MX_GPIO_Init(void)
 {
@@ -205,10 +240,10 @@ void assert_failed(uint8_t* file, uint32_t line)
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-*/ 
+*/
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
