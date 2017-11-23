@@ -48,9 +48,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+#include <stdio.h>
+
 //#define getLength(x)  (sizeof(x) / sizeof((x)[0]))
 #define FRAME_LENGTH 8
 #define SERIAL 7
+#define BUFSIZE 200
 
 
 
@@ -60,8 +63,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 void DASH7Message();
-void *array_concat(const void *a, size_t an,
-               const void *b, size_t bn, size_t s);
 
 int main(void)
 {
@@ -74,6 +75,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
+
+  char buf[BUFSIZE];
 
   /* Infinite loop */
   while (1)
@@ -155,29 +158,50 @@ static void MX_USART1_UART_Init(void)
 
 }
 
-void *array_concat(const void *a, size_t an,
-               const void *b, size_t bn, size_t s)
-{
-    char *p = malloc(s * (an + bn));
-    memcpy(p, a, an*s);
-    memcpy(p + an*s, b, bn*s);
-    return p;
-}
 
 void DASH7Message()
 {
-	//Making an ALP message
-	uint8_t ALP[] = {
-		 0x41, 0x54, 0x24, 0x44, 0xc0, 0x00, // SERIAL INTERFACE
-		 0x12, //ALP CMD LENGTH
-		 0x32, 0xd7, 0x01, 0x00, 0x10, 0x01, //FORWARD + OPERAND D7
-		 0x20, 0x01, 0x00,
-		 0x04, //LENGTH
-		 0x74, 0x65, 0x73, 0x74 //DATA: test
-		 };
+	 //int length = getLength(message);
+	 //{
+	 //	 //int length = getLength(message);
 
-	//transmit over UART
-	HAL_UART_Transmit(&huart1, ALP, sizeof(ALP),HAL_MAX_DELAY);
+	 //Making an ALP message
+	// uint8_t ALP[] = {
+	//		 0x41, 0x54, 0x24, 0x44, 0xc0, 0x00, // SERIAL INTERFACE
+	//		 0x12, //ALP CMD LENGTH
+	// 		 0x32, 0xd7, 0x01, 0x00, 0x10, 0x01, //FORWARD + OPERAND
+	// 		 0x20, 0x01, 0x00,
+	// 		 0x04, //LENGTH
+	// 		 0x74, 0x65, 0x74, 0x74 //DATA
+//};
+	uint8_t CMD[] = {
+			0x32, 0xd7, 0x01, 0x00, 0x10, 0x01, //FORWARD ACTION
+			0x20, 0x01, 0x00, //
+			//0x01,
+			//message[0],
+
+	   };
+
+	 uint8_t FRAME[] = {
+				0x41, 0x54, 0x24, 0x44, 0xc0, 0x00, // SERIAL INTERFACE
+				FRAME_LENGTH + sizeof(CMD) + 1,
+	 };
+	 int sizeFrame, sizeCMD, j,k;
+	 sizeFrame = sizeof(FRAME);
+	 sizeCMD = sizeof(CMD);
+
+	 uint8_t ALP[sizeCMD+sizeFrame];
+
+	for(int i = 0; i<sizeFrame+1; i++)
+		ALP[i] = FRAME[i];
+	for(int j = 0; j<sizeCMD+1; j++)
+		 ALP[j+sizeFrame] = CMD[j];
+
+
+
+//snprintf(buf, sizeof(buf), "test:", ALP);
+HAL_UART_Transmit(&huart1, ALP, sizeof(ALP),HAL_MAX_DELAY);
+
 }
 
 
