@@ -1,106 +1,106 @@
 import math
 import operator
 import csv
-import time
 import paho.mqtt.client as mqtt
 import json
-import numpy as np
 import datetime
-count1 = 1
-count2 = 1
-count3 = 1
-count4 = 1
+
 firstRun = True
-newValue = True
+newBatch = True
 timestampBatch = 0
 value1 = 0
 value2 = 0
 value3 = 0
 value4 = 0
 measurement = []
-
+sample = 0
+xPixel = 0
+yPixel = 0
 
 
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+    print("Connected with result code " + str(rc))
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe("/localisation/#")
-        client.subscribe("test/")
 
 
 def on_message(client, userdata, msg):
-    #declaring some variables
-    global timestamp1, timestamp2, timestamp3, timestamp4
-        global value1, value2, value3, value4
-            global timestampBatch
-                global newValue
-                    global firstRun
-                        global measurement
-                            #parse the JSON string, if the message contains the NODE ID capture it.
-                            parsed_json = json.loads(str(msg.payload))
-                            if parsed_json['node'] == "43373134003e0041":
-                                #get the right values
-gateway = parsed_json['gateway']
-value = parsed_json['link_budget']
-timestamp = parsed_json['timestamp']
-date = datetime.datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
+    # declaring some variables
+    global value1, value2, value3, value4
+    global timestampBatch
+    global newBatch
+    global firstRun
+    global measurement
 
-# when new message was send from node, get a timestamp to check the nex incomonig messages
-if newValue:
-    print(timestampBatch)
-    if (date.second < timestampBatch+1):
-        if gateway == "c2c4ebd0-b95a-11e7-bebc-85e6dd10a2e8":
-            value1 = value
+    global sample
+
+    # parse the JSON string, if the message contains the NODE ID capture it.
+    parsed_json = json.loads(str(msg.payload))
+    if parsed_json['node'] == "43373134003e0041":
+        # get the right values
+        gateway = parsed_json['gateway']
+        value = parsed_json['link_budget']
+        timestamp = parsed_json['timestamp']
+        date = datetime.datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
+
+        # when new message was send from node, check if the incoming messages are from the same batch as the timestampBatch
+        if not newBatch:
+            #print(timestampBatch)
+
+
+            if (date.second < timestampBatch + 1):
+                if gateway == "c2c4ebd0-b95a-11e7-bebc-85e6dd10a2e8":
+                    value1 = value
                 elif gateway == "b6b48ad0-b95a-11e7-bebc-85e6dd10a2e8":
                     value2 = value
-            elif gateway == "f1f7e740-b8b0-11e7-bebc-85e6dd10a2e8":
-                value3 = value
+                elif gateway == "f1f7e740-b8b0-11e7-bebc-85e6dd10a2e8":
+                    value3 = value
                 elif gateway == "43e01b20-b967-11e7-bebc-85e6dd10a2e8":
                     value4 = value
-            
-            measurement = [value1, value2, value3, value4]
-                
-                print("Gateway: " + gateway + " RSS: " + str(value) + " Seconds : " + str(date.second))
-            
-            
+
+                measurement = [value1, value2, value3, value4]
+
+                #print("Gateway: " + gateway + " RSS: " + str(value) + " Seconds : " + str(date.second))
+
+
             else:
-                #fill the array when messages from gateways completed
+                # fill the array when messages from gateways completed
                 measurement = [value1, value2, value3, value4]
                 print measurement
-                #check for neighbours
+                # check for neighbours
                 knn(measurement)
-                newValue = False
+                newBatch = True
                 if not firstRun:
                     value1 = 0
                     value2 = 0
                     value3 = 0
                     value4 = 0
-                
+
                 if gateway == "c2c4ebd0-b95a-11e7-bebc-85e6dd10a2e8":
-                    timestamp1 = datetime
                     value1 = value
                 elif gateway == "b6b48ad0-b95a-11e7-bebc-85e6dd10a2e8":
-                    timestamp2 = datetime
                     value2 = value
                 elif gateway == "f1f7e740-b8b0-11e7-bebc-85e6dd10a2e8":
-                    timestamp3 = datetime
                     value3 = value
                 elif gateway == "43e01b20-b967-11e7-bebc-85e6dd10a2e8":
-                    timestamp4 = datetime
                     value4 = value
-                
+
                 firstRun = False
-                print("Gateway: " + gateway + " RSS: " + str(value) + " Seconds : " + str(date.second))
+                #print("Gateway: " + gateway + " RSS: " + str(value) + " Seconds : " + str(date.second))
+
+        if newBatch:
+            newBatch = False
+            timestampBatch = date.second
+        if(date.second >= 58):
+            sample = date.second
+        if(date.second < sample):
+            timestampBatch = 0
+            sample = 0
 
 
-if not newValue:
-    newValue = True
-        timestampBatch = date.second
-
-
-#Load the trainingdata and put it in the right format
+# Load the trainingdata and put it in the right format
 def loadDataset(filename):
     with open(filename, 'rb') as csvfile:
         lines = csv.reader(csvfile)
@@ -108,15 +108,14 @@ def loadDataset(filename):
         trainingdata = []
         for x in range(len(dataset)):
             for y in range(len(dataset[x])):
-                dataset[x][y] = dataset[x][y].replace("[","")
+                dataset[x][y] = dataset[x][y].replace("[", "")
                 dataset[x][y] = dataset[x][y].replace(" ", "")
                 dataset[x][y] = dataset[x][y].replace("]", "")
                 dataset[x][y] = dataset[x][y].replace("-", "")
                 dataset[x][y] = dataset[x][y].split(',')
                 dataset[x][y] = list(map(int, dataset[x][y]))
-                trainingdata.append(dataset[x])
+            trainingdata.append(dataset[x])
         return trainingdata
-
 
 
 def euclideanDistance(instance1, instance2, length):
@@ -141,56 +140,116 @@ def getResponse(neighbors):
 def getNeighbors(trainingSet, measurment, k):
     distances = []
     y = 0
-    
+
     for x in range(len(trainingSet)):
         nodeSet = trainingSet[x]
-        node = numbers_to_strings(x)
-        test = len(nodeSet)
         for y in range(len(nodeSet)):
-            lengte = len(nodeSet[y])
             dist = euclideanDistance(nodeSet[y], measurment, len(nodeSet[y]))
-            distances.append((node, dist))
-    # print distances
+            distances.append((x, dist))
 
-distances.sort(key=operator.itemgetter(1))
-#print distances
+    distances.sort(key=operator.itemgetter(1))
 
-neighbors = []
+    neighbors = []
     for x in range(k):
         neighbors.append(distances[x][0])
-print neighbors
-    
+    #print neighbors
     return neighbors
 
+def getPixels(results):
+    global xPixel, yPixel
+    if results == 0:
+        xPixel = 1
+        yPixel = 1
+    if results == 1:
+        xPixel = 1
+        yPixel = 3
+    if results == 2:
+        xPixel = 1
+        yPixel = 1
+    if results == 3:
+        xPixel = 1
+        yPixel = 3
+    if results == 4:
+        xPixel = 1
+        yPixel = 1
+    if results == 5:
+        xPixel = 1
+        yPixel = 3
+    if results == 6:
+        xPixel = 1
+        yPixel = 1
+    if results == 7:
+        xPixel = 1
+        yPixel = 3
+    if results == 8:
+        xPixel = 1
+        yPixel = 1
+    if results == 9:
+        xPixel = 1
+        yPixel = 3
+    if results == 10:
+        xPixel = 1
+        yPixel = 1
+    if results == 11:
+        xPixel = 1
+        yPixel = 3
+    if results == 12:
+        xPixel = 1
+        yPixel = 1
+    if results == 13:
+        xPixel = 1
+        yPixel = 3
+    if results == 14:
+        xPixel = 1
+        yPixel = 1
+    if results == 15:
+        xPixel = 1
+        yPixel = 3
+    if results == 16:
+        xPixel = 1
+        yPixel = 1
+    if results == 17:
+        xPixel = 1
+        yPixel = 3
+    if results == 18:
+        xPixel = 1
+        yPixel = 1
+    if results == 19:
+        xPixel = 1
+        yPixel = 3
+    if results == 20:
+        xPixel = 1
+        yPixel = 1
+    if results == 21:
+        xPixel = 1
+        yPixel = 1
+    if results == 22:
+        xPixel = 1
+        yPixel = 1
+    if results == 23:
+        xPixel = 1
+        yPixel = 1
+    if results == 24:
+        xPixel = 1
+        yPixel = 1
+    if results == 25:
+        xPixel = 1
+        yPixel = 1
+    if results == 26:
+        xPixel = 1
+        yPixel = 1
 
-def numbers_to_strings(argument):
-    switcher = {
-        0: "a",
-        1: "b",
-        2: "c",
-        3: "d",
-        4: "e",
-        5: "f"
-    }
-    return switcher.get(argument, "nothing")
+    return xPixel, yPixel
+
 def knn(measurement):
     k = 3
     trainingSet = loadDataset("trainingdata.csv")
     neighbors = getNeighbors(trainingSet, measurement, k)
     result = getResponse(neighbors)
-    print "Nearest neighbor is: " + result
-
-#Choose k so gateways that are too far will be dismissed
-#global trainingSet
+    print(getPixels(result))
 
 
 
-#Measurement: hier moet een meting gedaan worden en als er geen 4 waarden terug komen een 0 plaatsen . Zodra er een een meting is KNN functie aangroepen worden
-#while(1):
-
-#measurement = [80, 60, 80]
-#knn(measurement, trainingSet)
-#time.sleep(5)
 
 client = mqtt.Client(protocol=mqtt.MQTTv31)
 client.on_connect = on_connect
