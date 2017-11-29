@@ -1,0 +1,88 @@
+/**
+ ******************************************************************************
+ * @file    LSM303AGR_driver.h
+ * @author  Levi Mariën
+ * @brief   LSM303AGR header driver file
+ ******************************************************************************
+ */
+
+#ifndef __LSM303AGR_DRIVER__H
+#define __LSM303AGR_DRIVER__H
+
+typedef unsigned char u8_t;
+
+/************** I2C Addresses *****************/
+#define LSM303AGR_A_I2C_ADDRESS 0x32
+#define LSM303AGR_M_I2C_ADDRESS 0x3C
+
+/************** Read/Write functions *****************/
+mems_status_t LSM303AGR_A_read_reg(u8_t Reg, u8_t *Data);
+mems_status_t LSM303AGR_A_write_reg(u8_t Reg, u8_t Data);
+mems_status_t LSM303AGR_M_read_reg(u8_t Reg, u8_t *Data);
+mems_status_t LSM303AGR_M_write_reg(u8_t Reg, u8_t Data);
+
+/************** Register Map *****************/
+#define LSM303AGR_A_STATUS_REG_AUX 0X07
+#define LSM303AGR_A_OUT_ADC1_L 0X08
+#define LSM303AGR_A_OUT_ADC1_H 0X09
+#define LSM303AGR_A_OUT_ADC2_L 0X0A
+#define LSM303AGR_A_OUT_ADC2_H 0X0B
+#define LSM303AGR_A_OUT_ADC3_L 0X0C
+#define LSM303AGR_A_OUT_ADC3_H 0X0D
+#define LSM303AGR_A_INT_COUNTER_REG 0X0E
+#define LSM303AGR_A_WHO_AM_I_REG 0X0F
+#define LSM303AGR_A_TEMP_CFG_REG 0X1F
+#define LSM303AGR_A_CTRL_REG1 0X20
+#define LSM303AGR_A_CTRL_REG2 0X21
+#define LSM303AGR_A_CTRL_REG3 0X22
+#define LSM303AGR_A_CTRL_REG4 0X23
+#define LSM303AGR_A_CTRL_REG5 0X24
+#define LSM303AGR_A_CTRL_REG6 0X25
+#define LSM303AGR_A_REFERENCE 0X26
+#define LSM303AGR_A_STATUS_REG2 0X27
+#define LSM303AGR_A_OUT_X_L 0X28
+#define LSM303AGR_A_OUT_X_H 0X29
+#define LSM303AGR_A_OUT_Y_L 0X2A
+#define LSM303AGR_A_OUT_Y_H 0X2B
+#define LSM303AGR_A_OUT_Z_L 0X2C
+#define LSM303AGR_A_OUT_Z_H 0X2D
+#define LSM303AGR_A_FIFO_CTRL_REG 0X2E
+#define LSM303AGR_A_FIFO_SRC_REG 0X2F
+#define LSM303AGR_A_INT1_CFG 0X30
+#define LSM303AGR_A_INT1_SOURCE 0X31
+#define LSM303AGR_A_INT1_THS 0X32
+#define LSM303AGR_A_INT1_DURATION 0X33
+#define LSM303AGR_A_INT2_CFG 0X34
+#define LSM303AGR_A_INT2_SOURCE 0X35
+#define LSM303AGR_A_INT2_THS 0X36
+#define LSM303AGR_A_INT2_DURATION 0X37
+#define LSM303AGR_A_CLICK_CFG 0X38
+#define LSM303AGR_A_CLICK_SRC 0X39
+#define LSM303AGR_A_CLICK_THS 0X3A
+#define LSM303AGR_A_TIME_LIMIT 0X3B
+#define LSM303AGR_A_TIME_LATENCY 0X3C
+#define LSM303AGR_A_TIME_WINDOW 0X3D
+
+#define LSM303AGR_M_OFFSET_X_REG_L 0X45
+#define LSM303AGR_M_OFFSET_X_REG_H 0X46
+#define LSM303AGR_M_OFFSET_Y_REG_L 0X47
+#define LSM303AGR_M_OFFSET_Y_REG_H 0X48
+#define LSM303AGR_M_OFFSET_Z_REG_L 0X49
+#define LSM303AGR_M_OFFSET_Z_REG_H 0X4A
+#define LSM303AGR_M_WHO_AM_I_REG 0X4F
+#define LSM303AGR_M_CFG_REG_A 0X60
+#define LSM303AGR_M_CFG_REG_B 0X61
+#define LSM303AGR_M_CFG_REG_C 0X62
+#define LSM303AGR_M_INT_CTRL_REG 0X63
+#define LSM303AGR_M_INT_SOURCE_REG 0X64
+#define LSM303AGR_M_INT_THS_L_REG 0X65
+#define LSM303AGR_M_INT_THS_H_REG 0X66
+#define LSM303AGR_M_STATUS_REG 0X67
+#define LSM303AGR_M_OUTX_L_REG 0X68
+#define LSM303AGR_M_OUTX_H_REG 0X69
+#define LSM303AGR_M_OUTY_L_REG 0X6A
+#define LSM303AGR_M_OUTY_H_REG 0X6B
+#define LSM303AGR_M_OUTZ_L_REG 0X6C
+#define LSM303AGR_M_OUTZ_H_REG 0X6D
+
+#endif
