@@ -1,4 +1,4 @@
-/**
+﻿/**
  ******************************************************************************
  * @file    LSM303AGR_driver.h
  * @author  Levi Mariën
@@ -16,10 +16,10 @@ typedef unsigned char u8_t;
 #define LSM303AGR_M_I2C_ADDRESS 0x3C
 
 /************** Read/Write functions *****************/
-mems_status_t LSM303AGR_A_read_reg(u8_t Reg, u8_t *Data);
-mems_status_t LSM303AGR_A_write_reg(u8_t Reg, u8_t Data);
-mems_status_t LSM303AGR_M_read_reg(u8_t Reg, u8_t *Data);
-mems_status_t LSM303AGR_M_write_reg(u8_t Reg, u8_t Data);
+bool LSM303AGR_A_read_reg(u8_t Reg, u8_t *Data);
+bool LSM303AGR_A_write_reg(u8_t Reg, u8_t Data);
+bool LSM303AGR_M_read_reg(u8_t Reg, u8_t *Data);
+bool LSM303AGR_M_write_reg(u8_t Reg, u8_t Data);
 
 /************** Register Map *****************/
 #define LSM303AGR_A_STATUS_REG_AUX 0X07
