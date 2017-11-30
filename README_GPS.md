@@ -7,6 +7,6 @@ The problem with HAL libraries is that they need a fixed length for a uart recei
 
 two example strings:
 428.4992,E,230700.000,A,A*59 **$GPGLL,5117.1421,N,0000428.4897,E**
-__,230746.000,A,A*56__ $GPGLL,5117.1473,N,00428.4892,E,230748.000,A
+**,230746.000,A,A*56**$GPGLL,5117.1473,N,00428.4892,E,230748.000,A
 
 resulting in: **$GPGLL,5117.1421,N,0000428.4897,E,230746.000,A,A*56**
