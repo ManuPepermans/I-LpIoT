@@ -40,111 +40,63 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
 
-
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
-DMA_HandleTypeDef hdma_usart1_rx;
- /* Data buffer that contains newly received data */
 
+//create a buffer and a character
+uint8_t buffer[64];
+uint8_t character[1];
 
-
-/* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
-
-/* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_DMA_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
-void putArrayTogether(int);
-
-#define DMA_BUF_SIZE 64
-uint8_t rxbytes[DMA_BUF_SIZE ];
-uint8_t data[DMA_BUF_SIZE] = {'\0'};
-
-/* USER CODE BEGIN PFP */
-/* Private function prototypes -----------------------------------------------*/
-
-/* USER CODE END PFP */
-
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-typedef struct
-{
-    volatile uint8_t  flag;     /* Timeout event flag */
-    uint16_t timer;             /* Timeout duration in msec */
-    uint16_t prevCNDTR;         /* Holds previous value of DMA_CNDTR */
-} DMA_Event_t;
-
-DMA_Event_t dma_uart_rx = {0,0,64};
-    /* Data buffer that contains newly received data */
 
 
 int main(void)
 {
-
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration----------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
 
-  /* USER CODE BEGIN 2 */
+  __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
 
-  /* USER CODE END 2 */
+  HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(USART1_IRQn);
 
+  //create variable to check the lengt of the NMEA command
+
+  int i = 0;
   /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  //HAL_UART_Receive(&huart1,(uint8_t *)rxbytes,HAL_MAX_DELAY);
-
-  /* Start DMA */
-  if(HAL_UART_Receive_DMA(&huart1, (uint8_t*)rxbytes, DMA_BUF_SIZE) != HAL_OK)
-  {
-      Error_Handler();
-  }
-
-  /* Disable Half Transfer Interrupt */
-  __HAL_DMA_DISABLE_IT(huart1.hdmarx, DMA_IT_HT);
-
   while (1)
   {
-	  HAL_Delay(2000);
+	  //when there is a uart interrupt check the character and put it in the buffer.
+	  //If the character is the delimeter the NMEA command is complete.
+	  if (HAL_UART_Receive_IT(&huart1, character, 1) == HAL_OK){
+		  buffer[i-1] = *character;
+
+		  if (*character =='\n')
+		  {
+			HAL_UART_Transmit(&huart2,buffer,i,HAL_MAX_DELAY);
+			i = 0;
+		  }
+	  i = i+1;
 
 
   }
-  /* USER CODE END 3 */
 
+  }
 }
+
+
 
 /** System Clock Configuration
 */
@@ -235,9 +187,7 @@ static void MX_USART2_UART_Init(void)
 
 }
 
-/** 
-  * Enable DMA controller clock
-  */
+
 static void MX_DMA_Init(void) 
 {
   /* DMA controller clock enable */
@@ -250,8 +200,7 @@ static void MX_DMA_Init(void)
 
 }
 
-/** Pinout Configuration
-*/
+
 static void MX_GPIO_Init(void)
 {
 
@@ -260,124 +209,22 @@ static void MX_GPIO_Init(void)
 
 }
 
-/* USER CODE BEGIN 4 */
 
-/* USER CODE END 4 */
-
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @param  None
-  * @retval None
-  */
-
-
-// Starts when receiving a message -> for custom UART handler mode
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	uint8_t test = "test";
-	HAL_UART_Transmit(&huart2,test,sizeof(test),HAL_MAX_DELAY);
-
-	//defining variables
-    uint16_t i, pos, start, length;
-
-
-    uint16_t currCNDTR = __HAL_DMA_GET_COUNTER(huart->hdmarx);
-
-    /* Ignore IDLE Timeout when the received characters exactly filled up the DMA buffer and DMA Rx Complete IT is generated, but there is no new character during timeout */
-    if(dma_uart_rx.flag && currCNDTR == DMA_BUF_SIZE)
-    {
-        dma_uart_rx.flag = 0;
-        return;
-    }
-
-    /* Determine start position in DMA buffer based on previous CNDTR value */
-    start = (dma_uart_rx.prevCNDTR < DMA_BUF_SIZE) ? (DMA_BUF_SIZE - dma_uart_rx.prevCNDTR) : 0;
-
-    if(dma_uart_rx.flag)    /* Timeout event */
-    {
-        /* Determine new data length based on previous DMA_CNDTR value:
-         *  If previous CNDTR is less than DMA buffer size: there is old data in DMA buffer (from previous timeout) that has to be ignored.
-         *  If CNDTR == DMA buffer size: entire buffer content is new and has to be processed.
-        */
-        length = (dma_uart_rx.prevCNDTR < DMA_BUF_SIZE) ? (dma_uart_rx.prevCNDTR - currCNDTR) : (DMA_BUF_SIZE - currCNDTR);
-        dma_uart_rx.prevCNDTR = currCNDTR;
-        dma_uart_rx.flag = 0;
-    }
-    else                /* DMA Rx Complete event */
-    {
-        length = DMA_BUF_SIZE - start;
-        dma_uart_rx.prevCNDTR = DMA_BUF_SIZE;
-    }
-
-
-    /* Copy and Process new data */
-    for(i=0,pos=start; i<length; ++i,++pos)
-    {
-        data[i] = rxbytes[pos];
-
-
-
-
-    }
-    /* Send received data over USB */
-
-	 HAL_UART_Transmit(&huart2,data,length,HAL_MAX_DELAY);
-
-
-
-}
-
-/*void putArrayTogether(int lengthArray)
-{
-	char *secondPart[32]:
-	secondPart = strtok (data,"\n");
-	HAL_UART_Transmit(&huart2,secondPart,sizeof(secondPart),HAL_MAX_DELAY);
-
-	              //repeat this step for the other indexes
-	uint8_t firstPart = strtok (NULL,"\n");
-
-	HAL_UART_Transmit(&huart2,firstPart,sizeof(firstPart),HAL_MAX_DELAY);
-
-
-
-	}
-*/
 void _Error_Handler(char * file, int line)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+
   while(1) 
   {
   }
-  /* USER CODE END Error_Handler_Debug */ 
 }
 
 #ifdef USE_FULL_ASSERT
 
-/**
-   * @brief Reports the name of the source file and the source line number
-   * where the assert_param error has occurred.
-   * @param file: pointer to the source file name
-   * @param line: assert_param error line source number
-   * @retval None
-   */
+
 void assert_failed(uint8_t* file, uint32_t line)
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-    ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
 
 }
 
 #endif
 
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-*/ 
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

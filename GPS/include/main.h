@@ -49,7 +49,7 @@
 
 /* ########################## Assert Selection ############################## */
 /**
-  * @brief Uncomment the line below to expanse the "assert_param" macro in the
+  * @brief Uncomment the line below to expanse the "assert_param" macro in the 
   *        HAL drivers code
   */
 /* #define USE_FULL_ASSERT    1U */
@@ -57,9 +57,6 @@
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
-
-
-#define DMA_TIMEOUT_MS      10      /* DMA Timeout duration in msec */
 
 #ifdef __cplusplus
  extern "C" {
