@@ -145,7 +145,7 @@ class Backend:
                     json=json_str
                 )
 
-                print("Updated my_sensor attribute for node {}".format(node_id))
+                print("Updated direction telemetry for node {}".format(node_id))
             except ApiException as e:
                 print("Exception when calling API: %s\n" % e)
         else:
