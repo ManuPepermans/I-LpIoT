@@ -7,62 +7,84 @@ import pickle
 metingen = np.zeros((10,4))   # Create an array of all zeros
 resultaat = np.zeros((14,3))
 FinalMatrix = np.zeros((0,4))
+global input2
 
 
+metingenList = []
 count1 = 1
 count2 = 1
 count3 = 1
 count4 = 1
 counter = 0
-numberOfGateways = 4;
-counterMax = 2
+numberOfGateways = 4
+counterMax = 26
+lists = []
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
+   global input2, counterMax, singleList, locationList
    print("Connected with result code "+str(rc))
 
    # Subscribing in on_connect() means that if we lose the connection and
    # reconnect then subscriptions will be renewed.
    client.subscribe("/localisation/#")
    client.subscribe("test/")
+   input2 = raw_input("Hoeveel metingen wilt u uitvoeren op deze locatie?")
+   input2 = int(input2)
+   locationList = []
+   lists.append(locationList)
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-   global count1, count2, count3, count4, counter, numberOfGateways, FinalMatrix
+   global count1, count2, count3, count4, counter, numberOfGateways, FinalMatrix, input2, counterMax, singleList, singleList
    print(msg.topic+" "+str(msg.payload))
    parsed_json = json.loads(str(msg.payload))
    if parsed_json['node'] == "43373134003e0041":
+
+
         print("Correcte node")
         print("counter", counter, "(count1 + count3) % (numberOfGateways * 11)", (count1 + count3) % (numberOfGateways * 11))
         #if counter < numberOfGateways and ((count1 + count2 + count3) % (NumberOfGateways * 11)) != 0:
-        if counter < counterMax and ((count1 + count2 + count3 + count4) % (numberOfGateways * 11)) != 0:
+        if counter < counterMax and ((count1 + count2 + count3 + count4) % (numberOfGateways * (input2+1))) != 0:
             gateway = parsed_json['gateway']
             print("gateway: " + gateway)
             value = parsed_json['link_budget']
             print("RSS: " + str(value))
 
-            if gateway == "c2c4ebd0-b95a-11e7-bebc-85e6dd10a2e8" and count1 < 11:
+            if gateway == "c2c4ebd0-b95a-11e7-bebc-85e6dd10a2e8" and count1 < (input2+1):
                 metingen[count1-1,0] = value
                 count1 += 1
                 print("count1")
                 print(count1)
-            elif gateway == "b6b48ad0-b95a-11e7-bebc-85e6dd10a2e8" and count2 < 11:
+            elif gateway == "b6b48ad0-b95a-11e7-bebc-85e6dd10a2e8" and count2 < (input2+1):
                 metingen[count2-1, 1] = value
                 count2 += 1
                 print("count2")
                 print(count2)
-            elif gateway == "f1f7e740-b8b0-11e7-bebc-85e6dd10a2e8" and count3 < 11:
+            elif gateway == "f1f7e740-b8b0-11e7-bebc-85e6dd10a2e8" and count3 < (input2+1):
                 metingen[count3-1, 2] = value
                 count3 += 1
                 print("count3")
                 print(count3)
-            elif gateway == "43e01b20-b967-11e7-bebc-85e6dd10a2e8" and count4 < 11:
+            elif gateway == "43e01b20-b967-11e7-bebc-85e6dd10a2e8" and count4 < (input2+1):
                 metingen[count4-1, 3] = value
                 count4 += 1
                 print("count4")
                 print(count4)
         #elif counter < numberOfGateways and ((count1 + count2 + count3) % (NumberOfGateways * 11)) == 0:
-        elif counter < counterMax and ((count1 + count2 + count3 + count4) % (numberOfGateways * 11)) == 0:
+        elif counter < counterMax and ((count1 + count2 + count3 + count4) % (numberOfGateways * (input2+1))) == 0:
+
+            for (x, y), value in np.ndenumerate(metingen):
+                if y == 0:
+                    singleList = []
+                if y == 3:
+                    locationList.append(singleList)
+                print(x)
+                print(y)
+                if x > (input2-1):
+                    break
+                singleList.append(metingen[x,y])
+            print(lists)
             count1 = 1
             count2 = 1
             count3 = 1
@@ -90,7 +112,9 @@ def on_message(client, userdata, msg):
             np.savetxt("foo.csv", FinalMatrix, delimiter=",")
             with open("trainingdata.csv", "wb") as f:
                 writer = csv.writer(f)
-                writer.writerows(FinalMatrix)
+                writer.writerows(lists)
+            with open("a.pickle", "wb") as f:
+                pickle.dump(lists, f)
 
 
 
@@ -98,7 +122,9 @@ def on_message(client, userdata, msg):
 client = mqtt.Client(protocol=mqtt.MQTTv31)
 client.on_connect = on_connect
 client.on_message = on_message
-
+#user = "student"
+#password = "cv1Dq6GXL9cqsStSHKp5"
+#client.username_pw_set(user, password=password)    #set username and password
 client.connect("backend.idlab.uantwerpen.be", 1883, 60)
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
