@@ -1,0 +1,4 @@
+-r tb_api_client/requirements.txt
+-r lib/pyd7a/requirements.txt
+jsonpickle
+

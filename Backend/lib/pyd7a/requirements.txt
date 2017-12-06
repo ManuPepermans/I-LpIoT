@@ -1,0 +1,14 @@
+bitstring
+Cerberus
+eventlet
+Flask
+Flask-SocketIO
+Flask-Cors
+PyCRC
+pyserial>=3.1.1
+unittest2
+coverage
+enum34
+jsonpickle
+paho-mqtt
+traceback2

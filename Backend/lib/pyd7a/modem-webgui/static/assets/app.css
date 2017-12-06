@@ -1,0 +1,140 @@
+img{
+	border:none;
+}
+
+.webix_layout_toolbar.header {
+  background-color: #5F5F5F;
+  color: #FFF;
+  border: none;
+}
+
+.webix_layout_toolbar.header .webix_view {
+  background-color: #5F5F5F;
+  color: #FFF;
+  border: none;
+}
+
+/*
+.webix_layout_toolbar .webix_view {
+  background-color: #5F5F5F;
+  color: #FFF;
+  border: none;
+}
+*/
+
+.header .webix_icon_button .webix_icon {
+  color: #FFF;
+}
+
+.webix_icon_button{
+	position:relative;
+}
+
+.webix_layout_toolbar.webix_toolbar .webix_el_icon  .webix_icon{
+	height:100%;
+	width:100%;
+	line-height: inherit;
+}
+
+.title .webix_template{
+	padding: 10px 12px;
+	line-height: 29px;
+}
+.title .header{
+	float: left;
+	font-size: 18px;
+}
+.title .details{
+	float: left;
+	font-size: 13px;
+	font-style: italic;
+
+	padding-left: 10px;
+}
+
+.sub_title  .webix_template{
+	padding-left: 12px;
+	padding-top: 14px;
+}
+.sub_title2 .webix_template{
+	padding-top: 5px;
+}
+.sub_title .webix_icon{
+	padding-right: 7px;
+}
+.sub_title2 .webix_icon{
+	padding-right: 5px;
+}
+
+.sub_title2{
+	background: transparent !important;
+}
+
+.highlighted_header.header1{
+	background-color: #a693eb !important;
+}
+.webix_toolbar.highlighted_header .webix_template{
+	color:#fff !important;
+}
+.webix_toolbar.highlighted_header .webix_template .webix_icon{
+	color:#fff !important;
+}
+
+.highlighted_header.header1{
+	background-color: #a693eb !important;
+}
+
+.highlighted_header .webix_view{
+	color:#fff !important;
+    border: none;
+    background: transparent !important;
+}
+
+.highlighted_header .webix_template .webix_icon{
+	color:#fff !important;
+}
+
+.highlighted_header.header2{
+	background-color: #f19b60 !important;
+}
+.highlighted_header.header3{
+	background-color: #63b4ea !important;
+}
+.highlighted_header.header4{
+	 background-color: #5f5f5f !important;
+}
+.highlighted_header.header5{
+	background-color: #a4b4bf !important;
+}
+.highlighted_header.header6{
+	background-color: #fbfbfb !important;
+}
+
+.highlighted_header .webix_el_icon .webix_icon{
+	font-size: 17px;
+}
+/*
+.webix_el_button .webixtype_base{
+	background-color: #eb6e1a;
+	border-color: #eb6e1a;
+	border-bottom-color:#c45c16;
+}*/
+.webix_el_button .webixtype_base{
+	background-color: #a693eb;
+	border-color: #fff;
+    color: #fff;
+    border-width: 1px;
+}
+
+.webix_list .marker {
+	float: left;
+	height: 10px;
+	width: 10px;
+	border-radius: 50%;
+	margin-top: 10px;
+	margin-right: 5px;
+}
+
+.center{
+	text-align: center;
+}

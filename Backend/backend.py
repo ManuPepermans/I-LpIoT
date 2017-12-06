@@ -47,7 +47,6 @@ class Backend:
 
         self.config = argparser.parse_args()
         self.config.D7 = "/tb/#"
-        self.config.LOR = "/loriot/#"
         self.connect_to_mqtt()
 
         api_client_config = Configuration()
@@ -64,10 +63,14 @@ class Backend:
 
         # client_id=””, clean_session=True, userdata=None, protocol=MQTTv311, transport=”tcp”)
         self.mq = mqtt.Client("", True, None, mqtt.MQTTv31)
+
         self.mq.on_connect = self.on_mqtt_connect
         self.mq.on_message = self.on_mqtt_message
+
+        # select broker
         self.mq.connect(self.config.broker, 1883, 60)
         self.mq.loop_start()
+
         while not self.connected_to_mqtt: pass  # busy wait until connected
         print("Connected to MQTT broker on {}".format(
             self.config.broker,
@@ -75,9 +78,10 @@ class Backend:
 
     def on_mqtt_connect(self, client, config, flags, rc):
         print("Connect to topic: {}".format(self.config.D7))
+
         # subscribe to topic
         self.mq.subscribe(self.config.D7)
-        self.mq.subscribe(self.config.LOR)
+
         # login with username and password
         self.mq.username_pw_set(self.config.user, self.config.password)
         self.connected_to_mqtt = True
@@ -145,7 +149,7 @@ class Backend:
                     json=json_str
                 )
 
-                print("Updated my_sensor attribute for node {}".format(node_id))
+                print("Updated direction telemetry for node {}".format(node_id))
             except ApiException as e:
                 print("Exception when calling API: %s\n" % e)
         else:
