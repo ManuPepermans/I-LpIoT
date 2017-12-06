@@ -1,30 +1,30 @@
 # coding=utf-8
 import math
 import operator
-import csv
 import paho.mqtt.client as mqtt
 import signal
+import numpy as np
 
 import json
 import datetime
 import argparse
 
-from tb_api_client import swagger_client
-from tb_api_client.swagger_client import ApiClient, Configuration
-from tb_api_client.swagger_client.rest import ApiException
+import pickle
+
+import ThingsBoard
 
 firstRun = True
 newBatch = True
 timestampBatch = 0
-value1 = 0
-value2 = 0
-value3 = 0
-value4 = 0
+value1 = np.nan
+value2 = np.nan
+value3 = np.nan
+value4 = np.nan
 measurement = []
 sample = 0
 xPixel = 0
 yPixel = 0
-
+#"43373134003e0041"
 
 class knn:
     def __init__(self):
@@ -36,29 +36,21 @@ class knn:
         argparser.add_argument("-t", "--token", help="token to access the thingsboard API", required=True)
         argparser.add_argument("-U", "--user", help="username for MQTT broker", required=True)
         argparser.add_argument("-P", "--password", help="password for MQTT broker", required=True)
-        argparser.add_argument("-n", "--node", help="node name", default="43373134003e0041")
+        argparser.add_argument("-n", "--node", help="node name", default="4337313400210032")
 
         self.mqtt_config = None
         self.mqtt_connected = False
 
         self.config = argparser.parse_args()
         self.config.knn = "/localisation/#"
-        self.start_mqtt()
+        self.connect_to_mqtt()
 
-        api_client_config = Configuration()
-        api_client_config.host = self.config.url
-        api_client_config.api_key['X-Authorization'] = self.config.token
-        api_client_config.api_key_prefix['X-Authorization'] = 'Bearer'
-        api_client = ApiClient(api_client_config)
+        ThingsBoard.start_api(self.config)
 
-        self.device_controller_api = swagger_client.DeviceControllerApi(api_client=api_client)
-        self.device_api_controller_api = swagger_client.DeviceApiControllerApi(api_client=api_client)
-
-    def start_mqtt(self):
+    def connect_to_mqtt(self):
         self.mqtt_connected = False
 
         # client_id=””, clean_session=True, userdata=None, protocol=MQTTv311, transport=”tcp”)
-
         self.mqtt_config = mqtt.Client("", True, None, mqtt.MQTTv31)
 
         self.mqtt_config.on_connect = self.on_mqtt_connect
@@ -137,10 +129,10 @@ class knn:
                     self.calculate(measurement)
                     newBatch = True
                     if not firstRun:
-                        value1 = 0
-                        value2 = 0
-                        value3 = 0
-                        value4 = 0
+                        value1 = np.nan
+                        value2 = np.nan
+                        value3 = np.nan
+                        value4 = np.nan
 
                     if gateway == "c2c4ebd0-b95a-11e7-bebc-85e6dd10a2e8":
                         value1 = value
@@ -168,26 +160,16 @@ class knn:
 
 
     # Load the trainingdata and put it in the right format
-    def loadDataset(self, filename):
-        with open(filename, 'rb') as csvfile:
-            lines = csv.reader(csvfile)
-            dataset = list(lines)
-            trainingdata = []
-            for x in range(len(dataset)):
-                for y in range(len(dataset[x])):
-                    dataset[x][y] = dataset[x][y].replace("[", "")
-                    dataset[x][y] = dataset[x][y].replace(" ", "")
-                    dataset[x][y] = dataset[x][y].replace("]", "")
-                    dataset[x][y] = dataset[x][y].replace("-", "")
-                    dataset[x][y] = dataset[x][y].split(',')
-                    dataset[x][y] = list(map(int, dataset[x][y]))
-                trainingdata.append(dataset[x])
-            return trainingdata
+    def loadDataset(self):
+        lists = pickle.load(open("a.pickle", "rb"))
+        return lists
 
     def euclideanDistance(self, instance1, instance2, length):
         distance = 0
         for x in range(length):
-            distance += pow((instance1[x] - instance2[x]), 2)
+            if not math.isnan(instance2[x]):
+                distance += pow((instance1[x] - instance2[x]), 2)
+
         return math.sqrt(distance)
 
     def getResponse(self, neighbors):
@@ -198,8 +180,8 @@ class knn:
                 classVotes[response] += 1
             else:
                 classVotes[response] = 1
-            sortedVotes = sorted(classVotes.iteritems(), key=operator.itemgetter(1), reverse=True)
-            return sortedVotes[0][0]
+        sortedVotes = sorted(classVotes.iteritems(), key=operator.itemgetter(1), reverse=True)
+        return sortedVotes[0][0]
 
     def getNeighbors(self, trainingSet, measurment, k):
         distances = []
@@ -212,7 +194,6 @@ class knn:
                 distances.append((x, dist))
 
         distances.sort(key=operator.itemgetter(1))
-
         neighbors = []
         for x in range(k):
             neighbors.append(distances[x][0])
@@ -224,124 +205,105 @@ class knn:
 
         # Points on blueprint in pixels (blueprint = 1583 x 825 px)
 
-        if results == 0:
+        if results == 25:
             xPixel = 291
             yPixel = 203
-        elif results == 1:
+        elif results == 24:
             xPixel = 409
             yPixel = 203
-        elif results == 2:
+        elif results == 23:
             xPixel = 535
             yPixel = 203
-        elif results == 3:
+        elif results == 22:
             xPixel = 673
             yPixel = 203
-        elif results == 4:
+        elif results == 21:
             xPixel = 808
             yPixel = 203
-        elif results == 5:
+        elif results == 20:
             xPixel = 932
             yPixel = 203
-        elif results == 6:
+        elif results == 19:
             xPixel = 1055
             yPixel = 203
-        elif results == 7:
+        elif results == 18:
             xPixel = 347
             yPixel = 328
-        elif results == 8:
+        elif results == 17:
             xPixel = 471
             yPixel = 328
-        elif results == 9:
+        elif results == 16:
             xPixel = 595
             yPixel = 328
-        elif results == 10:
+        elif results == 15:
             xPixel = 746
             yPixel = 328
-        elif results == 11:
+        elif results == 14:
             xPixel = 870
             yPixel = 328
-        elif results == 12:
+        elif results == 13:
             xPixel = 994
             yPixel = 328
-        elif results == 13:
+        elif results == 12:
             xPixel = 341
             yPixel = 409
-        elif results == 14:
+        elif results == 11:
             xPixel = 449
             yPixel = 409
-        elif results == 15:
+        elif results == 10:
             xPixel = 556
             yPixel = 409
-        elif results == 16:
+        elif results == 9:
             xPixel = 664
             yPixel = 409
-        elif results == 17:
+        elif results == 8:
             xPixel = 772
             yPixel = 409
-        elif results == 18:
+        elif results == 7:
             xPixel = 879
             yPixel = 409
-        elif results == 19:
+        elif results == 6:
             xPixel = 290
             yPixel = 536
-        elif results == 20:
+        elif results == 5:
             xPixel = 397
             yPixel = 536
-        elif results == 21:
+        elif results == 4:
             xPixel = 503
             yPixel = 536
-        elif results == 22:
+        elif results == 3:
             xPixel = 611
             yPixel = 536
-        elif results == 23:
+        elif results == 2:
             xPixel = 718
             yPixel = 536
-        elif results == 24:
+        elif results == 1:
             xPixel = 829
             yPixel = 536
-        elif results == 25:
+        elif results == 0:
             xPixel = 937
             yPixel = 536
 
         return xPixel, yPixel
 
-    def send_to_thingsboard(self, xPixel, yPixel):
-
-        try:
-            # first get the deviceId mapped to the device name
-            response = self.device_controller_api.get_tenant_device_using_get(device_name=str(self.config.node))
-            device_id = response.id.id
-            # print(device_id)
-
-            # next, get the access token of the device
-            response = self.device_controller_api.get_device_credentials_by_device_id_using_get(device_id=device_id)
-            device_access_token = response.credentials_id
-            # print(device_access_token)
-
-            # finally, store the sensor attribute on the node in TB
-            response = self.device_api_controller_api.post_telemetry_using_post(
-                device_token=device_access_token,
-                json={"x_group1": xPixel}
-            )
-            response = self.device_api_controller_api.post_telemetry_using_post(
-                device_token=device_access_token,
-                json={"y_group1": yPixel}
-            )
-
-            print("Updated x_group1 and y_group1 telemetry for node {}".format(self.config.node))
-        except ApiException as e:
-            print("Exception when calling API: %s\n" % e)
-
     def calculate(self, measurement):
-        k = 3
-        trainingSet = self.loadDataset("output.csv")
-        neighbors = self.getNeighbors(trainingSet, measurement, k)
-        print("Get Neighbors: {}".format(neighbors))
-        result = self.getResponse(neighbors)
-        print("Voting: {}".format(result))
-        xPixel, yPixel = self.getPixels(result)
-        print("Pixels: x = {} and y = {}".format(xPixel,yPixel))
-        self.send_to_thingsboard(xPixel,yPixel)
+        count = measurement.count(np.nan)
+
+        if count < 2:
+            k = 5
+            trainingSet = self.loadDataset()
+            print("Measurement: {}".format(measurement))
+            neighbors = self.getNeighbors(trainingSet, measurement, k)
+            print("Get Neighbors: {}".format(neighbors))
+            result = self.getResponse(neighbors)
+            print("Voting: {}".format(result))
+            xPixel, yPixel = self.getPixels(result)
+            print("Pixels: x = {} and y = {}".format(xPixel,yPixel))
+            #self.send_to_thingsboard(xPixel,yPixel)
+            json_datax = {"x_group1": xPixel}
+            ThingsBoard.send_json(self.config,json_datax)
+            json_datay = {"y_group1": yPixel}
+            ThingsBoard.send_json(self.config, json_datay)
 
     def __del__(self):
         try:
