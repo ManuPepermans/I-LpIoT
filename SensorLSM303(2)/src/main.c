@@ -80,6 +80,19 @@ uint8_t MIDpressure;
 uint8_t MSBpressure;
 uint32_t CompletePressure;
 
+uint8_t OUTX_L_REG_M_Data;
+uint8_t OUTX_H_REG_M_Data;
+uint8_t OUTY_L_REG_M_Data;
+uint8_t OUTY_H_REG_M_Data;
+uint8_t OUTZ_L_REG_M_Data;
+uint8_t OUTZ_H_REG_M_Data;
+
+uint16_t MAG_X;
+uint16_t MAG_Y;
+uint16_t MAG_Z;
+
+
+
 int16_t Xaxis = 0; //
 int16_t Yaxis = 0; //
 int16_t Zaxis = 0; //
@@ -177,28 +190,47 @@ int main(void)
 		HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(1) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_L_REG_M, 1, Data, 1, 100);
-		HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
+		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_L_REG_M, 1, &OUTX_L_REG_M_Data, 1, 100);
+		HAL_UART_Transmit(&huart2,&OUTX_L_REG_M_Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(2) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_H_REG_M, 1, Data, 1, 100);
-		HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
+		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_H_REG_M, 1, &OUTX_H_REG_M_Data, 1, 100);
+		HAL_UART_Transmit(&huart2,&OUTX_H_REG_M_Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(3) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_L_REG_M, 1, Data, 1, 100);
-		HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
+		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_L_REG_M, 1, &OUTY_L_REG_M_Data, 1, 100);
+		HAL_UART_Transmit(&huart2,&OUTY_L_REG_M_Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(4) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_H_REG_M, 1, Data, 1, 100);
-		HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
+		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_H_REG_M, 1, &OUTY_H_REG_M_Data, 1, 100);
+		HAL_UART_Transmit(&huart2,&OUTY_H_REG_M_Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(5) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_L_REG_M, 1, Data, 1, 100);
-		HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
+		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_L_REG_M, 1, &OUTZ_L_REG_M_Data, 1, 100);
+		HAL_UART_Transmit(&huart2,&OUTZ_L_REG_M_Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(6) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_H_REG_M, 1, Data, 1, 100);
-		HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
+		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_H_REG_M, 1, &OUTZ_H_REG_M_Data, 1, 100);
+		HAL_UART_Transmit(&huart2,&OUTZ_H_REG_M_Data,1,HAL_MAX_DELAY);
+
+		//Omzetten van hexadecimaal naar decimal two's complement
+
+		MAG_X =  (((uint16_t)OUTX_H_REG_M_Data << 8) | OUTX_L_REG_M_Data);
+		MAG_Y =  (((uint16_t)OUTY_H_REG_M_Data << 8) | OUTY_L_REG_M_Data);
+		MAG_Z =  (((uint16_t)OUTZ_H_REG_M_Data << 8) | OUTZ_L_REG_M_Data);
+
+		int mask = 0xFF; // 11111111
+
+		MAG_X ^= mask;
+		MAG_Y ^= mask;
+		MAG_Z ^= mask;
+
+		MAG_X = (int) MAG_X + 1;
+		MAG_Y = (int) MAG_Y + 1;
+		MAG_Z = (int) MAG_Z + 1;
+
+		sprintf(str, "%d", MAG_X);
+		HAL_UART_Transmit(&huart2,(uint8_t*)str,strlen(str),HAL_MAX_DELAY);
 
   		Xaxis = ((Data[1] << 8) | Data[0]);
   		Yaxis = ((Data[3] << 8) | Data[2]);
