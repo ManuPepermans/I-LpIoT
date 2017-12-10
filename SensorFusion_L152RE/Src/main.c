@@ -41,6 +41,9 @@
 #include "stm32l1xx_hal.h"
 
 /* USER CODE BEGIN Includes */
+#include <string.h>
+#include <stdio.h>
+#include <math.h>
 
 /* USER CODE END Includes */
 
@@ -51,6 +54,18 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+typedef enum {
+	TWOS_COMPLEMENT_24_BIT = 24, TWOS_COMPLEMENT_16_BIT = 16,
+} SignBitIndex;
+
+static uint8_t ender[] = { 0x0D, 0x0A };
+static uint8_t rawSensorData[5];
+static int64_t pressureRaw = 0;
+static int16_t pressure = 0;
+static int64_t temperatureRaw = 0;
+static int16_t temperature = 0;
+static uint8_t controlRegisterSetting[] = { 0x10 };
+static char msg[128] = { [0 ... 127] = '\0' };
 
 /* USER CODE END PV */
 
@@ -69,6 +84,7 @@ static void MX_I2C1_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
+int64_t twosComplementToSignedInteger(uint32_t rawValue, SignBitIndex sbi);
 
 /* USER CODE END PFP */
 
@@ -104,6 +120,10 @@ int main(void) {
 	MX_I2C1_Init();
 
 	/* USER CODE BEGIN 2 */
+	HAL_I2C_Mem_Write(&hi2c1, 0xBA, 0x10, I2C_MEMADD_SIZE_8BIT,
+			controlRegisterSetting, 1, HAL_MAX_DELAY);
+	while (HAL_I2C_IsDeviceReady(&hi2c1, 0xBA, 1, HAL_MAX_DELAY) != HAL_OK)
+		;
 
 	/* USER CODE END 2 */
 
@@ -113,6 +133,30 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
+		HAL_I2C_Mem_Read(&hi2c1, 0xBA, 0x28, I2C_MEMADD_SIZE_8BIT,
+				rawSensorData, 5, HAL_MAX_DELAY);
+
+		uint32_t pressureTwosComplement = (rawSensorData[2] << 16)
+				| (rawSensorData[1] << 8) | rawSensorData[0];
+		pressureRaw = twosComplementToSignedInteger(pressureTwosComplement,
+				TWOS_COMPLEMENT_24_BIT);
+		pressure = (int16_t) (pressureRaw / 410);
+		sprintf(msg, "%d µbar", pressure);
+		HAL_UART_Transmit(&huart2, (uint8_t *) msg, 21, HAL_MAX_DELAY);
+		HAL_UART_Transmit(&huart2, ender, 2, HAL_MAX_DELAY);
+
+		uint32_t temperatureTwosComplement = (rawSensorData[4] << 8)
+				| rawSensorData[3];
+		temperatureRaw = twosComplementToSignedInteger(
+				temperatureTwosComplement, TWOS_COMPLEMENT_16_BIT);
+		temperature = (int16_t) (temperatureRaw / 100);
+		for (uint16_t i = 0; i < (sizeof(msg) / sizeof(msg[0])); ++i)
+			msg[i] = '\0';
+		sprintf(msg, "%d °C", temperature);
+		HAL_UART_Transmit(&huart2, (uint8_t *) msg, 21, HAL_MAX_DELAY);
+		HAL_UART_Transmit(&huart2, ender, 2, HAL_MAX_DELAY);
+
+		HAL_Delay(2000);
 
 	}
 	/* USER CODE END 3 */
@@ -249,6 +293,22 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
+int64_t twosComplementToSignedInteger(uint32_t rawValue, SignBitIndex sbi) {
+	switch (sbi) {
+	case TWOS_COMPLEMENT_24_BIT: {
+		if ((rawValue & 0x00800000) == 0)
+			return (rawValue & 0x00FFFFFF);
+		return ((int64_t) (~((rawValue & 0x00FFFFFF) - 1))) * -1;
+	}
+	case TWOS_COMPLEMENT_16_BIT: {
+		if ((rawValue & 0x00008000) == 0)
+			return (rawValue & 0x0000FFFF);
+		return ((int64_t) (~((rawValue & 0x0000FFFF) - 1))) * -1;
+	}
+	default:
+		return NAN;
+	}
+}
 
 /* USER CODE END 4 */
 
