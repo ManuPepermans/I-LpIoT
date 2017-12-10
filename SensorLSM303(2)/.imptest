@@ -1,0 +1,14 @@
+{
+    "modelId": "dFKbHRnixLoE" /* F */,
+    "devices": [
+        "23b51a57bc073aee" /* F - Explorer Kit 001 */
+    ],
+    "agentFile": false,
+    "deviceFile": "LPS22HB.device.lib.nut",
+    "stopOnFailure": false,
+    "timeout": 30,
+    "tests": [
+        "*.test.nut",
+        "tests/**/*.test.nut"
+    ]
+}
