@@ -25,10 +25,7 @@ from modem.modem import Modem
 import time
 from pprint import pprint
 
-from tb_api_client import swagger_client
-from tb_api_client.swagger_client import ApiClient, Configuration
-from tb_api_client.swagger_client.rest import ApiException
-
+import ThingsBoard
 
 class Backend:
     def __init__(self):
@@ -49,14 +46,7 @@ class Backend:
         self.config.D7 = "/tb/#"
         self.connect_to_mqtt()
 
-        api_client_config = Configuration()
-        api_client_config.host = self.config.url
-        api_client_config.api_key['X-Authorization'] = self.config.token
-        api_client_config.api_key_prefix['X-Authorization'] = 'Bearer'
-        api_client = ApiClient(api_client_config)
-
-        self.device_controller_api = swagger_client.DeviceControllerApi(api_client=api_client)
-        self.device_api_controller_api = swagger_client.DeviceApiControllerApi(api_client=api_client)
+        ThingsBoard.start_api(self.config)
 
     def connect_to_mqtt(self):
         self.connected_to_mqtt = False
@@ -90,6 +80,7 @@ class Backend:
 
         # msg contains already parsed command in ALP in JSON
         # print("ALP Command received from {}".format(msg.topic))
+        global json_str
         try:
             obj = jsonpickle.json.loads(msg.payload)
         except:
@@ -107,6 +98,7 @@ class Backend:
 
         if node_id == self.config.node:
             print("***Right node: {}".format(node_id))
+            json_str = {}
 
             for action in cmd.actions:
                 if type(action.operation) is ReturnFileData and action.operand.offset.id == 1:
@@ -131,27 +123,8 @@ class Backend:
                     elif value_type == "F": #RSSI value for fingerprinting
                         json_str = {"XPos": x}
 
-            # save the parsed sensor data as an attribute to the device, using the TB API
-            try:
-                # first get the deviceId mapped to the device name
-                response = self.device_controller_api.get_tenant_device_using_get(device_name=str(node_id))
-                device_id = response.id.id
-                # print(device_id)
+            ThingsBoard.send_json(self.config, json_str)
 
-                # next, get the access token of the device
-                response = self.device_controller_api.get_device_credentials_by_device_id_using_get(device_id=device_id)
-                device_access_token = response.credentials_id
-                # print(device_access_token)
-
-                # finally, store the sensor attribute on the node in TB
-                response = self.device_api_controller_api.post_telemetry_using_post(
-                    device_token=device_access_token,
-                    json=json_str
-                )
-
-                print("Updated direction telemetry for node {}".format(node_id))
-            except ApiException as e:
-                print("Exception when calling API: %s\n" % e)
         else:
             # print("Wrong node: {}".format(node_id))
             return

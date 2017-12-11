@@ -49,6 +49,7 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 #define LENGTH_ARRAY(x)  (sizeof(x) / sizeof(uint8_t))
 #define FRAME_LENGTH 7
@@ -63,6 +64,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 void DASH7Message(uint8_t[], int);
+void DASH7Receive(void);
 int getHex(int);
 
 int main(void)
@@ -86,6 +88,11 @@ int main(void)
 	  uint8_t uartTest [] = {0x4d, 0x01, 0x04};
 	  LENGTH_ARRAY(uartTest);
 	  DASH7Message(uartTest, 3);
+
+//TODO: make DASH7Receive always listen and correct
+	  DASH7Receive();
+
+
 	  HAL_Delay(2000);
   }
 }
@@ -197,6 +204,19 @@ void DASH7Message(uint8_t data[], int lengthDash7)
 	      }
 
 HAL_UART_Transmit(&huart1, ALP, sizeof(ALP),HAL_MAX_DELAY);
+}
+
+void DASH7Receive()
+{
+	char readBuf[1];
+	  HAL_UART_Receive(&huart1, (uint8_t*)readBuf, 1, HAL_MAX_DELAY);
+	  int opt = atoi(readBuf);
+	  if (opt != 0) {
+	      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+	      HAL_Delay(100);
+	      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+	      HAL_Delay(100);
+	  }
 }
 
 //int getHex(int data)

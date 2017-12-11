@@ -24,7 +24,7 @@ measurement = []
 sample = 0
 xPixel = 0
 yPixel = 0
-#"43373134003e0041"
+#Test node: "43373134003e0041"
 
 class knn:
     def __init__(self):
