@@ -59,12 +59,14 @@ typedef enum {
 } SignBitIndex;
 
 static uint8_t ender[] = { 0x0D, 0x0A };
-static uint8_t rawSensorData[5];
+static uint8_t rawSensorData[6];
 static int64_t pressureRaw = 0;
 static int16_t pressure = 0;
 static int64_t temperatureRaw = 0;
 static int16_t temperature = 0;
-static uint8_t controlRegisterSetting[] = { 0x10 };
+static uint8_t controlRegisterSettingLPS22HB[] = { 0x10 };
+static uint8_t controlRegisterSettingsLSM303AGR_M[] = { 0x00 };
+static uint8_t controlRegisterSettingsLSM303AGR_A[] = { 0x57 };
 static char msg[128] = { [0 ... 127] = '\0' };
 
 /* USER CODE END PV */
@@ -120,9 +122,20 @@ int main(void) {
 	MX_I2C1_Init();
 
 	/* USER CODE BEGIN 2 */
+	//Configure the LPS22HB sensor
 	HAL_I2C_Mem_Write(&hi2c1, 0xBA, 0x10, I2C_MEMADD_SIZE_8BIT,
-			controlRegisterSetting, 1, HAL_MAX_DELAY);
+			controlRegisterSettingLPS22HB, 1, HAL_MAX_DELAY);
 	while (HAL_I2C_IsDeviceReady(&hi2c1, 0xBA, 1, HAL_MAX_DELAY) != HAL_OK)
+		;
+	//Configure the LSM303AGR accelerometer
+	HAL_I2C_Mem_Write(&hi2c1, 0x19 << 1, 0x20, I2C_MEMADD_SIZE_8BIT,
+			controlRegisterSettingsLSM303AGR_A, 1, HAL_MAX_DELAY);
+	while (HAL_I2C_IsDeviceReady(&hi2c1, 0x19 << 1, 1, HAL_MAX_DELAY) != HAL_OK)
+		;
+	//Configure the LSM303AGR magnetometer
+	HAL_I2C_Mem_Write(&hi2c1, 0x1e << 1, 0x60 , I2C_MEMADD_SIZE_8BIT,
+			controlRegisterSettingsLSM303AGR_M, 1, HAL_MAX_DELAY);
+	while (HAL_I2C_IsDeviceReady(&hi2c1, 0x1e << 1, 1, HAL_MAX_DELAY) != HAL_OK)
 		;
 
 	/* USER CODE END 2 */
@@ -156,7 +169,8 @@ int main(void) {
 		HAL_UART_Transmit(&huart2, (uint8_t *) msg, 21, HAL_MAX_DELAY);
 		HAL_UART_Transmit(&huart2, ender, 2, HAL_MAX_DELAY);
 
-		HAL_Delay(2000);
+		HAL_Delay(1000);
+
 
 	}
 	/* USER CODE END 3 */
