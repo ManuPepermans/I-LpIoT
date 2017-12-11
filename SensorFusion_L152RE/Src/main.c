@@ -41,6 +41,7 @@
 #include "stm32l1xx_hal.h"
 
 /* USER CODE BEGIN Includes */
+#include "LPS22HB_driver.h"
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
