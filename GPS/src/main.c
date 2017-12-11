@@ -57,6 +57,7 @@ static void MX_USART6_UART_Init(void);
 static void sendGPS(void);
 static void initLora(void);
 static void initGPS(void);
+static void test(void);
 
 typedef int bool;
 enum {
@@ -86,9 +87,9 @@ int main(void) {
 	MX_USART1_UART_Init();
 	MX_USART2_UART_Init();
 
-	__HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
+	//__HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
 
-	HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+	HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
 	HAL_NVIC_EnableIRQ(USART1_IRQn);
 
 	//create variable to check the length of the NMEA command
@@ -100,23 +101,27 @@ int main(void) {
 
 		dangerZone = true;
 		if (dangerZone) {
-			HAL_UART_Transmit(&huart2,"Danger zone!", sizeof("Danger zone!"), HAL_MAX_DELAY);
+			HAL_UART_Transmit(&huart2,"Danger zone!", sizeof("Danger zone!")-1, HAL_MAX_DELAY);
 
 			//initLora();
+			HAL_Delay(5000);
+
 			initGPS();
 			sendGPS();
-			//HAL_Delay(2000);
 
 		}
 
 	}
+
+
 }
 
-void initLora() {
-	/* TO DO -> check init/join network, try X times
 
-	something like this:
-	 int init = false;
+/*void initLora() {
+	uint8_t buffer[64];
+	uint8_t character[1];
+	/* TO DO -> check init/join network, try X times
+	 bool loraInit = false;
 	 uint8_t joinLora[] = {0x41,0x54,0x2b,0x4a,0x4f,0x49,0x4e};
 	 HAL_UART_Transmit(&huart2, joinLora, 8, HAL_MAX_DELAY);
 	 if (HAL_UART_Receive_IT(&huart1, character, 1) == HAL_OK) {
@@ -127,13 +132,15 @@ void initLora() {
 	 init = true
 	 }
 	 }
-	 */
+
 	//return;
-}
+}*/
+
+
 void initGPS(){
 	uint8_t ggaOff[] = {0x24, 0x50, 0x53, 0x52, 0x46, 0x31, 0x30, 0x33, 0x2c, 0x30, 0x30, 0x2c, 0x30, 0x30, 0x2c, 0x30, 0x30, 0x2c, 0x30, 0x31, 0x2a, 0x32, 0x34, 0x0d, 0x0a};
 	HAL_UART_Transmit(&huart1, ggaOff, 25, HAL_MAX_DELAY);
-	uint8_t gglOn[] = {0x24, 0x50, 0x53, 0x52, 0x46, 0x31, 0x30, 0x33, 0x2c, 0x30, 0x31, 0x2c, 0x30, 0x30, 0x2c, 0x30, 0x31, 0x2c, 0x30, 0x31, 0x2a, 0x32, 0x34, 0x0d, 0x0a};
+	uint8_t gglOn[] = {0x24, 0x50, 0x53, 0x52, 0x46, 0x31, 0x30, 0x33, 0x2c, 0x30, 0x31, 0x2c, 0x30, 0x30, 0x2c, 0x30, 0x34, 0x2c, 0x30, 0x31, 0x2a, 0x32, 0x31, 0x0d, 0x0a};
 	HAL_UART_Transmit(&huart1, gglOn, 25, HAL_MAX_DELAY);
 	uint8_t gsaOff[] = {0x24, 0x50, 0x53, 0x52, 0x46, 0x31, 0x30, 0x33, 0x2c, 0x30, 0x32, 0x2c, 0x30, 0x30, 0x2c, 0x30, 0x30, 0x2c, 0x30, 0x31, 0x2a, 0x32, 0x36, 0x0d, 0x0a};
 	HAL_UART_Transmit(&huart1, gsaOff, 25, HAL_MAX_DELAY);
@@ -143,7 +150,7 @@ void initGPS(){
 	HAL_UART_Transmit(&huart1, rmcOff, 25, HAL_MAX_DELAY);
 	uint8_t vtgOff[] = {0x24, 0x50, 0x53, 0x52, 0x46, 0x31, 0x30, 0x33, 0x2c, 0x30, 0x35, 0x2c, 0x30, 0x30, 0x2c, 0x30, 0x30, 0x2c, 0x30, 0x31, 0x2a, 0x32, 0x31, 0x0d, 0x0a};
 	HAL_UART_Transmit(&huart1, vtgOff, 25, HAL_MAX_DELAY);
-	HAL_UART_Transmit(&huart2,"Transmit Done!", sizeof("Transmit Done!"), HAL_MAX_DELAY);
+	HAL_UART_Transmit(&huart2,"Transmit Done!", sizeof("Transmit Done!")-1, HAL_MAX_DELAY);
 
 
 }
@@ -151,15 +158,18 @@ void sendGPS() {
 	uint8_t buffer[64];
 	uint8_t character[1];
 	int i = 0;
+	int k = 0;
+	//__HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
 
 	while (dangerZone) {
 		//when there is a uart interrupt check the character and put it in the buffer.
 		//If the character is the end delemiter the NMEA command is complete.
+
 		if (HAL_UART_Receive_IT(&huart1, character, 1) == HAL_OK) {
 			buffer[i - 1] = *character;
 			if (*character == '\n') {
 
-				//AT COMMAND: AT+SEND=2:<data>
+				//AT COMMAND: AT+SEND=2:<data><CR><LF>
 				uint8_t AT_COMMAND[] = { 0x41, 0x54, 0x2b, 0x53, 0x45, 0x4e,
 						0x44, 0x3d, 0x32, 0x3a };
 				for (int j = 0; j <= i; j++) {
@@ -173,12 +183,24 @@ void sendGPS() {
 				HAL_UART_Transmit(&huart6, AT_COMMAND, i + 10, HAL_MAX_DELAY);
 				HAL_UART_Transmit(&huart2, AT_COMMAND, i + 10, HAL_MAX_DELAY);
 				i = 0;
+				k = k+1;
+
 			}
 			i = i + 1;
 
 		}
+if( k == 4)
+	return;
 
-	}
+}
+}
+
+
+void test() {
+	HAL_UART_Transmit(&huart2,"testfunctie", 7, HAL_MAX_DELAY);
+	HAL_Delay(5000);
+
+
 }
 
 /** System Clock Configuration
