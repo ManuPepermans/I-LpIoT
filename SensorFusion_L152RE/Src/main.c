@@ -57,8 +57,8 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-#define LSM303_ACC_ADDRESS 0x32 // 0011001 << 1 ADRESS from the accelero
-#define LSM303_MAG_ADDRESS 0x3C //0011110 << 1 Address magnetometer
+#define LSM303_ACC_ADDRESS (0x19 << 1) // ADRESS from the accelero
+#define LSM303_MAG_ADDRESS 0x3C // ADRESS from the magnetometer
 
 #define LSM303_ACC_CTRL_REG1_A 0x20 // Control register
 #define LSM303_ACC_CTRL_REG1_A 0x20 // Control register
@@ -77,8 +77,27 @@ UART_HandleTypeDef huart2;
 #define OUTZ_L_REG_M 0x6C
 #define OUTZ_H_REG_M 0x6D
 
+#define LSM303_SETTINGS1 0x00 // Mag = 10 Hz (HR and continuous mode) //This has to be set to single mode for lower power consumption
+#define LSM303_SETTINGS2 0x01 // Mag data-ready interrupt enable
+
+/* USER CODE END PV */
 #define LSM303_ACC_Z_L_A_MULTI_READ (LSM303_ACC_Z_L_A | 0x80)
 #define LSM303_ACC_X_L_A_MULTI_READ (LSM303_ACC_X_L_A | 0x80)
+
+// CTRL_REG1_A = [ODR3][ODR2][ODR1][ODR0][LPEN][ZEN][YEN][XEN]
+#define LSM303_ACC_Z_ENABLE 0x04 // 0000 0100
+#define LSM303_ACC_XYZ_ENABLE 0x07 // 0000 0111
+#define LSM303_ACC_100HZ 0x50 //0101 0000
+#define LSM303_ACC_1HZ 0x10 //0001 0000
+#define LSM303_ACC_WHO_AM_I 0x0F //0001 0000
+
+// CTRL_REG3_A = [CLICK][AOI1][AOI2][DRDY_1][DRDY_2][WTM][OVERRUN][---]
+#define LSM303_ACC_I1_DRDY1 0x10 //0001 0000
+#define LSM303_ACC_I1_DRDY2 0x08 //0000 1000
+
+#define LSM303_MAG_RSP 0x40
+#define LSM303_MAG_WHO_AM_I 0x4F
+#define LSM303_ACC_RSP 0x33
 
 #define LSM303_ACC_RESOLUTION 2.0 //
 
@@ -86,18 +105,8 @@ typedef enum {
 	TWOS_COMPLEMENT_24_BIT = 24, TWOS_COMPLEMENT_16_BIT = 16,
 } SignBitIndex;
 
-static uint8_t ender[] = { 0x0D, 0x0A };
-static uint8_t rawSensorData[6];
-static int64_t pressureRaw = 0;
-static int16_t pressure = 0;
-static int64_t temperatureRaw = 0;
-static int16_t temperature = 0;
-static uint8_t controlRegisterSettingLPS22HB[] = { 0x10 };
-static uint8_t controlRegisterSettingsLSM303AGR_M[] = { 0x00 };
-static uint8_t controlRegisterSettingsLSM303AGR_A[] = { 0x57 };
-static char msg[128] = { [0 ... 127] = '\0' };
-
 uint8_t Data[6]; // Var for acc data
+
 uint8_t OUTX_L_REG_M_Data;
 uint8_t OUTX_H_REG_M_Data;
 uint8_t OUTY_L_REG_M_Data;
@@ -118,6 +127,7 @@ float Yaxis_g = 0; //
 float Zaxis_g = 0; //
 
 char str[50];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -171,142 +181,115 @@ int main(void) {
 	MX_I2C1_Init();
 
 	/* USER CODE BEGIN 2 */
-	//Configure the LPS22HB sensor
-	HAL_I2C_Mem_Write(&hi2c1, 0xBA, 0x10, I2C_MEMADD_SIZE_8BIT,
-			controlRegisterSettingLPS22HB, 1, HAL_MAX_DELAY);
-	while (HAL_I2C_IsDeviceReady(&hi2c1, 0xBA, 1, HAL_MAX_DELAY) != HAL_OK)
+	uint8_t Settings = LSM303_ACC_XYZ_ENABLE | LSM303_ACC_100HZ;
+
+	// I2C write settings
+	//Startup sequence LSM303AGR
+	HAL_I2C_Mem_Write(&hi2c1, LSM303_MAG_ADDRESS, LSM303_CFG_REG_A_M,
+	I2C_MEMADD_SIZE_8BIT, 0x00, sizeof(0x00), 100);
+	while (HAL_I2C_IsDeviceReady(&hi2c1, LSM303_MAG_ADDRESS, 1, HAL_MAX_DELAY)
+			!= HAL_OK)
 		;
-	//Configure the LSM303AGR accelerometer (see startup datasheet)
-	HAL_I2C_Mem_Write(&hi2c1, 0x32, 0x20, I2C_MEMADD_SIZE_8BIT, 0x57, 1,
-	HAL_MAX_DELAY);
-	while (HAL_I2C_IsDeviceReady(&hi2c1, 0x32, 1, HAL_MAX_DELAY) != HAL_OK)
-		;
-	//Configure the LSM303AGR magnetometer (see startup datasheet)
-	HAL_I2C_Mem_Write(&hi2c1, 0x3C, 0x60, I2C_MEMADD_SIZE_8BIT, 0x00, 1,
-	HAL_MAX_DELAY);
-	while (HAL_I2C_IsDeviceReady(&hi2c1, 0x3C, 1, HAL_MAX_DELAY) != HAL_OK)
+	HAL_I2C_Mem_Write(&hi2c1, LSM303_MAG_ADDRESS, LSM303_CFG_REG_C_M,
+	I2C_MEMADD_SIZE_8BIT, 0x01, sizeof(0x01), 100);
+	while (HAL_I2C_IsDeviceReady(&hi2c1, LSM303_MAG_ADDRESS, 1, HAL_MAX_DELAY)
+			!= HAL_OK)
 		;
 
-	HAL_Delay(500);
+	uint8_t hwID[1];
+	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, LSM303_MAG_WHO_AM_I,
+	I2C_MEMADD_SIZE_8BIT, hwID, 1, HAL_MAX_DELAY);
+	if (hwID[0] == LSM303_MAG_RSP) {
+		printf("WHO_AM_I of magnetometer correct!!\r\n");
+	} else {
+		printf("Error!!\r\n");
+	}
 
-	printf(
-			"Waarden naar de registers geschreven, apparaten klaar voor gebruik!\n\r");
+	// I2C write settings
+	HAL_I2C_Mem_Write(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_CTRL_REG1_A, 1,
+			&Settings, 1, 100);
+	Settings = LSM303_ACC_I1_DRDY2;
+	HAL_I2C_Mem_Write(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_CTRL_REG3_A, 1,
+			&Settings, 1, 100);
+
+	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_WHO_AM_I,
+	I2C_MEMADD_SIZE_8BIT, hwID, 1, HAL_MAX_DELAY);
+	if (hwID[0] == LSM303_ACC_RSP) {
+		printf("WHO_AM_I of accelerometer correct!!\r\n");
+	} else {
+		printf("Error!!\r\n");
+	}
+
+	printf("Devices ready\r\n");
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		/* USER CODE END WHILE */
 
-		/* USER CODE BEGIN 3 */
-		printf("Start met barometer\r\n");
-		HAL_I2C_Mem_Read(&hi2c1, 0xBA, 0x28, I2C_MEMADD_SIZE_8BIT,
-				rawSensorData, 5, HAL_MAX_DELAY);
+		int32_t axes_m[3];
+		int32_t axes_a[3];
+		float axes_aF[3];
+		float axes_aT[3];
+		float roll, pitch, x, y, h, dir;
+		uint16_t dirUint16_t;
 
-		uint32_t pressureTwosComplement = (rawSensorData[2] << 16)
-				| (rawSensorData[1] << 8) | rawSensorData[0];
-		pressureRaw = twosComplementToSignedInteger(pressureTwosComplement,
-				TWOS_COMPLEMENT_24_BIT);
-		pressure = (int16_t) (pressureRaw / 410);
-		sprintf(msg, "%d µbar", pressure);
-		HAL_UART_Transmit(&huart2, (uint8_t *) msg, 21, HAL_MAX_DELAY);
-		HAL_UART_Transmit(&huart2, ender, 2, HAL_MAX_DELAY);
+		get_m_axes(axes_m);
 
-		uint32_t temperatureTwosComplement = (rawSensorData[4] << 8)
-				| rawSensorData[3];
-		temperatureRaw = twosComplementToSignedInteger(
-				temperatureTwosComplement, TWOS_COMPLEMENT_16_BIT);
-		temperature = (int16_t) (temperatureRaw / 100);
-		for (uint16_t i = 0; i < (sizeof(msg) / sizeof(msg[0])); ++i)
-			msg[i] = '\0';
-		sprintf(msg, "%d °C", temperature);
-		HAL_UART_Transmit(&huart2, (uint8_t *) msg, 21, HAL_MAX_DELAY);
-		HAL_UART_Transmit(&huart2, ender, 2, HAL_MAX_DELAY);
+		//printf("LSM303AGR [mag/mgauss]:  %6ld, %6ld, %6ld\r\n", axes_m[0],
+		//axes_m[1], axes_m[2]);
+		//LSM303AGR_ACC_Get_Acceleration(axes_a);
 
-		HAL_Delay(1000);
-
-		printf("Start met ecompass\r\n");
+		//printf("LSM303AGR [acc/mg]:  %6ld, %6ld, %6ld\r\n", axes_a[0],
+		//	axes_a[1], axes_a[2]);
 
 		HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS,
-		LSM303_ACC_X_L_A_MULTI_READ, 1, Data, 6, 100);
-		HAL_UART_Transmit(&huart2, Data, 6, HAL_MAX_DELAY);
-
+				LSM303_ACC_X_L_A_MULTI_READ, 1, Data, 6, 100);
 		HAL_Delay(500);
 
-		//Read magnetometer dataregister(1) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_L_REG_M, 1,
-				&OUTX_L_REG_M_Data, 1, 100);
-		printf("Dataregister 1: %d\r\n", OUTX_L_REG_M_Data);
+		Xaxis = ((Data[1] << 8) | Data[0]);
+		Yaxis = ((Data[3] << 8) | Data[2]);
+		Zaxis = ((Data[5] << 8) | Data[4]);
 
-		//Read magnetometer dataregister(2) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_H_REG_M, 1,
-				&OUTX_H_REG_M_Data, 1, 100);
-		printf("Dataregister 2: %d\r\n", OUTX_H_REG_M_Data);
+		axes_a[0] = ((Xaxis >> 6) * 3900 + 500) / 1000;
+		axes_a[1] = ((Yaxis >> 6) * 3900 + 500) / 1000;
+		axes_a[2] = ((Zaxis >> 6) * 3900 + 500) / 1000;
 
-		//Read magnetometer dataregister(3) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_L_REG_M, 1,
-				&OUTY_L_REG_M_Data, 1, 100);
-		printf("Dataregister 3: %d\r\n", OUTY_L_REG_M_Data);
+		printf("LSM303AGR [acc/mg]:  %6ld, %6ld, %6ld\r\n", Xaxis_g, Xaxis_g,
+				Xaxis_g);
 
-		//Read magnetometer dataregister(4) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_H_REG_M, 1,
-				&OUTY_H_REG_M_Data, 1, 100);
-		printf("Dataregister 4: %d\r\n", OUTY_H_REG_M_Data);
+		axes_aF[0] = (float) axes_a[0];
+		    axes_aF[1] = (float) axes_a[1];
+		    axes_aF[2] = (float) axes_a[2];
 
-		//Read magnetometer dataregister(5) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_L_REG_M, 1,
-				&OUTZ_L_REG_M_Data, 1, 100);
-		printf("Dataregister 5: %d\r\n", OUTZ_L_REG_M_Data);
+		    // Resolution is 2^(8) = 256
+		    axes_aT[0] = (axes_aF[0] * 2 / 256);
+		    axes_aT[1] = (axes_aF[1] * 2 / 256);
+		    axes_aT[2] = (axes_aF[2] * 2 / 256);
 
-		//Read magnetometer dataregister(6) and print
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_H_REG_M, 1,
-				&OUTZ_H_REG_M_Data, 1, 100);
-		printf("Dataregister 6: %d\r\n", OUTZ_H_REG_M_Data);
+		    // Some math to get the thing working
+		    roll = atan2f(axes_aT[1], axes_aT[2]);
+		    pitch = atan2f(-axes_aT[0],
+		            axes_aT[1] * sinf(roll) + axes_aT[2] * cosf(roll));
 
-		//Omzetten van hexadecimaal naar decimal two's complement
+		    x = axes_m[0] * cosf(pitch)
+		            + (axes_m[1] * sinf(roll) + axes_m[2] * cosf(roll)) * sinf(pitch);
+		    y = axes_m[2] * sinf(roll) - axes_m[1] * cosf(roll);
 
-		MAG_X = (OUTX_H_REG_M_Data << 8) | OUTX_L_REG_M_Data;
-		MAG_Y = (OUTY_H_REG_M_Data << 8) | OUTY_L_REG_M_Data;
-		MAG_Z = (OUTZ_H_REG_M_Data << 8) | OUTZ_L_REG_M_Data;
+		    // Convert to degrees, look in what quadrant the value lays and if it's negative add 360° to achieve correct positioning.
+		    h = atan2f(y, x);
+		    dir = h * (180 / 3.1415);
+		    if (dir < 0)
+		        dir += 360;
 
-		int64_t MAG_X_int = twosComplementToSignedInteger(MAG_X, TWOS_COMPLEMENT_16_BIT);
-		int64_t MAG_Y_int = twosComplementToSignedInteger(MAG_Y, TWOS_COMPLEMENT_16_BIT);
-		int64_t MAG_Z_int = twosComplementToSignedInteger(MAG_Z, TWOS_COMPLEMENT_16_BIT);
+		    // Convert for transmission over DASH7
+		    dirUint16_t = (uint16_t)dir;
 
-		MAG_X_int = MAG_X_int*1.5;
-		MAG_Y_int = MAG_Y_int*1.5;
-		MAG_Z_int = MAG_Z_int*1.5;
-
-		printf("MAG_X_int is: %d\r\n", MAG_X_int);
-		printf("MAG_Y_int is: %d\r\n", MAG_Y_int);
-		printf("MAG_Z_int is: %d\r\n", MAG_Z_int);
-
-//		int mask = 0xFF; // 11111111
-//
-//		MAG_X ^= mask;
-//		MAG_Y ^= mask;
-//		MAG_Z ^= mask;
-//
-//		MAG_X = (int) MAG_X + 1;
-//		MAG_Y = (int) MAG_Y + 1;
-//		MAG_Z = (int) MAG_Z + 1;
-//
-//		printf("MAG_X %d\r\n", MAG_X);
-//		printf("MAG_Y %d\r\n", MAG_Y);
-//		printf("MAG_Z %d\r\n", MAG_Z);
-//
-//		Xaxis = ((Data[1] << 8) | Data[0]);
-//		Yaxis = ((Data[3] << 8) | Data[2]);
-//		Zaxis = ((Data[5] << 8) | Data[4]);
-//
-//		Xaxis_g = ((float) Xaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
-//		Yaxis_g = ((float) Yaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
-//		Zaxis_g = ((float) Zaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
-//		printf("Xaxis_g %d\r\n", Xaxis_g);
-//		printf("Yaxis_g %d\r\n", Yaxis_g);
-//		printf("Zaxis_g %d\r\n", Zaxis_g);
-
-		HAL_Delay(3000);
+		    printf("LSM303AGR [mag/mgauss]:  %6ld, %6ld, %6ld\r\n", axes_m[0],
+		            axes_m[1], axes_m[2]);
+		    printf("LSM303AGR [acc/mg]:  %6ld, %6ld, %6ld\r\n", axes_a[0], axes_a[1],
+		            axes_a[2]);
+		    printf("richting: %6ld graden\r\n", dirUint16_t);
 
 	}
 	/* USER CODE END 3 */
@@ -392,7 +375,7 @@ static void MX_I2C1_Init(void) {
 static void MX_USART2_UART_Init(void) {
 
 	huart2.Instance = USART2;
-	huart2.Init.BaudRate = 115200;
+	huart2.Init.BaudRate = 9600;
 	huart2.Init.WordLength = UART_WORDLENGTH_8B;
 	huart2.Init.StopBits = UART_STOPBITS_1;
 	huart2.Init.Parity = UART_PARITY_NONE;
@@ -458,6 +441,123 @@ int64_t twosComplementToSignedInteger(uint32_t rawValue, SignBitIndex sbi) {
 	default:
 		return NAN;
 	}
+}
+
+/**
+ * @brief  Read raw data from LSM303AGR Magnetometer
+ * @param  pData the pointer where the magnetomer raw data are stored
+ * @retval 0 in case of success, an error code otherwise
+ */
+void get_m_axes(int32_t *pData) {
+	int16_t pDataRaw[3];
+	float sensitivity = 1.5;
+
+	/* Read raw data from LSM303AGR output register. */
+	get_m_axes_raw(pDataRaw);
+
+	/* Calculate the data. */
+	pData[0] = (int32_t) (pDataRaw[0] * sensitivity);
+	pData[1] = (int32_t) (pDataRaw[1] * sensitivity);
+	pData[2] = (int32_t) (pDataRaw[2] * sensitivity);
+}
+
+/**
+ * @brief  Read raw data from LSM303AGR Magnetometer
+ * @param  pData the pointer where the magnetomer raw data are stored
+ * @retval 0 in case of success, an error code otherwise
+ */
+int get_m_axes_raw(int16_t *pData) {
+	uint8_t regValue[6] = { 0, 0, 0, 0, 0, 0 };
+	int16_t *regValueInt16;
+
+	/* Read output registers from LSM303AGR_MAG_OUTX_L to LSM303AGR_MAG_OUTZ_H. */
+	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_L_REG_M,
+	I2C_MEMADD_SIZE_8BIT, &regValue[0], 1, 100);
+	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_H_REG_M,
+	I2C_MEMADD_SIZE_8BIT, &regValue[1], 1, 100);
+	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_L_REG_M,
+	I2C_MEMADD_SIZE_8BIT, &regValue[2], 1, 100);
+	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_H_REG_M,
+	I2C_MEMADD_SIZE_8BIT, &regValue[3], 1, 100);
+	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_L_REG_M,
+	I2C_MEMADD_SIZE_8BIT, &regValue[4], 1, 100);
+	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_H_REG_M,
+	I2C_MEMADD_SIZE_8BIT, &regValue[5], 1, 100);
+
+	regValueInt16 = (int16_t *) regValue;
+
+	/* Format the data. */
+	pData[0] = regValueInt16[0];
+	pData[1] = regValueInt16[1];
+	pData[2] = regValueInt16[2];
+
+}
+
+///**
+// * @brief  Read data from LSM303AGR Accelerometer
+// * @param  pData the pointer where the accelerometer data are stored
+// * @retval 0 in case of success, an error code otherwise
+// */
+//void get_x_axes(int32_t *pData) {
+//	int data[3];
+//
+//	/* Calculate the data. */
+//	pData[0] = (int32_t) data[0];
+//	pData[1] = (int32_t) data[1];
+//	pData[2] = (int32_t) data[2];
+//}
+
+/*
+ * Values returned are espressed in mg.
+ */
+void LSM303AGR_ACC_Get_Acceleration(int32_t *pData) {
+	int16_t pDataRaw[3];
+
+	LSM303AGR_ACC_Get_Raw_Acceleration(pDataRaw);
+//See driver, normal mode shift = 6
+
+	/* Apply proper shift and sensitivity */
+	pData[0] = ((pDataRaw[0] >> 6) * 3900 + 500) / 1000;
+	pData[1] = ((pDataRaw[1] >> 6) * 3900 + 500) / 1000;
+	pData[2] = ((pDataRaw[2] >> 6) * 3900 + 500) / 1000;
+}
+
+void LSM303AGR_ACC_Get_Raw_Acceleration(int16_t *pData) {
+	uint8_t regValue[6] = { 0, 0, 0, 0, 0, 0 };
+	int16_t *regValueInt16;
+
+	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_X_L_A_MULTI_READ, 1,
+			Data, 6, 100);
+	HAL_UART_Transmit(&huart2, Data, 6, HAL_MAX_DELAY);
+
+//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_X_L_A,
+//	I2C_MEMADD_SIZE_8BIT, &regValue[0], 1, 100);
+//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_X_H_A,
+//	I2C_MEMADD_SIZE_8BIT, &regValue[1], 1, 100);
+//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_Y_L_A,
+//	I2C_MEMADD_SIZE_8BIT, &regValue[2], 1, 100);
+//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_Y_H_A,
+//	I2C_MEMADD_SIZE_8BIT, &regValue[3], 1, 100);
+//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_Z_L_A,
+//	I2C_MEMADD_SIZE_8BIT, &regValue[4], 1, 100);
+//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_Z_H_A,
+//	I2C_MEMADD_SIZE_8BIT, &regValue[5], 1, 100);
+
+	//HAL_UART_Transmit(&huart2, &regValue[3], 1, HAL_MAX_DELAY);
+	//printf("Register 1: %d\r\n", regValue[0]);
+	//printf("Register 2: %d\r\n", regValue[1]);
+	//printf("Register 3: %d\r\n", regValue[2]);
+
+//	regValueInt16 = (int16_t *) regValue;
+//
+//	/* Format the data. */
+//	pData[0] = regValueInt16[0];
+//	pData[1] = regValueInt16[1];
+//	pData[2] = regValueInt16[2];
+
+	Xaxis = ((Data[1] << 8) | Data[0]);
+	Yaxis = ((Data[3] << 8) | Data[2]);
+	Zaxis = ((Data[5] << 8) | Data[4]);
 }
 
 /* USER CODE END 4 */
