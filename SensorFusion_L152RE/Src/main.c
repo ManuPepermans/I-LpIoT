@@ -57,7 +57,7 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-#define LSM303_ACC_ADDRESS (0x32) // 0011001 << 1 ADRESS from the accelero
+#define LSM303_ACC_ADDRESS 0x32 // 0011001 << 1 ADRESS from the accelero
 #define LSM303_MAG_ADDRESS 0x3C //0011110 << 1 Address magnetometer
 
 #define LSM303_ACC_CTRL_REG1_A 0x20 // Control register
@@ -187,6 +187,8 @@ int main(void) {
 	while (HAL_I2C_IsDeviceReady(&hi2c1, 0x3C, 1, HAL_MAX_DELAY) != HAL_OK)
 		;
 
+	HAL_Delay(500);
+
 	printf(
 			"Waarden naar de registers geschreven, apparaten klaar voor gebruik!\n\r");
 	/* USER CODE END 2 */
@@ -197,6 +199,7 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
+		printf("Start met barometer\r\n");
 		HAL_I2C_Mem_Read(&hi2c1, 0xBA, 0x28, I2C_MEMADD_SIZE_8BIT,
 				rawSensorData, 5, HAL_MAX_DELAY);
 
@@ -222,12 +225,13 @@ int main(void) {
 
 		HAL_Delay(1000);
 
+		printf("Start met ecompass\r\n");
+
 		HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS,
 		LSM303_ACC_X_L_A_MULTI_READ, 1, Data, 6, 100);
 		HAL_UART_Transmit(&huart2, Data, 6, HAL_MAX_DELAY);
 
 		HAL_Delay(500);
-		printf("Ecompass\r\n");
 
 		//Read magnetometer dataregister(1) and print
 		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_L_REG_M, 1,
@@ -261,34 +265,46 @@ int main(void) {
 
 		//Omzetten van hexadecimaal naar decimal two's complement
 
-		MAG_X = (((uint16_t) OUTX_H_REG_M_Data << 8) | OUTX_L_REG_M_Data);
-		MAG_Y = (((uint16_t) OUTY_H_REG_M_Data << 8) | OUTY_L_REG_M_Data);
-		MAG_Z = (((uint16_t) OUTZ_H_REG_M_Data << 8) | OUTZ_L_REG_M_Data);
+		MAG_X = (OUTX_H_REG_M_Data << 8) | OUTX_L_REG_M_Data;
+		MAG_Y = (OUTY_H_REG_M_Data << 8) | OUTY_L_REG_M_Data;
+		MAG_Z = (OUTZ_H_REG_M_Data << 8) | OUTZ_L_REG_M_Data;
 
-		int mask = 0xFF; // 11111111
+		int64_t MAG_X_int = twosComplementToSignedInteger(MAG_X, TWOS_COMPLEMENT_16_BIT);
+		int64_t MAG_Y_int = twosComplementToSignedInteger(MAG_Y, TWOS_COMPLEMENT_16_BIT);
+		int64_t MAG_Z_int = twosComplementToSignedInteger(MAG_Z, TWOS_COMPLEMENT_16_BIT);
 
-		MAG_X ^= mask;
-		MAG_Y ^= mask;
-		MAG_Z ^= mask;
+		MAG_X_int = MAG_X_int*1.5;
+		MAG_Y_int = MAG_Y_int*1.5;
+		MAG_Z_int = MAG_Z_int*1.5;
 
-		MAG_X = (int) MAG_X + 1;
-		MAG_Y = (int) MAG_Y + 1;
-		MAG_Z = (int) MAG_Z + 1;
+		printf("MAG_X_int is: %d\r\n", MAG_X_int);
+		printf("MAG_Y_int is: %d\r\n", MAG_Y_int);
+		printf("MAG_Z_int is: %d\r\n", MAG_Z_int);
 
-		printf("MAG_X %d\r\n", MAG_X);
-		printf("MAG_Y %d\r\n", MAG_Y);
-		printf("MAG_Z %d\r\n", MAG_Z);
-
-		Xaxis = ((Data[1] << 8) | Data[0]);
-		Yaxis = ((Data[3] << 8) | Data[2]);
-		Zaxis = ((Data[5] << 8) | Data[4]);
-
-		Xaxis_g = ((float) Xaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
-		Yaxis_g = ((float) Yaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
-		Zaxis_g = ((float) Zaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
-		printf("Xaxis_g %d\r\n", Xaxis_g);
-		printf("Yaxis_g %d\r\n", Yaxis_g);
-		printf("Zaxis_g %d\r\n", Zaxis_g);
+//		int mask = 0xFF; // 11111111
+//
+//		MAG_X ^= mask;
+//		MAG_Y ^= mask;
+//		MAG_Z ^= mask;
+//
+//		MAG_X = (int) MAG_X + 1;
+//		MAG_Y = (int) MAG_Y + 1;
+//		MAG_Z = (int) MAG_Z + 1;
+//
+//		printf("MAG_X %d\r\n", MAG_X);
+//		printf("MAG_Y %d\r\n", MAG_Y);
+//		printf("MAG_Z %d\r\n", MAG_Z);
+//
+//		Xaxis = ((Data[1] << 8) | Data[0]);
+//		Yaxis = ((Data[3] << 8) | Data[2]);
+//		Zaxis = ((Data[5] << 8) | Data[4]);
+//
+//		Xaxis_g = ((float) Xaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
+//		Yaxis_g = ((float) Yaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
+//		Zaxis_g = ((float) Zaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
+//		printf("Xaxis_g %d\r\n", Xaxis_g);
+//		printf("Yaxis_g %d\r\n", Yaxis_g);
+//		printf("Zaxis_g %d\r\n", Zaxis_g);
 
 		HAL_Delay(3000);
 
