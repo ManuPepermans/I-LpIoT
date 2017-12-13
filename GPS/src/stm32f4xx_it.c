@@ -41,6 +41,7 @@
 
 /* External variables --------------------------------------------------------*/
 extern UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart6;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -196,6 +197,20 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 1 */
 
   /* USER CODE END USART1_IRQn 1 */
+}
+
+/**
+* @brief This function handles USART6 global interrupt.
+*/
+void USART6_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART6_IRQn 0 */
+
+  /* USER CODE END USART6_IRQn 0 */
+  HAL_UART_IRQHandler(&huart6);
+  /* USER CODE BEGIN USART6_IRQn 1 */
+
+  /* USER CODE END USART6_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
