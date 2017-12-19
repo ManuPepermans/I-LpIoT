@@ -27,6 +27,8 @@ UART_HandleTypeDef huart2;
 #define LPS22HB_PRESS_OUT_XL 0x28	// Pressure output value (LSB)
 #define LPS22HB_OUT_L 0x29			// Pressure output value (mid part)
 #define LPS22HB_OUT_H 0x2A			// Pressure output value (MSB)
+#define LPS22HB_TEMP_OUT_L 0x2B		// Temperature output value (LSB)
+#define LPS22HB_TEMP_OUT_H 0x2C		// Temperature output value (MSB)
 
 
 #define LSM303_ACC_CTRL_REG1_A 0x20 // Control register
@@ -78,7 +80,10 @@ uint8_t Data[6]; // Var for acc data
 uint8_t LSBpressure;
 uint8_t MIDpressure;
 uint8_t MSBpressure;
+uint8_t MSBtemp;
+uint8_t LSBtemp;
 uint32_t CompletePressure;
+uint16_t temperature;
 
 uint8_t OUTX_L_REG_M_Data;
 uint8_t OUTX_H_REG_M_Data;
@@ -140,42 +145,70 @@ int main(void)
   	while (1) {
   		// Downloading 6 bytes of data containing accelerations in 3 axes
   		HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_X_L_A_MULTI_READ, 1, Data, 6, 100);
-		HAL_UART_Transmit(&huart2,Data,6,HAL_MAX_DELAY);
+  		//HAL_UART_Transmit(&huart2,Data,6,HAL_MAX_DELAY);
 
 		HAL_Delay(500);
 
 		//Read accelerometer WHO_AM_I register and print (test)
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_WHO_AM_I, 1, Data, 1, 100);
-		HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
+		//HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_WHO_AM_I, 1, Data, 1, 100);
+		//HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
 
 		//Set one shot mode for barometer for low power consumption
 		Settings = LPS22HB_ONE__SHOT_ENABLE;
 		HAL_I2C_Mem_Write(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_CTRL_REG2, 1, &Settings, 1, 100);
 
 		//Read barometer WHO_AM_I register and print (test)
-		HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_AWHO_AM_I, 1, Data, 1, 100);
-		HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
+		//HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_AWHO_AM_I, 1, Data, 1, 100);
+		//HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
 
 		//Read barometer dataRegister(LSB) and print
 		HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_PRESS_OUT_XL, 1, &LSBpressure, 1, 100);
-		HAL_UART_Transmit(&huart2,&LSBpressure,1,HAL_MAX_DELAY);
+		//HAL_UART_Transmit(&huart2,&LSBpressure,1,HAL_MAX_DELAY);
 
 		//Read barometer dataRegister(MID) and print
 		HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_OUT_L, 1, &MIDpressure, 1, 100);
-		HAL_UART_Transmit(&huart2,&MIDpressure,1,HAL_MAX_DELAY);
+		//HAL_UART_Transmit(&huart2,&MIDpressure,1,HAL_MAX_DELAY);
 
 		//Read barometer dataRegister(MSB) and print
 		HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_OUT_H, 1, &MSBpressure, 1, 100);
-		HAL_UART_Transmit(&huart2,&MSBpressure,1,HAL_MAX_DELAY);
+		//HAL_UART_Transmit(&huart2,&MSBpressure,1,HAL_MAX_DELAY);
+
+		//Read temperature dataRegister(LSB) and print
+		HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_TEMP_OUT_L, 1, &LSBtemp, 1, 100);
+		//HAL_UART_Transmit(&huart2,&LSBtemp,1,HAL_MAX_DELAY);
+
+		//Read temperature dataRegister(MSB) and print
+		HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_TEMP_OUT_H, 1, &MSBtemp, 1, 100);
+		//HAL_UART_Transmit(&huart2,&MSBtemp,1,HAL_MAX_DELAY);
+
+		temperature =  (((uint16_t)MSBtemp << 8) | LSBtemp);
+		int temperature2 = ((int) temperature) / 100;
 
 		//Combine all data to get the pressure and convert to hPa
 		CompletePressure = ((uint32_t)MSBpressure << 16) | (((uint32_t)MIDpressure << 8) | LSBpressure);
+		double pressureHPaD = ((double) CompletePressure) / 4096;
 		int pressureHPa = ((int) CompletePressure) / 4096;
+		double top = pow((1001.1/pressureHPaD),0.1902);
+		double top1 = top - 1;
+		double top2 = top1 *(temperature+273.15);
+		double top3 = top2/0.0065;
+		//double h = ((pow((1001.1/pressureHPa),0.1902)-1)*(temperature+273.15))/0.0065;
+		int hInt = (int) top3;
+
+
+
+		char str2[50];
+		sprintf(str2, "%d", temperature2);
+		//HAL_UART_Transmit(&huart2,(uint8_t*)str2,strlen(str2),HAL_MAX_DELAY);
+
+		//char str3[50];
+		//sprintf(str3, "%d----", hInt);
+		//HAL_UART_Transmit(&huart2,(uint8_t*)str3,strlen(str3),HAL_MAX_DELAY);
 
 		//Print pressure in hPa
 		char str[50];
 		sprintf(str, "%d", pressureHPa);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str,strlen(str),HAL_MAX_DELAY);
+		//HAL_UART_Transmit(&huart2,(uint8_t*)str,strlen(str),HAL_MAX_DELAY);
 
 		// Mag = 10 Hz (HR and continuous mode) //This has to be set to single mode for lower power consumption
 		Settings = LSM303_SETTINGS1;
@@ -186,40 +219,47 @@ int main(void)
 		HAL_I2C_Mem_Write(&hi2c1, LSM303_MAG_ADDRESS, LSM303_CFG_REG_C_M, 1, &Settings, 1, 100);
 
 		//Read magnetometer WHO_AM_I and print (test)
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, LSM303_MAG_WHO_AM_I, 1, Data, 1, 100);
-		HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
+		//HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, LSM303_MAG_WHO_AM_I, 1, Data, 1, 100);
+		//HAL_UART_Transmit(&huart2,Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(1) and print
 		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_L_REG_M, 1, &OUTX_L_REG_M_Data, 1, 100);
-		HAL_UART_Transmit(&huart2,&OUTX_L_REG_M_Data,1,HAL_MAX_DELAY);
+		//HAL_UART_Transmit(&huart2,&OUTX_L_REG_M_Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(2) and print
 		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_H_REG_M, 1, &OUTX_H_REG_M_Data, 1, 100);
-		HAL_UART_Transmit(&huart2,&OUTX_H_REG_M_Data,1,HAL_MAX_DELAY);
+		//HAL_UART_Transmit(&huart2,&OUTX_H_REG_M_Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(3) and print
 		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_L_REG_M, 1, &OUTY_L_REG_M_Data, 1, 100);
-		HAL_UART_Transmit(&huart2,&OUTY_L_REG_M_Data,1,HAL_MAX_DELAY);
+		//HAL_UART_Transmit(&huart2,&OUTY_L_REG_M_Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(4) and print
 		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_H_REG_M, 1, &OUTY_H_REG_M_Data, 1, 100);
-		HAL_UART_Transmit(&huart2,&OUTY_H_REG_M_Data,1,HAL_MAX_DELAY);
+		//HAL_UART_Transmit(&huart2,&OUTY_H_REG_M_Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(5) and print
 		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_L_REG_M, 1, &OUTZ_L_REG_M_Data, 1, 100);
-		HAL_UART_Transmit(&huart2,&OUTZ_L_REG_M_Data,1,HAL_MAX_DELAY);
+		//HAL_UART_Transmit(&huart2,&OUTZ_L_REG_M_Data,1,HAL_MAX_DELAY);
 
 		//Read magnetometer dataregister(6) and print
 		HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_H_REG_M, 1, &OUTZ_H_REG_M_Data, 1, 100);
-		HAL_UART_Transmit(&huart2,&OUTZ_H_REG_M_Data,1,HAL_MAX_DELAY);
+		//HAL_UART_Transmit(&huart2,&OUTZ_H_REG_M_Data,1,HAL_MAX_DELAY);
 
 		//Omzetten van hexadecimaal naar decimal two's complement
+
+
 
 		MAG_X =  (((uint16_t)OUTX_H_REG_M_Data << 8) | OUTX_L_REG_M_Data);
 		MAG_Y =  (((uint16_t)OUTY_H_REG_M_Data << 8) | OUTY_L_REG_M_Data);
 		MAG_Z =  (((uint16_t)OUTZ_H_REG_M_Data << 8) | OUTZ_L_REG_M_Data);
 
 		int mask = 0xFF; // 11111111
+
+		int MAG_Xtest = ((int) MAG_X) / 256;
+		//char str2[50];
+		//sprintf(str2, "%d", MAG_Xtest);
+		//HAL_UART_Transmit(&huart2,(uint8_t*)str2,strlen(str2),HAL_MAX_DELAY);
 
 		MAG_X ^= mask;
 		MAG_Y ^= mask;
@@ -229,18 +269,35 @@ int main(void)
 		MAG_Y = (int) MAG_Y + 1;
 		MAG_Z = (int) MAG_Z + 1;
 
-		sprintf(str, "%d", MAG_X);
-		HAL_UART_Transmit(&huart2,(uint8_t*)str,strlen(str),HAL_MAX_DELAY);
-
   		Xaxis = ((Data[1] << 8) | Data[0]);
   		Yaxis = ((Data[3] << 8) | Data[2]);
   		Zaxis = ((Data[5] << 8) | Data[4]);
+
+  		/* Apply proper shift and sensitivity */
+  		int32_t Xaxis_g = ((Xaxis >> 6) * 3900 + 500) / 1000;
+  		int32_t Yaxis_g = ((Yaxis >> 6) * 3900 + 500) / 1000;
+  		int32_t Zaxis_g = ((Zaxis >> 6) * 3900 + 500) / 1000;
 		//HAL_UART_Transmit(&huart2,Data[1],1,HAL_MAX_DELAY);
 		//HAL_UART_Transmit(&huart2,Data[2],1,HAL_MAX_DELAY);
 
-  		Xaxis_g = ((float) Xaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
-  		Yaxis_g = ((float) Yaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
-  		Zaxis_g = ((float) Zaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
+  		//Xaxis_g = ((float) Xaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
+  		//Yaxis_g = ((float) Yaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
+  		//Zaxis_g = ((float) Zaxis * LSM303_ACC_RESOLUTION) / (float) INT16_MAX;
+
+  		int Xaxis_gInteger = (int) Xaxis_g;
+
+		char str3[50];
+		sprintf(str3, "%d  ", Xaxis_g);
+		HAL_UART_Transmit(&huart2,(uint8_t*)str3,strlen(str3),HAL_MAX_DELAY);
+
+		char str5[50];
+		sprintf(str5, "%d  ", Yaxis_g);
+		HAL_UART_Transmit(&huart2,(uint8_t*)str5,strlen(str5),HAL_MAX_DELAY);
+
+		char str6[50];
+		sprintf(str6, "%d  ", Zaxis_g);
+		HAL_UART_Transmit(&huart2,(uint8_t*)str6,strlen(str6),HAL_MAX_DELAY);
+
   		HAL_Delay(3000);
   	}
 }
