@@ -39,7 +39,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32l1xx_hal.h"
-#include "global.h"
+
+//#include "global.h"
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
@@ -74,22 +75,17 @@ int main(void) {
 	MX_I2C1_Init();
 	MX_UART4_Init();
 
+	LPS22HB baro;
+
 	/* Set global parameters */
 	loraJoined = false;
 	dangerZone = false;
 	loraCounter = 0;
 
-
+	setBarometer(hi2c1);
 	/* Infinite loop */
 	while (1) {
 
-		//Test DASH7
-		/*for (int i = 0; i <= 10; i++) {
-			uint8_t uartTest[] = { 0x4d, 0x01, 0x04 };
-			int arrayLength = LENGTH_ARRAY(uartTest);
-			DASH7Message(uartTest, arrayLength);
-			HAL_Delay(2000);
-		}*/
 
 		/*Parameter that is set to 'true' if the tracked person is outside the building*/
 		dangerZone = true;
@@ -100,6 +96,8 @@ int main(void) {
 			initGPS();
 			HAL_Delay(1000);
 			initLora();
+
+			readBarometer(baro);
 		}
 	}
 }
