@@ -39,11 +39,14 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32l1xx_hal.h"
+#include "stm32l1xx_ll_wwdg.h"
 
 //#include "global.h"
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
+
+WWDG_HandleTypeDef   WwdgHandle;
 
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart1;
@@ -59,13 +62,40 @@ static void MX_USART3_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_UART4_Init(void);
 
-
 int main(void) {
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
 	/* Configure the system clock */
 	SystemClock_Config();
+
+	  /*##-1- Check if the system has resumed from WWDG reset ####################*/
+	  if (__HAL_RCC_GET_FLAG(RCC_FLAG_WWDGRST) != RESET)
+	  {
+	    /* WWDGRST flag set: Turn LED1 on */
+		  HAL_UART_Transmit(&huart2, "WWDGRST flag set!",sizeof("WWDGRST flag set!") - 1, HAL_MAX_DELAY);
+
+	    /* Insert 4s delay */
+	    HAL_Delay(4000);
+
+	    /* Prior to clear WWDGRST flag: Turn LED1 off */
+	    HAL_UART_Transmit(&huart2, "WWDGRST flag clear!",sizeof("WWDGRST flag clear!") - 1, HAL_MAX_DELAY);
+	  }
+
+	/* Clear reset flags in any case */
+	__HAL_RCC_CLEAR_RESET_FLAGS();
+
+	/*##-2- Configure the WWDG peripheral */
+	  /* WWDG clock counter = (PCLK1 (42MHz)/4096)/8) = 1281 Hz (~780 us)
+	     WWDG Window value = 80 means that the WWDG counter should be refreshed only
+	     when the counter is below 80 (and greater than 64) otherwise a reset will
+	     be generated.
+	     WWDG Counter value = 127, WWDG timeout = ~780 us * 64 = 49.9 ms */
+	  WwdgHandle.Instance = WWDG;
+
+	  WwdgHandle.Init.Prescaler = WWDG_PRESCALER_8;
+	  WwdgHandle.Init.Window    = 80;
+	  WwdgHandle.Init.Counter   = 127;
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
@@ -74,6 +104,18 @@ int main(void) {
 	MX_USART3_UART_Init();
 	MX_I2C1_Init();
 	MX_UART4_Init();
+
+	  if(HAL_WWDG_Init(&WwdgHandle) != HAL_OK)
+	  {
+	    /* Initialization Error */
+	    Error_Handler();
+	  }
+
+	  /*##-5- Start the WWDG */
+	  if(HAL_WWDG_Start(&WwdgHandle) != HAL_OK)
+	  {
+	    Error_Handler();
+	  }
 
 	LPS22HB_TypeDef baro;
 
@@ -86,6 +128,13 @@ int main(void) {
 	/* Infinite loop */
 	while (1) {
 
+		/* Refresh WWDG: update counter value to 127, the refresh window is:
+		~780 * (127-80) = 36.6ms < refresh window < ~780 * 64 = 49.9ms */
+
+		if(HAL_WWDG_Refresh(&WwdgHandle, 127) != HAL_OK)
+		 {
+		    Error_Handler();
+		 }
 
 		/*Parameter that is set to 'true' if the tracked person is outside the building*/
 		dangerZone = true;
