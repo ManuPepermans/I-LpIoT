@@ -75,14 +75,14 @@ int main(void) {
 	MX_I2C1_Init();
 	MX_UART4_Init();
 
-	LPS22HB baro;
+	LPS22HB_TypeDef baro;
 
 	/* Set global parameters */
 	loraJoined = false;
 	dangerZone = false;
 	loraCounter = 0;
 
-	setBarometer(hi2c1);
+	 setBarInterface(hi2c1);
 	/* Infinite loop */
 	while (1) {
 
@@ -97,7 +97,7 @@ int main(void) {
 			HAL_Delay(1000);
 			initLora();
 
-			readBarometer(baro);
+			readBarometer(&baro);
 		}
 	}
 }

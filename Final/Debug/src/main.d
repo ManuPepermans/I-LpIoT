@@ -1,6 +1,7 @@
-src/main.o: ../src/main.c ../include/main.h \
+src/main.o: ../src/main.c ../include/main.h ../include/LPS22HB.h \
+ ../include/main.h ../include/stm32l1xx_it.h \
  ../system/include/stm32l1xx/stm32l1xx_hal.h \
- ../include/stm32l1xx_hal_conf.h ../include/main.h \
+ ../include/stm32l1xx_hal_conf.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_rcc.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_def.h \
  ../system/include/cmsis/device/stm32l1xx.h \
@@ -22,15 +23,20 @@ src/main.o: ../src/main.c ../include/main.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_i2c.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_pwr.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_pwr_ex.h \
- ../system/include/stm32l1xx/stm32l1xx_hal_uart.h
+ ../system/include/stm32l1xx/stm32l1xx_hal_uart.h \
+ ../include/stm32l1xx_hal_conf.h ../include/LM303.H
 
 ../include/main.h:
+
+../include/LPS22HB.h:
+
+../include/main.h:
+
+../include/stm32l1xx_it.h:
 
 ../system/include/stm32l1xx/stm32l1xx_hal.h:
 
 ../include/stm32l1xx_hal_conf.h:
-
-../include/main.h:
 
 ../system/include/stm32l1xx/stm32l1xx_hal_rcc.h:
 
@@ -75,3 +81,7 @@ src/main.o: ../src/main.c ../include/main.h \
 ../system/include/stm32l1xx/stm32l1xx_hal_pwr_ex.h:
 
 ../system/include/stm32l1xx/stm32l1xx_hal_uart.h:
+
+../include/stm32l1xx_hal_conf.h:
+
+../include/LM303.H:
