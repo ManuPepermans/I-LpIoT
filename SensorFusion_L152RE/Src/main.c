@@ -41,7 +41,7 @@
 #include "stm32l1xx_hal.h"
 
 /* USER CODE BEGIN Includes */
-#include "LPS22HB_driver.h"
+//#include "LPS22HB_driver.h"
 #include <string.h>
 #include <stdio.h>
 #include <strings.h>
@@ -57,76 +57,73 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-#define LSM303_ACC_ADDRESS (0x19 << 1) // ADRESS from the accelero
-#define LSM303_MAG_ADDRESS 0x3C // ADRESS from the magnetometer
-
-#define LSM303_ACC_CTRL_REG1_A 0x20 // Control register
-#define LSM303_ACC_CTRL_REG1_A 0x20 // Control register
-#define LSM303_ACC_CTRL_REG3_A 0x22
-#define LSM303_MAG_WHO_AM_I 0x4F
-#define LSM303_CFG_REG_A_M 0x60
-#define LSM303_CFG_REG_C_M 0x62
-#define LSM303_ACC_Z_H_A 0x2D // Z
-#define LSM303_ACC_Z_L_A 0x2C //  Z
-#define LSM303_ACC_X_L_A 0x28 // X
-
-#define OUTX_L_REG_M 0x68
-#define OUTX_H_REG_M 0x69
-#define OUTY_L_REG_M 0x6A
-#define OUTY_H_REG_M 0x6B
-#define OUTZ_L_REG_M 0x6C
-#define OUTZ_H_REG_M 0x6D
-
-#define LSM303_SETTINGS1 0x00 // Mag = 10 Hz (HR and continuous mode) //This has to be set to single mode for lower power consumption
-#define LSM303_SETTINGS2 0x01 // Mag data-ready interrupt enable
-
-/* USER CODE END PV */
-#define LSM303_ACC_Z_L_A_MULTI_READ (LSM303_ACC_Z_L_A | 0x80)
-#define LSM303_ACC_X_L_A_MULTI_READ (LSM303_ACC_X_L_A | 0x80)
-
-// CTRL_REG1_A = [ODR3][ODR2][ODR1][ODR0][LPEN][ZEN][YEN][XEN]
-#define LSM303_ACC_Z_ENABLE 0x04 // 0000 0100
-#define LSM303_ACC_XYZ_ENABLE 0x07 // 0000 0111
-#define LSM303_ACC_100HZ 0x50 //0101 0000
-#define LSM303_ACC_1HZ 0x10 //0001 0000
-#define LSM303_ACC_WHO_AM_I 0x0F //0001 0000
-
-// CTRL_REG3_A = [CLICK][AOI1][AOI2][DRDY_1][DRDY_2][WTM][OVERRUN][---]
-#define LSM303_ACC_I1_DRDY1 0x10 //0001 0000
-#define LSM303_ACC_I1_DRDY2 0x08 //0000 1000
-
-#define LSM303_MAG_RSP 0x40
-#define LSM303_MAG_WHO_AM_I 0x4F
-#define LSM303_ACC_RSP 0x33
-
-#define LSM303_ACC_RESOLUTION 2.0 //
+typedef short int i16_t;
+typedef unsigned char u8_t;
 
 typedef enum {
 	TWOS_COMPLEMENT_24_BIT = 24, TWOS_COMPLEMENT_16_BIT = 16,
 } SignBitIndex;
 
-uint8_t Data[6]; // Var for acc data
+typedef union {
+	i16_t i16bit[3];
+	u8_t u8bit[6];
+} Type3Axis16bit_U;
 
-uint8_t OUTX_L_REG_M_Data;
-uint8_t OUTX_H_REG_M_Data;
-uint8_t OUTY_L_REG_M_Data;
-uint8_t OUTY_H_REG_M_Data;
-uint8_t OUTZ_L_REG_M_Data;
-uint8_t OUTZ_H_REG_M_Data;
+HAL_I2C_StateTypeDef status = HAL_OK;
+//I2C address of the accelerometer and magnetometer
+//Shift already applied
+#define LSM303AGR_ACC_I2C_ADDRESS         0x32
+#define LSM303AGR_MAG_I2C_ADDRESS         0x3C
 
-uint16_t MAG_X;
-uint16_t MAG_Y;
-uint16_t MAG_Z;
+//Who am I
+#define LSM303AGR_ACC_WHO_AM_I         0x33
+#define LSM303AGR_MAG_WHO_AM_I         0x40
 
-int16_t Xaxis = 0; //
-int16_t Yaxis = 0; //
-int16_t Zaxis = 0; //
+//Important register accelerometer
+#define LSM303AGR_ACC_WHO_AM_I_REG      0X0F
+#define LSM303AGR_ACC_TEMP_CFG_REG      0X1F
+#define LSM303AGR_ACC_CTRL_REG1     0X20
+#define LSM303AGR_ACC_CTRL_REG2     0X21
+#define LSM303AGR_ACC_CTRL_REG3     0X22
+#define LSM303AGR_ACC_CTRL_REG4     0X23
+#define LSM303AGR_ACC_CTRL_REG5     0X24
+#define LSM303AGR_ACC_CTRL_REG6     0X25
+#define LSM303AGR_ACC_OUT_X_L   0X28
+#define LSM303AGR_ACC_OUT_X_H   0X29
+#define LSM303AGR_ACC_OUT_Y_L   0X2A
+#define LSM303AGR_ACC_OUT_Y_H   0X2B
+#define LSM303AGR_ACC_OUT_Z_L   0X2C
+#define LSM303AGR_ACC_OUT_Z_H   0X2D
+#define LSM303AGR_ACC_MULTIREAD (LSM303AGR_ACC_OUT_X_L | 0x80)
+#define LSM303_ACC_XYZ_ENABLE 0x07
+#define LSM303_ACC_100HZ 0x50
+#define LSM303_ACC_I1_DRDY2 0x08
 
-float Xaxis_g = 0; //
-float Yaxis_g = 0; //
-float Zaxis_g = 0; //
+#define LSM303AGR_MAG_WHO_AM_I_REG      0X4F
+#define LSM303AGR_MAG_CFG_REG_A     0X60
+#define LSM303AGR_MAG_CFG_REG_B     0X61
+#define LSM303AGR_MAG_CFG_REG_C     0X62
+#define LSM303AGR_MAG_OUTX_L_REG    0X68
+#define LSM303AGR_MAG_OUTX_H_REG    0X69
+#define LSM303AGR_MAG_OUTY_L_REG    0X6A
+#define LSM303AGR_MAG_OUTY_H_REG    0X6B
+#define LSM303AGR_MAG_OUTZ_L_REG    0X6C
+#define LSM303AGR_MAG_OUTZ_H_REG    0X6D
+#define LSM303AGR_MAG_MULTIREAD (LSM303AGR_MAG_OUTX_L_REG | 0x80)
+#define LSM303_SETTINGS1 0x00 // Mag = 10 Hz (HR and continuous mode) //This has to be set to single mode for lower power consumption
+#define LSM303_SETTINGS2 0x01 // Mag data-ready interrupt enable
 
-char str[50];
+#define X 0
+#define Y 1
+#define Z 2
+
+int32_t axes_a[3];
+int32_t axes_m[3];
+float roll = 0, pitch = 0, roll_rad = 0, pitch_rad = 0;
+float yaw_rad = 0, degree = 0, godr = 0;
+float temp[3] = { }, hardCor[3] = { };
+char buff[3];
+uint16_t degree_int = 0;
 
 /* USER CODE END PV */
 
@@ -181,44 +178,69 @@ int main(void) {
 	MX_I2C1_Init();
 
 	/* USER CODE BEGIN 2 */
-	uint8_t Settings = LSM303_ACC_XYZ_ENABLE | LSM303_ACC_100HZ;
+	//Check the who am I
+	// 5ms boot procedure
+	HAL_Delay(10);
 
-	// I2C write settings
-	//Startup sequence LSM303AGR
-	HAL_I2C_Mem_Write(&hi2c1, LSM303_MAG_ADDRESS, LSM303_CFG_REG_A_M,
-	I2C_MEMADD_SIZE_8BIT, 0x00, sizeof(0x00), 100);
-	while (HAL_I2C_IsDeviceReady(&hi2c1, LSM303_MAG_ADDRESS, 1, HAL_MAX_DELAY)
-			!= HAL_OK)
-		;
-	HAL_I2C_Mem_Write(&hi2c1, LSM303_MAG_ADDRESS, LSM303_CFG_REG_C_M,
-	I2C_MEMADD_SIZE_8BIT, 0x01, sizeof(0x01), 100);
-	while (HAL_I2C_IsDeviceReady(&hi2c1, LSM303_MAG_ADDRESS, 1, HAL_MAX_DELAY)
-			!= HAL_OK)
-		;
-
+	// Reading the who am I register for checking
 	uint8_t hwID[1];
-	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, LSM303_MAG_WHO_AM_I,
-	I2C_MEMADD_SIZE_8BIT, hwID, 1, HAL_MAX_DELAY);
-	if (hwID[0] == LSM303_MAG_RSP) {
-		printf("WHO_AM_I of magnetometer correct!!\r\n");
-	} else {
-		printf("Error!!\r\n");
-	}
-
-	// I2C write settings
-	HAL_I2C_Mem_Write(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_CTRL_REG1_A, 1,
-			&Settings, 1, 100);
-	Settings = LSM303_ACC_I1_DRDY2;
-	HAL_I2C_Mem_Write(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_CTRL_REG3_A, 1,
-			&Settings, 1, 100);
-
-	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_WHO_AM_I,
-	I2C_MEMADD_SIZE_8BIT, hwID, 1, HAL_MAX_DELAY);
-	if (hwID[0] == LSM303_ACC_RSP) {
+	HAL_I2C_Mem_Read(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS,
+	LSM303AGR_ACC_WHO_AM_I_REG, I2C_MEMADD_SIZE_8BIT, hwID, sizeof(hwID),
+	HAL_MAX_DELAY);
+	if (hwID[0] == LSM303AGR_ACC_WHO_AM_I) {
 		printf("WHO_AM_I of accelerometer correct!!\r\n");
 	} else {
 		printf("Error!!\r\n");
 	}
+
+	uint8_t Settings = LSM303_ACC_XYZ_ENABLE | LSM303_ACC_100HZ;
+	// I2C write settings
+	HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS,
+	LSM303AGR_ACC_CTRL_REG1, 1, &Settings, 1, 100);
+	Settings = LSM303_ACC_I1_DRDY2;
+	HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS,
+	LSM303AGR_ACC_CTRL_REG3, 1, &Settings, 1, 100);
+
+	// Mag = 10 Hz (HR and continuous mode) //This has to be set to single mode for lower power consumption
+	Settings = LSM303_SETTINGS1;
+	HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_MAG_I2C_ADDRESS,
+	LSM303AGR_MAG_CFG_REG_A, 1, &Settings, 1, 100);
+
+	// Mag data-ready interrupt enable
+	Settings = LSM303_SETTINGS2;
+	HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_MAG_I2C_ADDRESS,
+	LSM303AGR_MAG_CFG_REG_C, 1, &Settings, 1, 100);
+
+//	// Write the correct values to the registers (of the accelerometer)
+//	// This is taken from the datasheet
+//	// The following settings are applied
+//	// ODDR = 100Hz a,d Zen = Yen = Xen = true
+//	// Other settings important are (CTRL_REG4_A):
+//	// BDU = continious update
+//	// FS = +-2G
+//	// HR (operation mode): normal mode
+//	//
+//	uint8_t settingCTRL_REG1 = 0x57;
+//	uint8_t settingCTRL_REG2 = 0x00;
+//	uint8_t settingCTRL_REG3 = 0x00;
+//	uint8_t settingCTRL_REG4 = 0x80;
+//
+//	HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS,
+//	LSM303AGR_ACC_CTRL_REG1, I2C_MEMADD_SIZE_8BIT, settingCTRL_REG1,
+//			sizeof(settingCTRL_REG1), HAL_MAX_DELAY);
+//	HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS,
+//	LSM303AGR_ACC_CTRL_REG2, I2C_MEMADD_SIZE_8BIT, settingCTRL_REG2,
+//			sizeof(settingCTRL_REG2), HAL_MAX_DELAY);
+//	HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS,
+//	LSM303AGR_ACC_CTRL_REG3, I2C_MEMADD_SIZE_8BIT, settingCTRL_REG3,
+//			sizeof(settingCTRL_REG3), HAL_MAX_DELAY);
+//	HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS,
+//	LSM303AGR_ACC_CTRL_REG4, I2C_MEMADD_SIZE_8BIT, settingCTRL_REG4,
+//			sizeof(settingCTRL_REG4), HAL_MAX_DELAY);
+
+//	while (HAL_I2C_IsDeviceReady(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS, 1,
+//	HAL_MAX_DELAY))
+//		;
 
 	printf("Devices ready\r\n");
 	/* USER CODE END 2 */
@@ -227,69 +249,69 @@ int main(void) {
 	/* USER CODE BEGIN WHILE */
 	while (1) {
 
-		int32_t axes_m[3];
-		int32_t axes_a[3];
-		float axes_aF[3];
-		float axes_aT[3];
-		float roll, pitch, x, y, h, dir;
-		uint16_t dirUint16_t;
+		get_x_axes(axes_a);
+		printf("LSM303AGR [acc/mg]:  %6ld, %6ld, %6ld\r\n", axes_a[0],
+				axes_a[1], axes_a[2]);
 
 		get_m_axes(axes_m);
+		printf("LSM303AGR [mag/mgauss]:  %6ld, %6ld, %6ld\r\n", axes_m[0],
+				axes_m[1], axes_m[2]);
 
-		//printf("LSM303AGR [mag/mgauss]:  %6ld, %6ld, %6ld\r\n", axes_m[0],
-		//axes_m[1], axes_m[2]);
-		//LSM303AGR_ACC_Get_Acceleration(axes_a);
+		HAL_Delay(1000);
 
-		//printf("LSM303AGR [acc/mg]:  %6ld, %6ld, %6ld\r\n", axes_a[0],
-		//	axes_a[1], axes_a[2]);
+		printf("\r\n");
+		roll_rad = atan2((float) axes_a[Y], axes_a[Z]);
+		roll = roll_rad * 57.296;
 
-		HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS,
-				LSM303_ACC_X_L_A_MULTI_READ, 1, Data, 6, 100);
-		HAL_Delay(500);
+		temp[0] = (float) axes_a[Y] * sin(roll_rad);
+		temp[1] = cos(roll_rad) * (float) axes_a[Z] + temp[0];
+		pitch_rad = -atan2((float) axes_a[X],
+				sqrt(pow((float) axes_a[Y], 2) + pow((float) axes_a[Z], 2)));//temp[1]);
+		pitch = pitch_rad * 57.296;
+		printf("Angle: roll: %6lf   pitch: %6lf \r\n ", roll, pitch);
 
-		Xaxis = ((Data[1] << 8) | Data[0]);
-		Yaxis = ((Data[3] << 8) | Data[2]);
-		Zaxis = ((Data[5] << 8) | Data[4]);
+		//Determining where the head of the compass is pointed at
+		temp[0] = axes_m[Z] * sin(roll_rad) - axes_m[Y] * cos(roll_rad);
+		temp[1] = axes_m[Y] * sin(roll_rad) + axes_m[Z] * cos(roll_rad);
+		temp[2] = axes_m[X] * cos(pitch_rad) + temp[1] * sin(pitch_rad);
+		yaw_rad = atan2((float) temp[0], temp[2]);
+		degree = yaw_rad * 57.296; //180/PI
+		degree_int = (uint16_t)degree;
+		printf("float: %f, int16_t: %d\r\n", degree, degree_int);
 
-		axes_a[0] = ((Xaxis >> 6) * 3900 + 500) / 1000;
-		axes_a[1] = ((Yaxis >> 6) * 3900 + 500) / 1000;
-		axes_a[2] = ((Zaxis >> 6) * 3900 + 500) / 1000;
+		buff[0] = "M";
+		buff[1] = degree_int & 0xFF;
+		buff[2] = degree_int >> 8;
 
-		printf("LSM303AGR [acc/mg]:  %6ld, %6ld, %6ld\r\n", Xaxis_g, Xaxis_g,
-				Xaxis_g);
+		printf("Chars: %c  %c  %c\r\n", buff[0], buff[1], buff[2]);
 
-		axes_aF[0] = (float) axes_a[0];
-		    axes_aF[1] = (float) axes_a[1];
-		    axes_aF[2] = (float) axes_a[2];
+		//Transforming degrees into a wind direction
+		if (degree > 360) {
+			degree = degree - 360;
+		}
+		if (degree < 0) {
+			degree = degree + 360;
+		}
+		printf("degree: %lf\r\n", degree);
+		if (degree > 22.5 && degree < 67.5) {
+			printf("Direction: North-East\r\n");
+		} else if (degree > 67.5 && degree < 112.5) {
+			printf("Direction: East\r\n");
+		} else if (degree > 112.5 && degree < 157.5) {
+			printf("Direction: South-East\r\n");
+		} else if (degree > 157.5 && degree < 202.5) {
+			printf("Direction: South\r\n");
+		} else if (degree > 202.5 && degree < 247.5) {
+			printf("Direction: South-West\r\n");
+		} else if (degree > 247.5 && degree < 292.5) {
+			printf("Direction: West\r\n");
+		} else if (degree > 292.5 && degree < 337.25) {
+			printf("Direction: North-West\r\n");
+		} else if (degree > 337.25 || degree < 22.5) {
+			printf("Direction: North\r\n");
+		}
 
-		    // Resolution is 2^(8) = 256
-		    axes_aT[0] = (axes_aF[0] * 2 / 256);
-		    axes_aT[1] = (axes_aF[1] * 2 / 256);
-		    axes_aT[2] = (axes_aF[2] * 2 / 256);
-
-		    // Some math to get the thing working
-		    roll = atan2f(axes_aT[1], axes_aT[2]);
-		    pitch = atan2f(-axes_aT[0],
-		            axes_aT[1] * sinf(roll) + axes_aT[2] * cosf(roll));
-
-		    x = axes_m[0] * cosf(pitch)
-		            + (axes_m[1] * sinf(roll) + axes_m[2] * cosf(roll)) * sinf(pitch);
-		    y = axes_m[2] * sinf(roll) - axes_m[1] * cosf(roll);
-
-		    // Convert to degrees, look in what quadrant the value lays and if it's negative add 360° to achieve correct positioning.
-		    h = atan2f(y, x);
-		    dir = h * (180 / 3.1415);
-		    if (dir < 0)
-		        dir += 360;
-
-		    // Convert for transmission over DASH7
-		    dirUint16_t = (uint16_t)dir;
-
-		    printf("LSM303AGR [mag/mgauss]:  %6ld, %6ld, %6ld\r\n", axes_m[0],
-		            axes_m[1], axes_m[2]);
-		    printf("LSM303AGR [acc/mg]:  %6ld, %6ld, %6ld\r\n", axes_a[0], axes_a[1],
-		            axes_a[2]);
-		    printf("richting: %6ld graden\r\n", dirUint16_t);
+		HAL_Delay(1000);
 
 	}
 	/* USER CODE END 3 */
@@ -388,7 +410,7 @@ static void MX_USART2_UART_Init(void) {
 
 }
 
-/** Configure pins as 
+/** Configure pins as
  * Analog
  * Input
  * Output
@@ -444,8 +466,83 @@ int64_t twosComplementToSignedInteger(uint32_t rawValue, SignBitIndex sbi) {
 }
 
 /**
- * @brief  Read raw data from LSM303AGR Magnetometer
- * @param  pData the pointer where the magnetomer raw data are stored
+ * @brief  Read data from LSM303AGR Accelerometer
+ * @param  pData the pointer where the accelerometer data are stored
+ * @retval 0 in case of success, an error code otherwise
+ */
+void get_x_axes(int32_t *pData) {
+	int data[3];
+
+	/* Read data from LSM303AGR. */
+	LSM303AGR_ACC_Get_Acceleration(data);
+
+	/* Calculate the data. */
+	pData[0] = (int32_t) data[0];
+	pData[1] = (int32_t) data[1];
+	pData[2] = (int32_t) data[2];
+
+}
+
+/*
+ * Following is the table of sensitivity values for each case.
+ * Values are espressed in ug/digit.
+ */
+const long long LSM303AGR_ACC_Sensitivity_List[3][4] = {
+/* HR 12-bit */
+{ 980, /* FS @2g */
+1950, /* FS @4g */
+3900, /* FS @8g */
+11720, /* FS @16g */
+},
+
+/* Normal 10-bit */
+{ 3900, /* FS @2g */
+7820, /* FS @4g */
+15630, /* FS @8g */
+46900, /* FS @16g */
+},
+
+/* LP 8-bit */
+{ 15630, /* FS @2g */
+31260, /* FS @4g */
+62520, /* FS @8g */
+187580, /* FS @16g */
+}, };
+
+/*
+ * Values returned are espressed in mg.
+ */
+void LSM303AGR_ACC_Get_Acceleration(int *buff) {
+	Type3Axis16bit_U raw_data_tmp;
+
+	// Normal mode 10-bit, shift = 6 and FS = 2
+	u8_t op_mode = 1, fs_mode = 0, shift = 6;
+
+	/* Read out raw accelerometer samples */
+	HAL_I2C_Mem_Read(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS, LSM303AGR_ACC_MULTIREAD,
+	I2C_MEMADD_SIZE_8BIT, raw_data_tmp.u8bit, sizeof(raw_data_tmp.u8bit),
+	HAL_MAX_DELAY);
+
+	raw_data_tmp.i16bit[0] = (raw_data_tmp.u8bit[1] << 8)
+			| raw_data_tmp.u8bit[0];
+	raw_data_tmp.i16bit[1] = (raw_data_tmp.u8bit[3] << 8)
+			| raw_data_tmp.u8bit[2];
+	raw_data_tmp.i16bit[2] = (raw_data_tmp.u8bit[5] << 8)
+			| raw_data_tmp.u8bit[4];
+
+	/* Apply proper shift and sensitivity */
+	buff[0] = ((raw_data_tmp.i16bit[0] >> shift)
+			* LSM303AGR_ACC_Sensitivity_List[op_mode][fs_mode] + 500) / 1000;
+	buff[1] = ((raw_data_tmp.i16bit[1] >> shift)
+			* LSM303AGR_ACC_Sensitivity_List[op_mode][fs_mode] + 500) / 1000;
+	buff[2] = ((raw_data_tmp.i16bit[2] >> shift)
+			* LSM303AGR_ACC_Sensitivity_List[op_mode][fs_mode] + 500) / 1000;
+
+}
+
+/**
+ * @brief  Read data from LSM303AGR Magnetometer
+ * @param  pData the pointer where the magnetometer data are stored
  * @retval 0 in case of success, an error code otherwise
  */
 void get_m_axes(int32_t *pData) {
@@ -459,6 +556,7 @@ void get_m_axes(int32_t *pData) {
 	pData[0] = (int32_t) (pDataRaw[0] * sensitivity);
 	pData[1] = (int32_t) (pDataRaw[1] * sensitivity);
 	pData[2] = (int32_t) (pDataRaw[2] * sensitivity);
+
 }
 
 /**
@@ -466,23 +564,14 @@ void get_m_axes(int32_t *pData) {
  * @param  pData the pointer where the magnetomer raw data are stored
  * @retval 0 in case of success, an error code otherwise
  */
-int get_m_axes_raw(int16_t *pData) {
+void get_m_axes_raw(int16_t *pData) {
 	uint8_t regValue[6] = { 0, 0, 0, 0, 0, 0 };
 	int16_t *regValueInt16;
+	//Type3Axis16bit_U raw_data_tmp;
 
 	/* Read output registers from LSM303AGR_MAG_OUTX_L to LSM303AGR_MAG_OUTZ_H. */
-	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_L_REG_M,
-	I2C_MEMADD_SIZE_8BIT, &regValue[0], 1, 100);
-	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTX_H_REG_M,
-	I2C_MEMADD_SIZE_8BIT, &regValue[1], 1, 100);
-	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_L_REG_M,
-	I2C_MEMADD_SIZE_8BIT, &regValue[2], 1, 100);
-	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTY_H_REG_M,
-	I2C_MEMADD_SIZE_8BIT, &regValue[3], 1, 100);
-	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_L_REG_M,
-	I2C_MEMADD_SIZE_8BIT, &regValue[4], 1, 100);
-	HAL_I2C_Mem_Read(&hi2c1, LSM303_MAG_ADDRESS, OUTZ_H_REG_M,
-	I2C_MEMADD_SIZE_8BIT, &regValue[5], 1, 100);
+	HAL_I2C_Mem_Read(&hi2c1, LSM303AGR_MAG_I2C_ADDRESS, LSM303AGR_MAG_MULTIREAD,
+	I2C_MEMADD_SIZE_8BIT, regValue, sizeof(regValue), HAL_MAX_DELAY);
 
 	regValueInt16 = (int16_t *) regValue;
 
@@ -493,72 +582,33 @@ int get_m_axes_raw(int16_t *pData) {
 
 }
 
-///**
-// * @brief  Read data from LSM303AGR Accelerometer
-// * @param  pData the pointer where the accelerometer data are stored
-// * @retval 0 in case of success, an error code otherwise
-// */
-//void get_x_axes(int32_t *pData) {
-//	int data[3];
-//
-//	/* Calculate the data. */
-//	pData[0] = (int32_t) data[0];
-//	pData[1] = (int32_t) data[1];
-//	pData[2] = (int32_t) data[2];
+///*******************************************************************************
+// * Function Name  : mems_status_t LSM303AGR_MAG_Get_Raw_Magnetic(u8_t *buff)
+// * Description    : Read Magnetic output register
+// * Input          : pointer to [u8_t]
+// * Output         : Magnetic buffer u8_t
+// * Return         : Status [MEMS_ERROR, MEMS_SUCCESS]
+// *******************************************************************************/
+//void LSM303AGR_MAG_Get_Raw_Magnetic(u8_t *buff) {
 //}
-
-/*
- * Values returned are espressed in mg.
- */
-void LSM303AGR_ACC_Get_Acceleration(int32_t *pData) {
-	int16_t pDataRaw[3];
-
-	LSM303AGR_ACC_Get_Raw_Acceleration(pDataRaw);
-//See driver, normal mode shift = 6
-
-	/* Apply proper shift and sensitivity */
-	pData[0] = ((pDataRaw[0] >> 6) * 3900 + 500) / 1000;
-	pData[1] = ((pDataRaw[1] >> 6) * 3900 + 500) / 1000;
-	pData[2] = ((pDataRaw[2] >> 6) * 3900 + 500) / 1000;
-}
-
-void LSM303AGR_ACC_Get_Raw_Acceleration(int16_t *pData) {
-	uint8_t regValue[6] = { 0, 0, 0, 0, 0, 0 };
-	int16_t *regValueInt16;
-
-	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_X_L_A_MULTI_READ, 1,
-			Data, 6, 100);
-	HAL_UART_Transmit(&huart2, Data, 6, HAL_MAX_DELAY);
-
-//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_X_L_A,
-//	I2C_MEMADD_SIZE_8BIT, &regValue[0], 1, 100);
-//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_X_H_A,
-//	I2C_MEMADD_SIZE_8BIT, &regValue[1], 1, 100);
-//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_Y_L_A,
-//	I2C_MEMADD_SIZE_8BIT, &regValue[2], 1, 100);
-//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_Y_H_A,
-//	I2C_MEMADD_SIZE_8BIT, &regValue[3], 1, 100);
-//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_Z_L_A,
-//	I2C_MEMADD_SIZE_8BIT, &regValue[4], 1, 100);
-//	HAL_I2C_Mem_Read(&hi2c1, LSM303_ACC_ADDRESS, LSM303_ACC_Z_H_A,
-//	I2C_MEMADD_SIZE_8BIT, &regValue[5], 1, 100);
-
-	//HAL_UART_Transmit(&huart2, &regValue[3], 1, HAL_MAX_DELAY);
-	//printf("Register 1: %d\r\n", regValue[0]);
-	//printf("Register 2: %d\r\n", regValue[1]);
-	//printf("Register 3: %d\r\n", regValue[2]);
-
-//	regValueInt16 = (int16_t *) regValue;
 //
-//	/* Format the data. */
-//	pData[0] = regValueInt16[0];
-//	pData[1] = regValueInt16[1];
-//	pData[2] = regValueInt16[2];
-
-	Xaxis = ((Data[1] << 8) | Data[0]);
-	Yaxis = ((Data[3] << 8) | Data[2]);
-	Zaxis = ((Data[5] << 8) | Data[4]);
-}
+//#define LSM303AGR_MAG_SENSITIVITY   15/10
+//
+//void LSM303AGR_MAG_Get_Magnetic(void *handle, int *buff) {
+//	Type3Axis16bit_U raw_data_tmp;
+//
+//	/* Read out raw magnetometer samples */
+//	if (!LSM303AGR_MAG_Get_Raw_Magnetic(handle, raw_data_tmp.u8bit)) {
+//		return MEMS_ERROR;
+//	}
+//
+//	/* Applysensitivity */
+//	buff[0] = raw_data_tmp.i16bit[0] * LSM303AGR_MAG_SENSITIVITY;
+//	buff[1] = raw_data_tmp.i16bit[1] * LSM303AGR_MAG_SENSITIVITY;
+//	buff[2] = raw_data_tmp.i16bit[2] * LSM303AGR_MAG_SENSITIVITY;
+//
+//	return MEMS_SUCCESS;
+//}
 
 /* USER CODE END 4 */
 
