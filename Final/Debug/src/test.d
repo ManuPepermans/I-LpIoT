@@ -1,8 +1,7 @@
-system/src/stm32l1xx/stm32l1xx_hal_dma.o: \
- ../system/src/stm32l1xx/stm32l1xx_hal_dma.c \
+src/test.o: ../src/test.c ../src/test.h ../include/main.h \
  ../system/include/stm32l1xx/stm32l1xx_hal.h \
- ../include/stm32l1xx_hal_conf.h ../include/main.h ../include/LPS22HB.h \
- ../include/LM303.H ../system/include/stm32l1xx/stm32l1xx_hal_rcc.h \
+ ../include/stm32l1xx_hal_conf.h ../include/main.h \
+ ../system/include/stm32l1xx/stm32l1xx_hal_rcc.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_def.h \
  ../system/include/cmsis/device/stm32l1xx.h \
  ../system/include/cmsis/device/stm32l152xe.h \
@@ -23,17 +22,18 @@ system/src/stm32l1xx/stm32l1xx_hal_dma.o: \
  ../system/include/stm32l1xx/stm32l1xx_hal_i2c.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_pwr.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_pwr_ex.h \
- ../system/include/stm32l1xx/stm32l1xx_hal_uart.h
+ ../system/include/stm32l1xx/stm32l1xx_hal_uart.h ../include/LPS22HB.h \
+ ../include/LM303.H ../include/stm32l1xx_it.h
+
+../src/test.h:
+
+../include/main.h:
 
 ../system/include/stm32l1xx/stm32l1xx_hal.h:
 
 ../include/stm32l1xx_hal_conf.h:
 
 ../include/main.h:
-
-../include/LPS22HB.h:
-
-../include/LM303.H:
 
 ../system/include/stm32l1xx/stm32l1xx_hal_rcc.h:
 
@@ -78,3 +78,9 @@ system/src/stm32l1xx/stm32l1xx_hal_dma.o: \
 ../system/include/stm32l1xx/stm32l1xx_hal_pwr_ex.h:
 
 ../system/include/stm32l1xx/stm32l1xx_hal_uart.h:
+
+../include/LPS22HB.h:
+
+../include/LM303.H:
+
+../include/stm32l1xx_it.h:
