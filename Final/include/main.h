@@ -38,7 +38,8 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
 #define __MAIN_H
-
+//#include "test.h"
+#include "stm32l1xx_hal.h"
 #include "LPS22HB.h"
 #include "LM303.H"
 #include <limits.h>
@@ -50,6 +51,8 @@
 #define FRAME_LENGTH 7
 #define SERIAL 7
 #define BUFSIZE 200
+
+
 
 //functions
 void sendGPS(void);

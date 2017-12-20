@@ -45,16 +45,5 @@
 /*LPS22HB settings*/
 
 /*Function prototypes for the LPS22HB*/
-I2C_HandleTypeDef *hi2cLib;
-void setInterface_LPS22HB(I2C_HandleTypeDef *hi2c);
-void reset_LPS22HB();
-void reboot_LPS22HB();
-void powerDown_LPS22HB();
-uint8_t configure_LPS22HB();
-uint8_t readRegister_LPS22HB(uint8_t buf[],uint8_t reg,uint8_t length);
-uint8_t writeRegister_LPS22HB(uint8_t pData[],uint8_t length);
-
-
-
 
 #endif /* LPS22HB_DRIVER_H_ */
