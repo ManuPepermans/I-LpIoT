@@ -96,13 +96,27 @@ class Backend:
             self.dash7_topic(msg)
 
     def lorawan_topic(self, msg):
+        try:
+            obj = jsonpickle.json.loads(msg.payload)
+        except:
+            # print("Payload not valid JSON, skipping")
+            return
+
+        node_id = obj["EUI"]
+        if node_id == "BE7A000000001B94":
+            print("***Right node: {}".format("BE7A000000001B94"))
+
+            cmd = jsonpickle.decode(jsonpickle.json.dumps(obj["data"]))
+
+            #5117.1421,N,0000428.4897,E,230746.000,A,A*56
+
         value_type = "G"
         print("Parse LORA")
         if value_type == "G":  # GPS information form loriot
             # gps_value1 = struct.unpack(fmt, bytearray(action.operand.data))[1]
             # gps_value2 = struct.unpack(fmt, bytearray(action.operand.data))[2]
 
-            ThingsBoardMQTT.on_mqtt_publish(100, 100)
+            ThingsBoardMQTT.on_mqtt_publish(51.1776, 4.4149)
 
     def dash7_topic(self, msg):
         global json_str
