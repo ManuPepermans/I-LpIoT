@@ -38,10 +38,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32l1xx_hal.h"
-#include "global.h"
 
-/* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
 
 UART_HandleTypeDef huart4;
@@ -49,7 +46,6 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
-/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
@@ -58,11 +54,18 @@ static void MX_USART3_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_UART4_Init(void);
 
+//#include "LPS22HB.h"
+//#include "global.h"
+
+/* Private variables ---------------------------------------------------------*/
+
+
+/* Private function prototypes -----------------------------------------------*/
+
 
 int main(void) {
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
-
 	/* Configure the system clock */
 	SystemClock_Config();
 
@@ -74,33 +77,45 @@ int main(void) {
 	MX_I2C1_Init();
 	MX_UART4_Init();
 
+	//LPS22HB_TypeDef baro;
+
 	/* Set global parameters */
 	loraJoined = false;
 	dangerZone = false;
 	loraCounter = 0;
+	HAL_UART_Transmit(&huart2, "running\n",sizeof("running\n"), HAL_MAX_DELAY);
 
+HAL_Delay(1000);
+	 setBarInterface(&hi2c1, &huart2);
 
+	 uint8_t test;
 	/* Infinite loop */
 	while (1) {
 
-		//Test DASH7
-		/*for (int i = 0; i <= 10; i++) {
-			uint8_t uartTest[] = { 0x4d, 0x01, 0x04 };
-			int arrayLength = LENGTH_ARRAY(uartTest);
-			DASH7Message(uartTest, arrayLength);
-			HAL_Delay(2000);
-		}*/
 
 		/*Parameter that is set to 'true' if the tracked person is outside the building*/
-		dangerZone = true;
+//		dangerZone = true;
+//
+//		/*When in dngerZone, the LoRa and the GPS module will be initialized to send the persons location.*/
+//		if (dangerZone == true) {
+//			HAL_UART_Transmit(&huart2, "Danger zone!\n",sizeof("Danger zone!\n") - 1, HAL_MAX_DELAY);
+//			initGPS();
+//			HAL_Delay(1000);
+//			initLora();
+//
+//			readBarometer(&baro);
+//
+//		}
+		//initBar();
+		readsomething();
+//		test = readBarometer(&baro);
+//		HAL_UART_Transmit(&huart2,&test,1,HAL_MAX_DELAY);
+//		HAL_UART_Transmit(&huart2,&(baro.LSBpressure),1,HAL_MAX_DELAY);
+//		HAL_UART_Transmit(&huart2,&(baro.MIDpressure),1,HAL_MAX_DELAY);
+//		HAL_UART_Transmit(&huart2,&(baro.MSBpressure),1,HAL_MAX_DELAY);
 
-		/*When in dngerZone, the LoRa and the GPS module will be initialized to send the persons location.*/
-		if (dangerZone == true) {
-			HAL_UART_Transmit(&huart2, "Danger zone!\n",sizeof("Danger zone!\n") - 1, HAL_MAX_DELAY);
-			initGPS();
-			HAL_Delay(1000);
-			initLora();
-		}
+		HAL_Delay(3000);
+
 	}
 }
 

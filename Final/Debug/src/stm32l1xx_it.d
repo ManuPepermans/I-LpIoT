@@ -1,7 +1,7 @@
 src/stm32l1xx_it.o: ../src/stm32l1xx_it.c \
  ../system/include/stm32l1xx/stm32l1xx_hal.h \
- ../include/stm32l1xx_hal_conf.h ../include/main.h \
- ../system/include/stm32l1xx/stm32l1xx_hal_rcc.h \
+ ../include/stm32l1xx_hal_conf.h ../include/main.h ../include/LPS22HB.h \
+ ../include/LM303.H ../system/include/stm32l1xx/stm32l1xx_hal_rcc.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_def.h \
  ../system/include/cmsis/device/stm32l1xx.h \
  ../system/include/cmsis/device/stm32l152xe.h \
@@ -30,6 +30,10 @@ src/stm32l1xx_it.o: ../src/stm32l1xx_it.c \
 ../include/stm32l1xx_hal_conf.h:
 
 ../include/main.h:
+
+../include/LPS22HB.h:
+
+../include/LM303.H:
 
 ../system/include/stm32l1xx/stm32l1xx_hal_rcc.h:
 

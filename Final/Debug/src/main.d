@@ -22,7 +22,8 @@ src/main.o: ../src/main.c ../include/main.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_i2c.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_pwr.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_pwr_ex.h \
- ../system/include/stm32l1xx/stm32l1xx_hal_uart.h ../include/global.h
+ ../system/include/stm32l1xx/stm32l1xx_hal_uart.h ../include/LPS22HB.h \
+ ../include/LM303.H
 
 ../include/main.h:
 
@@ -76,4 +77,6 @@ src/main.o: ../src/main.c ../include/main.h \
 
 ../system/include/stm32l1xx/stm32l1xx_hal_uart.h:
 
-../include/global.h:
+../include/LPS22HB.h:
+
+../include/LM303.H:
