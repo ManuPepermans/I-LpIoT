@@ -38,7 +38,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32l1xx_hal.h"
 
+//#include "global.h"
+
+/* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
 
 UART_HandleTypeDef huart4;
@@ -46,6 +50,7 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
+/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
@@ -54,18 +59,13 @@ static void MX_USART3_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_UART4_Init(void);
 
-//#include "LPS22HB.h"
-//#include "global.h"
-
-/* Private variables ---------------------------------------------------------*/
-
-
-/* Private function prototypes -----------------------------------------------*/
+enum states state = safe_zone;
 
 
 int main(void) {
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
+
 	/* Configure the system clock */
 	SystemClock_Config();
 
@@ -77,67 +77,59 @@ int main(void) {
 	MX_I2C1_Init();
 	MX_UART4_Init();
 
-	//LPS22HB_TypeDef baro;
+	/* Define state*/
 
-	/* Set global parameters */
-	loraJoined = false;
-	dangerZone = false;
-	loraCounter = 0;
-	HAL_UART_Transmit(&huart2, "running\n",sizeof("running\n"), HAL_MAX_DELAY);
-
-HAL_Delay(1000);
+	/* Initialize all sensors */
 	 setBarInterface(&hi2c1, &huart2);
 
-	 uint8_t test;
+	 HAL_Delay(5000);
+	// bool loraJoined = false;
 	/* Infinite loop */
 	while (1) {
+		switch(state){
+		HAL_UART_Transmit(&huart2, state,sizeof(state), HAL_MAX_DELAY);
+
+		case safe_zone:
+			readsomething();
+			break;
+		case lora_joined:
+			initGPS();
+			HAL_Delay(1000);
+			sendGPS();
+			break;
+		case  in_danger_zone:
+			HAL_UART_Transmit(&huart2, "Danger zone!\n",sizeof("Danger zone!\n") - 1, HAL_MAX_DELAY);
+		    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //power Lora and GPS-module
+			void initLora;
+
+			break;
+		case  alarm:
+			break;
 
 
-		/*Parameter that is set to 'true' if the tracked person is outside the building*/
-//		dangerZone = true;
-//
-//		/*When in dngerZone, the LoRa and the GPS module will be initialized to send the persons location.*/
-//		if (dangerZone == true) {
-//			HAL_UART_Transmit(&huart2, "Danger zone!\n",sizeof("Danger zone!\n") - 1, HAL_MAX_DELAY);
-//			initGPS();
-//			HAL_Delay(1000);
-//			initLora();
-//
-//			readBarometer(&baro);
-//
-//		}
-		//initBar();
-		readsomething();
-//		test = readBarometer(&baro);
-//		HAL_UART_Transmit(&huart2,&test,1,HAL_MAX_DELAY);
-//		HAL_UART_Transmit(&huart2,&(baro.LSBpressure),1,HAL_MAX_DELAY);
-//		HAL_UART_Transmit(&huart2,&(baro.MIDpressure),1,HAL_MAX_DELAY);
-//		HAL_UART_Transmit(&huart2,&(baro.MSBpressure),1,HAL_MAX_DELAY);
-
-		HAL_Delay(3000);
-
+		}
 	}
 }
 
 /* Initializes LoRa Module */
 void initLora() {
 	uint8_t init[4];
-	int i = 0;
-	bool ok = false;
+	int loraTries = 0;
+
 	/* Do until received an OK, after 10 times, send ERROR over Dash7*/
-	while(ok == false){
+	while(1){
 	//reset the LoRa Module: <ATZ>
-	uint8_t resetLora[] = { 0x41, 0x54, 0x5A, 0x0d, 0x0a };
-	HAL_UART_Transmit(&huart3, resetLora, 5, HAL_MAX_DELAY);
+	uint8_t reset_cmd[] = { 0x41, 0x54, 0x5A, 0x0d, 0x0a };
+	HAL_UART_Transmit(&huart3, reset_cmd, 5, HAL_MAX_DELAY);
 	HAL_UART_Transmit(&huart2, "RESET\n", 6, HAL_MAX_DELAY);
 
 	//Delay until the module is reset
-	HAL_Delay(3000);
+	HAL_Delay(2000);
 
 
 	//Sent message has not to be confirmed
-	uint8_t confirmLora[] = {0x41, 0x54, 0x2b, 0x43, 0x46, 0x4d, 0x3d, 0x31, 0x0d, 0x0a};
-	HAL_UART_Transmit(&huart3, confirmLora, 10, HAL_MAX_DELAY);
+	uint8_t confirm_cmd[] = {0x41, 0x54, 0x2b, 0x43, 0x46, 0x4d, 0x3d, 0x31, 0x0d, 0x0a};
+	HAL_UART_Transmit(&huart3, confirm_cmd, 10, HAL_MAX_DELAY);
 	HAL_UART_Transmit(&huart2, "CONFIRM MODE\n", 13, HAL_MAX_DELAY);
 	HAL_Delay(2000);
 
@@ -145,33 +137,29 @@ void initLora() {
 	__HAL_UART_FLUSH_DRREGISTER(&huart3);
 
 	// AT command to join a network: <AT+JOIN>
-	uint8_t joinLora[] =
+	uint8_t join_cmd[] =
 			{ 0x41, 0x54, 0x2b, 0x4a, 0x4f, 0x49, 0x4e, 0x0d, 0x0a };
-	HAL_UART_Transmit(&huart3, joinLora, 9, HAL_MAX_DELAY);
-	HAL_UART_Transmit(&huart2, "JOINING\n", 8, HAL_MAX_DELAY);
+
+	HAL_UART_Transmit(&huart3, join_cmd, 9, HAL_MAX_DELAY);
 
 
 	/* Check if the previous command has arrived */
 	HAL_UART_Receive(&huart3, init , 4, HAL_MAX_DELAY);
-	HAL_UART_Transmit(&huart2, init, 4, HAL_MAX_DELAY);
+	//HAL_UART_Transmit(&huart2, init, 4, HAL_MAX_DELAY);
 
 	if (init[2] == 'O' && init[3] == 'K') {
-		__HAL_UART_FLUSH_DRREGISTER(&huart3);
 
-		//free(init);
+		HAL_UART_Transmit(&huart2, "TRY JOINING...\n", 17, HAL_MAX_DELAY);
+		return;
+	}
 
-		HAL_UART_Transmit(&huart2, "OK RECEIVED\n", 12, HAL_MAX_DELAY);
-		checkNetwork();
-		ok = true;
-				}
-	 //free(init);
-
-	__HAL_UART_FLUSH_DRREGISTER(&huart3);
-
-	/* Count until 10 to send error */
-	i = i+1;
-	if (i <= 10)
-	{loraError();}
+	/* When AT+COMMANDS are not getting an OK -> alarm state */
+	loraTries = loraTries+1;
+	if (loraTries <= 5)
+	{
+		state = alarm;
+		return;
+	}
 	}
 
 
@@ -181,37 +169,44 @@ void initLora() {
 void checkNetwork()
 {
 	// Delay to make sure the end node had enough time to join
-	HAL_Delay(2000);
-	uint8_t character[1] = "";
+		uint8_t at_joined[1];
+		int loraTries = 0;
+
+	while(1){
 
 	// Check if joined: <AT+NJS=?>
 	uint8_t checkNetwork[] = {0x41, 0x54, 0x2b, 0x4e, 0x4a, 0x53, 0x3d, 0x3f, 0x0d, 0x0a};
 	HAL_UART_Transmit(&huart3, checkNetwork, 10, HAL_MAX_DELAY);
+	HAL_UART_Transmit(&huart2, "Check Connection\n",sizeof("Check Connection\n"), HAL_MAX_DELAY);
 
-	// Check for the answer: 0 or 1
-	HAL_UART_Receive(&huart3, character, 1, HAL_MAX_DELAY);
-	if(character[0] == '1')
-	{
-		sendGPS();
 
+	if(HAL_UART_Receive_IT(&huart3, at_joined, 1) == HAL_OK) {
+	HAL_UART_Transmit(&huart2, at_joined, 1, HAL_MAX_DELAY);
+	uint8_t checkNetwork[] = {0x41, 0x54, 0x2b, 0x4e, 0x4a, 0x53, 0x3d, 0x3f, 0x0d, 0x0a};
+	HAL_UART_Transmit(&huart3, checkNetwork, 10, HAL_MAX_DELAY);
+
+
+				if (*at_joined == '1') {
+
+					HAL_UART_Transmit(&huart2, "JOINED!\n", 8, HAL_MAX_DELAY);
+					state = lora_joined;
+					return;
+
+				}
+
+				if (*at_joined == '0') {
+
+							HAL_UART_Transmit(&huart2, "OK", 2, HAL_MAX_DELAY);
+							loraTries = loraTries + 1;
+							if (loraTries >= 10)
+							{
+								state = alarm;
+							}
+
+
+				}
 	}
-
-	// If the answer is no (0), initialize again and count how many times
-	else{
-		loraCounter ++;
-		if(loraCounter <= 5)
-		{
-			HAL_UART_Transmit(&huart2, "COULD NOT JOIN, TRY AGAIN\n", 26, HAL_MAX_DELAY);
-			__HAL_UART_FLUSH_DRREGISTER(&huart3);
-
-			initLora()
-			;}
-		else
-		{
-			loraError();
-		}
-
-	}
+ }
 
 }
 
@@ -219,8 +214,8 @@ void checkNetwork()
 void loraError()
 {
 	HAL_UART_Transmit(&huart2, "JOIN ERROR\n", 11, HAL_MAX_DELAY);
-				uint8_t noLora[] = {0x65, 0x72, 0x72, 0x6f, 0x72};
-				DASH7Message(noLora,5);
+				uint8_t join_error[] = {0x65, 0x72, 0x72, 0x6f, 0x72};
+				DASH7Message(join_error,5);
 }
 
 /* Initializes the GPS module */
@@ -258,8 +253,9 @@ void sendGPS() {
 	uint8_t buffer[64];
 	uint8_t character[1];
 	int i = 0;
+	HAL_UART_Transmit(&huart2, "Send GPS", sizeof("Send GPS\n"), HAL_MAX_DELAY);
 
-	while (dangerZone) {
+	while (1) {
 		/* when there is a UART receive interrupt, put the character in the buffer.
 		 * If the character is the end delimiter the NMEA command is completed.
 		 * The first part: <$GPGLL,> of the buffer is deleted before sending  */
@@ -288,6 +284,8 @@ void sendGPS() {
 		}
 
 	}
+    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //Toggle the state of pin PC9
+
 	return;
 }
 

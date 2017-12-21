@@ -38,8 +38,7 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
 #define __MAIN_H
-//#include "test.h"
-#include "stm32l1xx_hal.h"
+
 #include "LPS22HB.h"
 #include "LM303.H"
 #include <limits.h>
@@ -52,24 +51,30 @@
 #define SERIAL 7
 #define BUFSIZE 200
 
-
-
 //functions
 void sendGPS(void);
 void initLora(void);
 void initGPS(void);
 void DASH7Message(uint8_t[], int);
 void loraError(void);
+void checkNetwork(void);
+
 
 typedef int bool;
 enum {
 	false, true
 };
 //global variables
-bool dangerZone;
-bool loraJoined;
-int loraCounter;
+//bool dangerZone;
+//bool loraJoined;
 
+enum states {
+  in_danger_zone,
+  lora_joined,
+  no_lora,
+  safe_zone,
+  alarm
+};
 
 
 #ifdef __cplusplus
