@@ -52,7 +52,7 @@
 
 //functions
 void sendGPS(void);
-void initLora(void);
+void initLora();
 void initGPS(void);
 void DASH7Message(uint8_t[], int);
 void loraError(void);
@@ -66,15 +66,20 @@ enum {
 //global variables
 //bool dangerZone;
 //bool loraJoined;
+int loraTries;
+bool lora_gps_powered;
+
 
 enum states {
   in_danger_zone,
-  lora_joined,
+  lora_ready,
   no_lora,
   safe_zone,
-  alarm
+  alarm_state,
+  lora_sending
 };
 
+enum states state;
 
 #ifdef __cplusplus
  extern "C" {
