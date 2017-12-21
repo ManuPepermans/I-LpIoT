@@ -1,11 +1,20 @@
+/*
+ * LPS22HB.h
+ *
+ *  Created on: 21 Dec 2017
+ *      Author: manupepermans
+ */
+
 #include "main.h"
 #include <stdio.h>
 #include "stm32l1xx_it.h"
 #include "stm32l1xx_hal_conf.h"
 #include "stm32l1xx_hal.h"
 
-#ifndef __test_H
-#define __test_H
+#ifndef LPS22HB_H_
+#define LPS22HB_H_
+
+
 
 static I2C_HandleTypeDef *hi2c_baro;
 static UART_HandleTypeDef *uart_baro;

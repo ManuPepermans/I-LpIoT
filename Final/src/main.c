@@ -59,7 +59,24 @@ static void MX_USART3_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_UART4_Init(void);
 
-enum states state = safe_zone;
+/*
+ *  The different states:
+ *  	- safe_zone: the mobile node is in normal
+ *  	mode, sending sensor data over DAHS7
+ *
+ *		- in_danger_zone: mobile node is outside.
+ *		The GSP and Lora module are powered and the
+ *		lora is initialzed
+ *
+ *		- alarm, when clocked on the panic button
+ *
+ *
+ *
+ * */
+
+
+/* Define state*/
+enum states state = in_danger_zone;
 
 
 int main(void) {
@@ -77,44 +94,40 @@ int main(void) {
 	MX_I2C1_Init();
 	MX_UART4_Init();
 
-	/* Define state*/
 
 	/* Initialize all sensors */
 	 setBarInterface(&hi2c1, &huart2);
 
+	 HAL_UART_Transmit(&huart2, "Starting...\n",12, HAL_MAX_DELAY);
+
 	 HAL_Delay(5000);
 	// bool loraJoined = false;
 	/* Infinite loop */
-	while (1) {
-		switch(state){
-		HAL_UART_Transmit(&huart2, state,sizeof(state), HAL_MAX_DELAY);
-
-		case safe_zone:
-			readsomething();
-			break;
-		case lora_joined:
+	if(state == safe_zone){
+			readsomething();}
+	if(state == lora_joined){
 			initGPS();
 			HAL_Delay(1000);
 			sendGPS();
-			break;
-		case  in_danger_zone:
-			HAL_UART_Transmit(&huart2, "Danger zone!\n",sizeof("Danger zone!\n") - 1, HAL_MAX_DELAY);
-		    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //power Lora and GPS-module
-			void initLora;
+	}
+	if(state == in_danger_zone){
+			//HAL_UART_Transmit(&huart2, "Danger zone!\n",sizeof("Danger zone!\n") , HAL_MAX_DELAY);
+		   // HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //power Lora and GPS-module
+			void initLora();
+	}
+    if(state == alarm){}
 
-			break;
-		case  alarm:
-			break;
 
 
 		}
-	}
-}
+
+
 
 /* Initializes LoRa Module */
 void initLora() {
 	uint8_t init[4];
 	int loraTries = 0;
+	HAL_UART_Transmit(&huart2, "Init Lora\n", 9, HAL_MAX_DELAY);
 
 	/* Do until received an OK, after 10 times, send ERROR over Dash7*/
 	while(1){

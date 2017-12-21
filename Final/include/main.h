@@ -39,7 +39,6 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
-#include "LPS22HB.h"
 #include "LM303.H"
 #include <limits.h>
 #include <math.h>
