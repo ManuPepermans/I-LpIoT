@@ -93,6 +93,7 @@ int main(void)
 
   /* Define the state to start with*/
   state = safe_zone;
+  int message;
 
 
   /* Initialize all sensors */
@@ -110,6 +111,7 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
 
+  uint8_t Rx_Buffer[100];
 
   /* Infinite loop */
   while (1)
@@ -157,7 +159,45 @@ int main(void)
 	  			break;
 
 
+	  		case dash7_downlink:
+	  			switch(message)
+	  			{
+	  			case 1:
+	  				state = alarm_state;
+	  			break;
+	  			case 2:
+	  				state = in_danger_zone;
+	  			break;
+	  			case 3:
+	  				state = safe_zone;
+	  			break;
+	  			case 4:
+	  				//update baro
+	  			break;
+	  			}
+	  		break;
+
+
 	  		}
+
+	  /* Als er iets binnnen komt op uart zet die da in buffer tot deze vol is, dan = HAL_OK; goed altijd zelfde lengte is
+	   * Een andere optie is om een karakter in te laden en een buffer te laten vullen tot er een bepaald karakter verschijnt een delimiter
+	   * zie naar GPS zo is datook gedaan ;)
+	   *  */
+
+
+	  if(HAL_UART_Receive_IT(&huart4,Rx_Buffer, 20) == HAL_OK){
+
+		  if (Rx_Buffer[19] == '1' & Rx_Buffer[20] == 'A') {
+		  				//Alert
+		  				HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+		  				HAL_Delay(100);
+		  				HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+		  				message = atoi(Rx_Buffer[15]);
+		  			}
+
+	  }
+
 
   }
 }

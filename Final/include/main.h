@@ -76,7 +76,8 @@ enum states {
   no_lora,
   safe_zone,
   alarm_state,
-  lora_sending
+  lora_sending,
+  dash7_downlink
 };
 
 enum states state;
