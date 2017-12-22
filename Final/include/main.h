@@ -46,10 +46,10 @@
 #include "stm32l1xx_hal.h"
 #include <stdio.h>
 #define LENGTH_ARRAY(x)  (sizeof(x) / sizeof(uint8_t))
-#define FRAME_LENGTH 7
 #define SERIAL 7
 #define BUFSIZE 200
-
+#define CMD_LENGTH 19
+#define FRAME_LENGTH
 //functions
 void sendGPS(void);
 void initLora();
@@ -80,7 +80,6 @@ enum states {
 };
 
 enum states state;
-
 #ifdef __cplusplus
  extern "C" {
 #endif

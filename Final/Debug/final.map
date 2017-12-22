@@ -1,19 +1,11 @@
 Archive member included to satisfy reference by file (symbol)
 
-/Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(unwind-arm.o)
-                              ./system/src/newlib/_cxx.o (__aeabi_unwind_cpp_pr1)
-/Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(libunwind.o)
-                              /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(unwind-arm.o) (restore_core_regs)
-/Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(pr-support.o)
-                              /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(unwind-arm.o) (__gnu_unwind_execute)
 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-errno.o)
                               ./system/src/newlib/_sbrk.o (__errno)
 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-impure.o)
                               /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-errno.o) (_impure_ptr)
 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-init.o)
                               ./system/src/cmsis/startup_stm32l152xe.o (__libc_init_array)
-/Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
-                              /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(unwind-arm.o) (memcpy)
 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-strlen.o)
                               ./system/src/diag/Trace.o (strlen)
 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-vsnprintf.o)
@@ -24,6 +16,8 @@ Archive member included to satisfy reference by file (symbol)
                               /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o) (_printf_i)
 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memchr-stub.o)
                               /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o) (memchr)
+/Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
+                              /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o) (memcpy)
 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memmove.o)
                               /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o) (memmove)
 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-freer.o)
@@ -49,7 +43,7 @@ uwTick              0x4               ./system/src/stm32l1xx/stm32l1xx_hal.o
 pFlash              0x18              ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
 lora_gps_powered    0x4               ./system/src/stm32l1xx/stm32l1xx_hal.o
 state               0x1               ./system/src/stm32l1xx/stm32l1xx_hal.o
-huart1              0x40              ./src/main.o
+huart5              0x40              ./src/main.o
 MSBpressure1        0x1               ./src/LPS22HB.o
 loraTries           0x4               ./system/src/stm32l1xx/stm32l1xx_hal.o
 huart4              0x40              ./src/main.o
@@ -261,7 +255,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
@@ -411,7 +405,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
@@ -437,7 +431,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x287 ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
  .debug_macro   0x0000000000000000      0x470 ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
  .debug_line    0x0000000000000000      0x866 ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
- .debug_str     0x0000000000000000    0x84df1 ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
+ .debug_str     0x0000000000000000    0x84dfe ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
  .comment       0x0000000000000000       0x6f ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
  .debug_frame   0x0000000000000000      0x158 ./system/src/stm32l1xx/stm32l1xx_hal_dma.o
  .ARM.attributes
@@ -567,7 +561,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
@@ -593,7 +587,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x287 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
  .debug_macro   0x0000000000000000      0x470 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
  .debug_line    0x0000000000000000      0x7d1 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
- .debug_str     0x0000000000000000    0x84c88 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
+ .debug_str     0x0000000000000000    0x84c95 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
  .comment       0x0000000000000000       0x6f ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
  .debug_frame   0x0000000000000000      0x120 ./system/src/stm32l1xx/stm32l1xx_hal_flash.o
  .ARM.attributes
@@ -760,7 +754,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
@@ -786,7 +780,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x287 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
  .debug_macro   0x0000000000000000      0x470 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
  .debug_line    0x0000000000000000      0x9c6 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
- .debug_str     0x0000000000000000    0x850d4 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
+ .debug_str     0x0000000000000000    0x850e1 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
  .comment       0x0000000000000000       0x6f ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
  .debug_frame   0x0000000000000000      0x2d4 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ex.o
  .ARM.attributes
@@ -891,7 +885,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
@@ -917,7 +911,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x287 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
  .debug_macro   0x0000000000000000      0x470 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
  .debug_line    0x0000000000000000      0x718 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
- .debug_str     0x0000000000000000    0x84d02 ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
+ .debug_str     0x0000000000000000    0x84d0f ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
  .comment       0x0000000000000000       0x6f ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
  .debug_frame   0x0000000000000000       0xfc ./system/src/stm32l1xx/stm32l1xx_hal_flash_ramfunc.o
  .ARM.attributes
@@ -1024,7 +1018,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
@@ -1119,14 +1113,26 @@ Discarded input sections
                 0x0000000000000000       0x20 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .text.I2C_SlaveReceive_BTF
                 0x0000000000000000       0x20 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
+ .text.I2C_IsAcknowledgeFailed
+                0x0000000000000000       0x2c ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
+ .text.I2C_WaitOnFlagUntilTimeout
+                0x0000000000000000       0x68 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
+ .text.I2C_WaitOnMasterAddressFlagUntilTimeout
+                0x0000000000000000       0x94 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .text.I2C_MasterRequestWrite
                 0x0000000000000000       0xc0 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .text.I2C_MasterRequestRead
                 0x0000000000000000      0x124 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
+ .text.I2C_WaitOnTXEFlagUntilTimeout
+                0x0000000000000000       0x50 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .text.I2C_RequestMemoryWrite
                 0x0000000000000000       0xd4 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
+ .text.I2C_RequestMemoryRead
+                0x0000000000000000      0x148 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .text.I2C_WaitOnBTFFlagUntilTimeout
                 0x0000000000000000       0x50 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
+ .text.I2C_WaitOnRXNEFlagUntilTimeout
+                0x0000000000000000       0x60 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .text.I2C_WaitOnSTOPFlagUntilTimeout
                 0x0000000000000000       0x4c ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .text.HAL_I2C_MspInit
@@ -1173,6 +1179,8 @@ Discarded input sections
                 0x0000000000000000       0xc0 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .text.HAL_I2C_Mem_Write
                 0x0000000000000000      0x190 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
+ .text.HAL_I2C_Mem_Read
+                0x0000000000000000      0x2fc ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .text.HAL_I2C_Mem_Write_IT
                 0x0000000000000000       0xe8 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .text.HAL_I2C_Mem_Read_IT
@@ -1273,7 +1281,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
@@ -1431,7 +1439,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
@@ -1457,7 +1465,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x287 ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
  .debug_macro   0x0000000000000000      0x470 ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
  .debug_line    0x0000000000000000      0x7cb ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
- .debug_str     0x0000000000000000    0x84d29 ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
+ .debug_str     0x0000000000000000    0x84d36 ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
  .comment       0x0000000000000000       0x6f ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
  .debug_frame   0x0000000000000000      0x128 ./system/src/stm32l1xx/stm32l1xx_hal_pwr.o
  .ARM.attributes
@@ -1575,7 +1583,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
@@ -1601,7 +1609,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x287 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
  .debug_macro   0x0000000000000000      0x470 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
  .debug_line    0x0000000000000000      0x707 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
- .debug_str     0x0000000000000000    0x84ae4 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
+ .debug_str     0x0000000000000000    0x84af1 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
  .comment       0x0000000000000000       0x6f ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
  .debug_frame   0x0000000000000000       0x80 ./system/src/stm32l1xx/stm32l1xx_hal_pwr_ex.o
  .ARM.attributes
@@ -1714,7 +1722,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
@@ -1854,7 +1862,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
@@ -1880,7 +1888,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x287 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
  .debug_macro   0x0000000000000000      0x470 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
  .debug_line    0x0000000000000000      0x7a5 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
- .debug_str     0x0000000000000000    0x84c44 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
+ .debug_str     0x0000000000000000    0x84c51 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
  .comment       0x0000000000000000       0x6f ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
  .debug_frame   0x0000000000000000       0xc4 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o
  .ARM.attributes
@@ -1982,7 +1990,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
@@ -2008,7 +2016,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x287 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
  .debug_macro   0x0000000000000000      0x470 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
  .debug_line    0x0000000000000000      0x631 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
- .debug_str     0x0000000000000000    0x84997 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
+ .debug_str     0x0000000000000000    0x849a4 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
  .comment       0x0000000000000000       0x6f ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
  .ARM.attributes
                 0x0000000000000000       0x33 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o
@@ -2109,7 +2117,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
@@ -2135,7 +2143,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x287 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
  .debug_macro   0x0000000000000000      0x470 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
  .debug_line    0x0000000000000000      0x634 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
- .debug_str     0x0000000000000000    0x8499a ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
+ .debug_str     0x0000000000000000    0x849a7 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
  .comment       0x0000000000000000       0x6f ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
  .ARM.attributes
                 0x0000000000000000       0x33 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o
@@ -2283,7 +2291,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
  .debug_macro   0x0000000000000000       0x16 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
  .debug_macro   0x0000000000000000      0x18b ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
- .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+ .debug_macro   0x0000000000000000       0x28 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
  .debug_macro   0x0000000000000000       0x88 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
  .debug_macro   0x0000000000000000       0x2e ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
@@ -2345,16 +2353,8 @@ Discarded input sections
  .bss           0x0000000000000000        0x0 ./system/src/newlib/_cxx.o
  .text._ZN9__gnu_cxx27__verbose_terminate_handlerEv
                 0x0000000000000000       0x10 ./system/src/newlib/_cxx.o
- .ARM.extab.text._ZN9__gnu_cxx27__verbose_terminate_handlerEv
-                0x0000000000000000        0xc ./system/src/newlib/_cxx.o
- .ARM.exidx.text._ZN9__gnu_cxx27__verbose_terminate_handlerEv
-                0x0000000000000000        0x8 ./system/src/newlib/_cxx.o
  .text.__cxa_pure_virtual
                 0x0000000000000000       0x10 ./system/src/newlib/_cxx.o
- .ARM.extab.text.__cxa_pure_virtual
-                0x0000000000000000        0xc ./system/src/newlib/_cxx.o
- .ARM.exidx.text.__cxa_pure_virtual
-                0x0000000000000000        0x8 ./system/src/newlib/_cxx.o
  .rodata._ZZ18__cxa_pure_virtualE8__func__
                 0x0000000000000000       0x13 ./system/src/newlib/_cxx.o
  .rodata._ZZN9__gnu_cxx27__verbose_terminate_handlerEvE8__func__
@@ -2365,7 +2365,7 @@ Discarded input sections
                 0x0000000000000000       0x28 ./system/src/newlib/_cxx.o
  .debug_ranges  0x0000000000000000       0x18 ./system/src/newlib/_cxx.o
  .debug_macro   0x0000000000000000      0x1cf ./system/src/newlib/_cxx.o
- .debug_macro   0x0000000000000000      0x928 ./system/src/newlib/_cxx.o
+ .debug_macro   0x0000000000000000      0x910 ./system/src/newlib/_cxx.o
  .debug_macro   0x0000000000000000      0x136 ./system/src/newlib/_cxx.o
  .debug_macro   0x0000000000000000      0x353 ./system/src/newlib/_cxx.o
  .debug_macro   0x0000000000000000       0x22 ./system/src/newlib/_cxx.o
@@ -2398,7 +2398,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x35 ./system/src/newlib/_cxx.o
  .debug_macro   0x0000000000000000      0x513 ./system/src/newlib/_cxx.o
  .debug_line    0x0000000000000000      0x407 ./system/src/newlib/_cxx.o
- .debug_str     0x0000000000000000     0x8603 ./system/src/newlib/_cxx.o
+ .debug_str     0x0000000000000000     0x8608 ./system/src/newlib/_cxx.o
  .comment       0x0000000000000000       0x6f ./system/src/newlib/_cxx.o
  .debug_frame   0x0000000000000000       0x40 ./system/src/newlib/_cxx.o
  .ARM.attributes
@@ -3134,9 +3134,9 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x1e1 ./src/LM303.o
  .debug_macro   0x0000000000000000       0x16 ./src/LM303.o
  .debug_macro   0x0000000000000000       0x35 ./src/LM303.o
- .debug_macro   0x0000000000000000       0x22 ./src/LM303.o
+ .debug_macro   0x0000000000000000       0x28 ./src/LM303.o
  .debug_line    0x0000000000000000      0x61f ./src/LM303.o
- .debug_str     0x0000000000000000    0x84970 ./src/LM303.o
+ .debug_str     0x0000000000000000    0x8497d ./src/LM303.o
  .comment       0x0000000000000000       0x6f ./src/LM303.o
  .ARM.attributes
                 0x0000000000000000       0x33 ./src/LM303.o
@@ -3203,6 +3203,8 @@ Discarded input sections
  .data          0x0000000000000000        0x0 ./src/LPS22HB.o
  .bss           0x0000000000000000        0x0 ./src/LPS22HB.o
  .text.initBar  0x0000000000000000       0x44 ./src/LPS22HB.o
+ .text.readsomething
+                0x0000000000000000       0x48 ./src/LPS22HB.o
  .text.readBarometer
                 0x0000000000000000       0x84 ./src/LPS22HB.o
  .debug_macro   0x0000000000000000      0x874 ./src/LPS22HB.o
@@ -3262,7 +3264,8 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x1e1 ./src/LPS22HB.o
  .debug_macro   0x0000000000000000       0x16 ./src/LPS22HB.o
  .debug_macro   0x0000000000000000       0x35 ./src/LPS22HB.o
- .debug_macro   0x0000000000000000       0x22 ./src/LPS22HB.o
+ .debug_macro   0x0000000000000000       0x28 ./src/LPS22HB.o
+ COMMON         0x0000000000000000        0x3 ./src/LPS22HB.o
  .group         0x0000000000000000        0x8 ./src/main.o
  .group         0x0000000000000000        0x8 ./src/main.o
  .group         0x0000000000000000        0x8 ./src/main.o
@@ -3381,7 +3384,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x1e1 ./src/main.o
  .debug_macro   0x0000000000000000       0x16 ./src/main.o
  .debug_macro   0x0000000000000000       0x35 ./src/main.o
- .debug_macro   0x0000000000000000       0x22 ./src/main.o
+ .debug_macro   0x0000000000000000       0x28 ./src/main.o
  .group         0x0000000000000000        0x8 ./src/stm32l1xx_hal_msp.o
  .group         0x0000000000000000        0x8 ./src/stm32l1xx_hal_msp.o
  .group         0x0000000000000000        0x8 ./src/stm32l1xx_hal_msp.o
@@ -3445,7 +3448,7 @@ Discarded input sections
  .text.HAL_I2C_MspDeInit
                 0x0000000000000000       0x2c ./src/stm32l1xx_hal_msp.o
  .text.HAL_UART_MspDeInit
-                0x0000000000000000       0xa8 ./src/stm32l1xx_hal_msp.o
+                0x0000000000000000       0xb4 ./src/stm32l1xx_hal_msp.o
  .debug_macro   0x0000000000000000      0x874 ./src/stm32l1xx_hal_msp.o
  .debug_macro   0x0000000000000000       0xee ./src/stm32l1xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x22 ./src/stm32l1xx_hal_msp.o
@@ -3478,7 +3481,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./src/stm32l1xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x16 ./src/stm32l1xx_hal_msp.o
  .debug_macro   0x0000000000000000      0x18b ./src/stm32l1xx_hal_msp.o
- .debug_macro   0x0000000000000000       0x22 ./src/stm32l1xx_hal_msp.o
+ .debug_macro   0x0000000000000000       0x28 ./src/stm32l1xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x88 ./src/stm32l1xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x2e ./src/stm32l1xx_hal_msp.o
  .debug_macro   0x0000000000000000       0x22 ./src/stm32l1xx_hal_msp.o
@@ -3595,7 +3598,7 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0xd7 ./src/stm32l1xx_it.o
  .debug_macro   0x0000000000000000       0x16 ./src/stm32l1xx_it.o
  .debug_macro   0x0000000000000000      0x18b ./src/stm32l1xx_it.o
- .debug_macro   0x0000000000000000       0x22 ./src/stm32l1xx_it.o
+ .debug_macro   0x0000000000000000       0x28 ./src/stm32l1xx_it.o
  .debug_macro   0x0000000000000000       0x88 ./src/stm32l1xx_it.o
  .debug_macro   0x0000000000000000       0x2e ./src/stm32l1xx_it.o
  .debug_macro   0x0000000000000000       0x22 ./src/stm32l1xx_it.o
@@ -3620,27 +3623,6 @@ Discarded input sections
  .debug_macro   0x0000000000000000       0x22 ./src/stm32l1xx_it.o
  .debug_macro   0x0000000000000000      0x287 ./src/stm32l1xx_it.o
  .debug_macro   0x0000000000000000      0x470 ./src/stm32l1xx_it.o
- .text          0x0000000000000000      0x9e4 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(unwind-arm.o)
- .data          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(unwind-arm.o)
- .bss           0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(unwind-arm.o)
- .ARM.extab     0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(unwind-arm.o)
- .ARM.exidx     0x0000000000000000       0xd8 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(unwind-arm.o)
- .debug_frame   0x0000000000000000      0x300 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(unwind-arm.o)
- .ARM.attributes
-                0x0000000000000000       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(unwind-arm.o)
- .text          0x0000000000000000      0x1ac /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(libunwind.o)
- .data          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(libunwind.o)
- .bss           0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(libunwind.o)
- .ARM.attributes
-                0x0000000000000000       0x1d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(libunwind.o)
- .text          0x0000000000000000      0x354 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(pr-support.o)
- .data          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(pr-support.o)
- .bss           0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(pr-support.o)
- .ARM.extab     0x0000000000000000       0x18 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(pr-support.o)
- .ARM.exidx     0x0000000000000000       0x48 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(pr-support.o)
- .debug_frame   0x0000000000000000      0x104 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(pr-support.o)
- .ARM.attributes
-                0x0000000000000000       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m/libgcc.a(pr-support.o)
  .text          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-errno.o)
  .data          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-errno.o)
  .bss           0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-errno.o)
@@ -3657,9 +3639,6 @@ Discarded input sections
  .debug_frame   0x0000000000000000       0x2c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-init.o)
  .ARM.attributes
                 0x0000000000000000       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-init.o)
- .text          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
- .data          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
- .bss           0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
  .text          0x0000000000000000       0x10 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-strlen.o)
  .data          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-strlen.o)
  .bss           0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-strlen.o)
@@ -3679,6 +3658,9 @@ Discarded input sections
  .text          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memchr-stub.o)
  .data          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memchr-stub.o)
  .bss           0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memchr-stub.o)
+ .text          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
+ .data          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
+ .bss           0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
  .text          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memmove.o)
  .data          0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memmove.o)
  .bss           0x0000000000000000        0x0 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memmove.o)
@@ -3767,7 +3749,7 @@ END GROUP
                 0x0000000020013c00                __Main_Stack_Limit = (__stack - __Main_Stack_Size)
                 [!provide]                        PROVIDE (_Main_Stack_Limit, __Main_Stack_Limit)
                 0x0000000000000100                _Minimum_Stack_Size = 0x100
-                0x0000000020000284                PROVIDE (_Heap_Begin, _end_noinit)
+                0x0000000020000280                PROVIDE (_Heap_Begin, _end_noinit)
                 0x0000000020013c00                PROVIDE (_Heap_Limit, (__stack - __Main_Stack_Size))
 
 .isr_vector     0x0000000008000000      0x354
@@ -3791,16 +3773,16 @@ END GROUP
 
 .inits          0x0000000008000354       0x28
                 0x0000000008000354                __data_regions_array_start = .
-                0x0000000008000354        0x4 LONG 0x8003c3c LOADADDR (.data)
+                0x0000000008000354        0x4 LONG 0x8003618 LOADADDR (.data)
                 0x0000000008000358        0x4 LONG 0x20000000 ADDR (.data)
                 0x000000000800035c        0x4 LONG 0x20000078 (ADDR (.data) + SIZEOF (.data))
-                0x0000000008000360        0x4 LONG 0x8003c3c LOADADDR (.data_CCMRAM)
+                0x0000000008000360        0x4 LONG 0x8003618 LOADADDR (.data_CCMRAM)
                 0x0000000008000364        0x4 LONG 0x10000000 ADDR (.data_CCMRAM)
                 0x0000000008000368        0x4 LONG 0x10000000 (ADDR (.data_CCMRAM) + SIZEOF (.data_CCMRAM))
                 0x000000000800036c                __data_regions_array_end = .
                 0x000000000800036c                __bss_regions_array_start = .
                 0x000000000800036c        0x4 LONG 0x20000078 ADDR (.bss)
-                0x0000000008000370        0x4 LONG 0x20000284 (ADDR (.bss) + SIZEOF (.bss))
+                0x0000000008000370        0x4 LONG 0x20000280 (ADDR (.bss) + SIZEOF (.bss))
                 0x0000000008000374        0x4 LONG 0x10000000 ADDR (.bss_CCMRAM)
                 0x0000000008000378        0x4 LONG 0x10000000 (ADDR (.bss_CCMRAM) + SIZEOF (.bss_CCMRAM))
                 0x000000000800037c                __bss_regions_array_end = .
@@ -3826,7 +3808,7 @@ END GROUP
 .flashtext
  *(.flashtext .flashtext.*)
 
-.text           0x000000000800037c     0x38bf
+.text           0x000000000800037c     0x329b
  *(.text .text.*)
  .text.HAL_InitTick
                 0x000000000800037c       0x2c ./system/src/stm32l1xx/stm32l1xx_hal.o
@@ -3873,363 +3855,345 @@ END GROUP
  .text.HAL_GPIO_TogglePin
                 0x00000000080006a8        0x8 ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
                 0x00000000080006a8                HAL_GPIO_TogglePin
- .text.I2C_IsAcknowledgeFailed
-                0x00000000080006b0       0x2c ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
- .text.I2C_WaitOnFlagUntilTimeout
-                0x00000000080006dc       0x68 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
- .text.I2C_WaitOnMasterAddressFlagUntilTimeout
-                0x0000000008000744       0x94 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
- .text.I2C_WaitOnTXEFlagUntilTimeout
-                0x00000000080007d8       0x50 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
- .text.I2C_RequestMemoryRead
-                0x0000000008000828      0x148 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
- .text.I2C_WaitOnRXNEFlagUntilTimeout
-                0x0000000008000970       0x60 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
  .text.HAL_I2C_Init
-                0x00000000080009d0      0x164 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
-                0x00000000080009d0                HAL_I2C_Init
- .text.HAL_I2C_Mem_Read
-                0x0000000008000b34      0x2fc ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
-                0x0000000008000b34                HAL_I2C_Mem_Read
+                0x00000000080006b0      0x164 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
+                0x00000000080006b0                HAL_I2C_Init
  .text.RCC_SetFlashLatencyFromMSIRange
-                0x0000000008000e30       0x98 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
+                0x0000000008000814       0x98 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
  .text.HAL_RCC_OscConfig
-                0x0000000008000ec8      0x7a0 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
-                0x0000000008000ec8                HAL_RCC_OscConfig
+                0x00000000080008ac      0x7a0 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
+                0x00000000080008ac                HAL_RCC_OscConfig
  .text.HAL_RCC_GetSysClockFreq
-                0x0000000008001668       0xa0 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
-                0x0000000008001668                HAL_RCC_GetSysClockFreq
+                0x000000000800104c       0xa0 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
+                0x000000000800104c                HAL_RCC_GetSysClockFreq
  .text.HAL_RCC_ClockConfig
-                0x0000000008001708      0x25c ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
-                0x0000000008001708                HAL_RCC_ClockConfig
+                0x00000000080010ec      0x25c ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
+                0x00000000080010ec                HAL_RCC_ClockConfig
  .text.HAL_RCC_GetHCLKFreq
-                0x0000000008001964        0xc ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
-                0x0000000008001964                HAL_RCC_GetHCLKFreq
+                0x0000000008001348        0xc ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
+                0x0000000008001348                HAL_RCC_GetHCLKFreq
  .text.HAL_RCC_GetPCLK1Freq
-                0x0000000008001970       0x30 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
-                0x0000000008001970                HAL_RCC_GetPCLK1Freq
+                0x0000000008001354       0x30 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
+                0x0000000008001354                HAL_RCC_GetPCLK1Freq
  .text.HAL_RCC_GetPCLK2Freq
-                0x00000000080019a0       0x30 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
-                0x00000000080019a0                HAL_RCC_GetPCLK2Freq
+                0x0000000008001384       0x30 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
+                0x0000000008001384                HAL_RCC_GetPCLK2Freq
  .text.UART_Transmit_IT
-                0x00000000080019d0       0x6c ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x00000000080013b4       0x6c ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
  .text.UART_SetConfig
-                0x0000000008001a3c      0x314 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001420      0x314 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
  .text.UART_WaitOnFlagUntilTimeout
-                0x0000000008001d50       0xd4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001734       0xd4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
  .text.HAL_UART_Init
-                0x0000000008001e24       0x60 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
-                0x0000000008001e24                HAL_UART_Init
+                0x0000000008001808       0x60 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001808                HAL_UART_Init
  .text.HAL_UART_Transmit
-                0x0000000008001e84       0xec ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
-                0x0000000008001e84                HAL_UART_Transmit
+                0x0000000008001868       0xec ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001868                HAL_UART_Transmit
  .text.HAL_UART_Receive
-                0x0000000008001f70       0xf0 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
-                0x0000000008001f70                HAL_UART_Receive
+                0x0000000008001954       0xf0 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001954                HAL_UART_Receive
  .text.HAL_UART_Receive_IT
-                0x0000000008002060       0x80 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
-                0x0000000008002060                HAL_UART_Receive_IT
+                0x0000000008001a44       0x80 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001a44                HAL_UART_Receive_IT
  .text.HAL_UART_TxCpltCallback
-                0x00000000080020e0        0x4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
-                0x00000000080020e0                HAL_UART_TxCpltCallback
+                0x0000000008001ac4        0x4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001ac4                HAL_UART_TxCpltCallback
  .text.UART_EndTransmit_IT
-                0x00000000080020e4       0x2c ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001ac8       0x2c ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
  .text.HAL_UART_RxCpltCallback
-                0x0000000008002110        0x4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
-                0x0000000008002110                HAL_UART_RxCpltCallback
+                0x0000000008001af4        0x4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001af4                HAL_UART_RxCpltCallback
  .text.UART_Receive_IT
-                0x0000000008002114       0xb4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001af8       0xb4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
  .text.HAL_UART_ErrorCallback
-                0x00000000080021c8        0x4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
-                0x00000000080021c8                HAL_UART_ErrorCallback
+                0x0000000008001bac        0x4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001bac                HAL_UART_ErrorCallback
  .text.HAL_UART_IRQHandler
-                0x00000000080021cc       0xc4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
-                0x00000000080021cc                HAL_UART_IRQHandler
- .text._exit    0x0000000008002290        0x4 ./system/src/newlib/_exit.o
-                0x0000000008002290                _exit
- .text._sbrk    0x0000000008002294       0x44 ./system/src/newlib/_sbrk.o
-                0x0000000008002294                _sbrk
+                0x0000000008001bb0       0xc4 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                0x0000000008001bb0                HAL_UART_IRQHandler
+ .text._exit    0x0000000008001c74        0x4 ./system/src/newlib/_exit.o
+                0x0000000008001c74                _exit
+ .text._sbrk    0x0000000008001c78       0x44 ./system/src/newlib/_sbrk.o
+                0x0000000008001c78                _sbrk
  .text.__initialize_args
-                0x00000000080022d8       0x10 ./system/src/newlib/_syscalls.o
-                0x00000000080022d8                __initialize_args
+                0x0000000008001cbc       0x10 ./system/src/newlib/_syscalls.o
+                0x0000000008001cbc                __initialize_args
  .text.trace_printf
-                0x00000000080022e8       0x30 ./system/src/diag/Trace.o
-                0x00000000080022e8                trace_printf
+                0x0000000008001ccc       0x30 ./system/src/diag/Trace.o
+                0x0000000008001ccc                trace_printf
  .text.trace_write
-                0x0000000008002318        0x8 ./system/src/diag/trace_impl.o
-                0x0000000008002318                trace_write
+                0x0000000008001cfc        0x8 ./system/src/diag/trace_impl.o
+                0x0000000008001cfc                trace_write
  .text.__initialize_hardware_early
-                0x0000000008002320       0x18 ./system/src/cortexm/_initialize_hardware.o
-                0x0000000008002320                __initialize_hardware_early
+                0x0000000008001d04       0x18 ./system/src/cortexm/_initialize_hardware.o
+                0x0000000008001d04                __initialize_hardware_early
  .text.__initialize_hardware
-                0x0000000008002338        0x8 ./system/src/cortexm/_initialize_hardware.o
-                0x0000000008002338                __initialize_hardware
+                0x0000000008001d1c        0x8 ./system/src/cortexm/_initialize_hardware.o
+                0x0000000008001d1c                __initialize_hardware
  .text.dumpExceptionStack
-                0x0000000008002340       0xf0 ./system/src/cortexm/exception_handlers.o
-                0x0000000008002340                dumpExceptionStack
+                0x0000000008001d24       0xf0 ./system/src/cortexm/exception_handlers.o
+                0x0000000008001d24                dumpExceptionStack
  .text.Default_Handler
-                0x0000000008002430        0x2 ./system/src/cmsis/startup_stm32l152xe.o
-                0x0000000008002430                DMA2_Channel3_IRQHandler
-                0x0000000008002430                EXTI2_IRQHandler
-                0x0000000008002430                COMP_ACQ_IRQHandler
-                0x0000000008002430                TIM10_IRQHandler
-                0x0000000008002430                USB_HP_IRQHandler
-                0x0000000008002430                TIM6_IRQHandler
-                0x0000000008002430                PVD_IRQHandler
-                0x0000000008002430                EXTI3_IRQHandler
-                0x0000000008002430                EXTI0_IRQHandler
-                0x0000000008002430                I2C2_EV_IRQHandler
-                0x0000000008002430                SPI1_IRQHandler
-                0x0000000008002430                USB_FS_WKUP_IRQHandler
-                0x0000000008002430                DMA2_Channel2_IRQHandler
-                0x0000000008002430                DMA1_Channel4_IRQHandler
-                0x0000000008002430                ADC1_IRQHandler
-                0x0000000008002430                DMA1_Channel7_IRQHandler
-                0x0000000008002430                LCD_IRQHandler
-                0x0000000008002430                UART5_IRQHandler
-                0x0000000008002430                TIM4_IRQHandler
-                0x0000000008002430                DMA2_Channel1_IRQHandler
-                0x0000000008002430                I2C1_EV_IRQHandler
-                0x0000000008002430                DMA1_Channel6_IRQHandler
-                0x0000000008002430                DMA2_Channel4_IRQHandler
-                0x0000000008002430                TIM3_IRQHandler
-                0x0000000008002430                RCC_IRQHandler
-                0x0000000008002430                DMA1_Channel1_IRQHandler
-                0x0000000008002430                Default_Handler
-                0x0000000008002430                EXTI15_10_IRQHandler
-                0x0000000008002430                TIM7_IRQHandler
-                0x0000000008002430                TIM5_IRQHandler
-                0x0000000008002430                EXTI9_5_IRQHandler
-                0x0000000008002430                TIM9_IRQHandler
-                0x0000000008002430                TAMPER_STAMP_IRQHandler
-                0x0000000008002430                RTC_WKUP_IRQHandler
-                0x0000000008002430                SPI2_IRQHandler
-                0x0000000008002430                DMA2_Channel5_IRQHandler
-                0x0000000008002430                DMA1_Channel5_IRQHandler
-                0x0000000008002430                USB_LP_IRQHandler
-                0x0000000008002430                EXTI4_IRQHandler
-                0x0000000008002430                DMA1_Channel3_IRQHandler
-                0x0000000008002430                COMP_IRQHandler
-                0x0000000008002430                WWDG_IRQHandler
-                0x0000000008002430                TIM2_IRQHandler
-                0x0000000008002430                DAC_IRQHandler
-                0x0000000008002430                EXTI1_IRQHandler
-                0x0000000008002430                TIM11_IRQHandler
-                0x0000000008002430                USART2_IRQHandler
-                0x0000000008002430                I2C2_ER_IRQHandler
-                0x0000000008002430                DMA1_Channel2_IRQHandler
-                0x0000000008002430                FLASH_IRQHandler
-                0x0000000008002430                SPI3_IRQHandler
-                0x0000000008002430                I2C1_ER_IRQHandler
-                0x0000000008002430                RTC_Alarm_IRQHandler
- *fill*         0x0000000008002432        0x2 
+                0x0000000008001e14        0x2 ./system/src/cmsis/startup_stm32l152xe.o
+                0x0000000008001e14                DMA2_Channel3_IRQHandler
+                0x0000000008001e14                EXTI2_IRQHandler
+                0x0000000008001e14                COMP_ACQ_IRQHandler
+                0x0000000008001e14                TIM10_IRQHandler
+                0x0000000008001e14                USB_HP_IRQHandler
+                0x0000000008001e14                TIM6_IRQHandler
+                0x0000000008001e14                PVD_IRQHandler
+                0x0000000008001e14                EXTI3_IRQHandler
+                0x0000000008001e14                EXTI0_IRQHandler
+                0x0000000008001e14                I2C2_EV_IRQHandler
+                0x0000000008001e14                SPI1_IRQHandler
+                0x0000000008001e14                USB_FS_WKUP_IRQHandler
+                0x0000000008001e14                DMA2_Channel2_IRQHandler
+                0x0000000008001e14                DMA1_Channel4_IRQHandler
+                0x0000000008001e14                ADC1_IRQHandler
+                0x0000000008001e14                DMA1_Channel7_IRQHandler
+                0x0000000008001e14                LCD_IRQHandler
+                0x0000000008001e14                TIM4_IRQHandler
+                0x0000000008001e14                DMA2_Channel1_IRQHandler
+                0x0000000008001e14                I2C1_EV_IRQHandler
+                0x0000000008001e14                DMA1_Channel6_IRQHandler
+                0x0000000008001e14                DMA2_Channel4_IRQHandler
+                0x0000000008001e14                TIM3_IRQHandler
+                0x0000000008001e14                RCC_IRQHandler
+                0x0000000008001e14                DMA1_Channel1_IRQHandler
+                0x0000000008001e14                Default_Handler
+                0x0000000008001e14                EXTI15_10_IRQHandler
+                0x0000000008001e14                TIM7_IRQHandler
+                0x0000000008001e14                TIM5_IRQHandler
+                0x0000000008001e14                EXTI9_5_IRQHandler
+                0x0000000008001e14                TIM9_IRQHandler
+                0x0000000008001e14                TAMPER_STAMP_IRQHandler
+                0x0000000008001e14                RTC_WKUP_IRQHandler
+                0x0000000008001e14                SPI2_IRQHandler
+                0x0000000008001e14                DMA2_Channel5_IRQHandler
+                0x0000000008001e14                DMA1_Channel5_IRQHandler
+                0x0000000008001e14                USB_LP_IRQHandler
+                0x0000000008001e14                EXTI4_IRQHandler
+                0x0000000008001e14                DMA1_Channel3_IRQHandler
+                0x0000000008001e14                COMP_IRQHandler
+                0x0000000008001e14                WWDG_IRQHandler
+                0x0000000008001e14                TIM2_IRQHandler
+                0x0000000008001e14                DAC_IRQHandler
+                0x0000000008001e14                EXTI1_IRQHandler
+                0x0000000008001e14                TIM11_IRQHandler
+                0x0000000008001e14                USART2_IRQHandler
+                0x0000000008001e14                I2C2_ER_IRQHandler
+                0x0000000008001e14                DMA1_Channel2_IRQHandler
+                0x0000000008001e14                FLASH_IRQHandler
+                0x0000000008001e14                USART1_IRQHandler
+                0x0000000008001e14                SPI3_IRQHandler
+                0x0000000008001e14                I2C1_ER_IRQHandler
+                0x0000000008001e14                RTC_Alarm_IRQHandler
+ *fill*         0x0000000008001e16        0x2 
  .text.SystemInit
-                0x0000000008002434       0x48 ./system/src/cmsis/system_stm32l1xx.o
-                0x0000000008002434                SystemInit
+                0x0000000008001e18       0x48 ./system/src/cmsis/system_stm32l1xx.o
+                0x0000000008001e18                SystemInit
  .text.SystemCoreClockUpdate
-                0x000000000800247c       0xc4 ./system/src/cmsis/system_stm32l1xx.o
-                0x000000000800247c                SystemCoreClockUpdate
+                0x0000000008001e60       0xc4 ./system/src/cmsis/system_stm32l1xx.o
+                0x0000000008001e60                SystemCoreClockUpdate
  .text.setBarInterface
-                0x0000000008002540       0x2c ./src/LPS22HB.o
-                0x0000000008002540                setBarInterface
- .text.readsomething
-                0x000000000800256c       0x48 ./src/LPS22HB.o
-                0x000000000800256c                readsomething
+                0x0000000008001f24       0x2c ./src/LPS22HB.o
+                0x0000000008001f24                setBarInterface
  .text.MX_GPIO_Init
-                0x00000000080025b4       0xa4 ./src/main.o
+                0x0000000008001f50       0xb8 ./src/main.o
  .text.checkNetwork
-                0x0000000008002658       0xa0 ./src/main.o
-                0x0000000008002658                checkNetwork
+                0x0000000008002008       0xa0 ./src/main.o
+                0x0000000008002008                checkNetwork
  .text.initLora
-                0x00000000080026f8      0x104 ./src/main.o
-                0x00000000080026f8                initLora
- .text.initGPS  0x00000000080027fc      0x118 ./src/main.o
-                0x00000000080027fc                initGPS
- .text.sendGPS  0x0000000008002914       0xa8 ./src/main.o
-                0x0000000008002914                sendGPS
+                0x00000000080020a8      0x114 ./src/main.o
+                0x00000000080020a8                initLora
+ .text.initGPS  0x00000000080021bc      0x118 ./src/main.o
+                0x00000000080021bc                initGPS
+ .text.sendGPS  0x00000000080022d4       0xb4 ./src/main.o
+                0x00000000080022d4                sendGPS
  .text.DASH7Message
-                0x00000000080029bc       0xac ./src/main.o
-                0x00000000080029bc                DASH7Message
+                0x0000000008002388       0x9c ./src/main.o
+                0x0000000008002388                DASH7Message
  .text.loraError
-                0x0000000008002a68       0x3c ./src/main.o
-                0x0000000008002a68                loraError
+                0x0000000008002424       0x3c ./src/main.o
+                0x0000000008002424                loraError
  .text._Error_Handler
-                0x0000000008002aa4        0x4 ./src/main.o
-                0x0000000008002aa4                _Error_Handler
- .text.MX_USART1_UART_Init
-                0x0000000008002aa8       0x3c ./src/main.o
+                0x0000000008002460        0x4 ./src/main.o
+                0x0000000008002460                _Error_Handler
  .text.MX_USART2_UART_Init
-                0x0000000008002ae4       0x3c ./src/main.o
+                0x0000000008002464       0x3c ./src/main.o
  .text.MX_USART3_UART_Init
-                0x0000000008002b20       0x3c ./src/main.o
+                0x00000000080024a0       0x3c ./src/main.o
  .text.MX_I2C1_Init
-                0x0000000008002b5c       0x44 ./src/main.o
+                0x00000000080024dc       0x44 ./src/main.o
  .text.MX_UART4_Init
-                0x0000000008002ba0       0x3c ./src/main.o
+                0x0000000008002520       0x3c ./src/main.o
+ .text.MX_UART5_Init
+                0x000000000800255c       0x3c ./src/main.o
  .text.SystemClock_Config
-                0x0000000008002bdc       0x8c ./src/main.o
-                0x0000000008002bdc                SystemClock_Config
- .text.main     0x0000000008002c68      0x130 ./src/main.o
-                0x0000000008002c68                main
+                0x0000000008002598       0x8c ./src/main.o
+                0x0000000008002598                SystemClock_Config
+ .text.main     0x0000000008002624      0x138 ./src/main.o
+                0x0000000008002624                main
  .text.HAL_MspInit
-                0x0000000008002d98       0xa0 ./src/stm32l1xx_hal_msp.o
-                0x0000000008002d98                HAL_MspInit
+                0x000000000800275c       0xa0 ./src/stm32l1xx_hal_msp.o
+                0x000000000800275c                HAL_MspInit
  .text.HAL_I2C_MspInit
-                0x0000000008002e38       0x54 ./src/stm32l1xx_hal_msp.o
-                0x0000000008002e38                HAL_I2C_MspInit
+                0x00000000080027fc       0x54 ./src/stm32l1xx_hal_msp.o
+                0x00000000080027fc                HAL_I2C_MspInit
  .text.HAL_UART_MspInit
-                0x0000000008002e8c      0x140 ./src/stm32l1xx_hal_msp.o
-                0x0000000008002e8c                HAL_UART_MspInit
+                0x0000000008002850      0x158 ./src/stm32l1xx_hal_msp.o
+                0x0000000008002850                HAL_UART_MspInit
  .text.NMI_Handler
-                0x0000000008002fcc        0x4 ./src/stm32l1xx_it.o
-                0x0000000008002fcc                NMI_Handler
+                0x00000000080029a8        0x4 ./src/stm32l1xx_it.o
+                0x00000000080029a8                NMI_Handler
  .text.HardFault_Handler
-                0x0000000008002fd0        0x4 ./src/stm32l1xx_it.o
-                0x0000000008002fd0                HardFault_Handler
+                0x00000000080029ac        0x4 ./src/stm32l1xx_it.o
+                0x00000000080029ac                HardFault_Handler
  .text.MemManage_Handler
-                0x0000000008002fd4        0x4 ./src/stm32l1xx_it.o
-                0x0000000008002fd4                MemManage_Handler
+                0x00000000080029b0        0x4 ./src/stm32l1xx_it.o
+                0x00000000080029b0                MemManage_Handler
  .text.BusFault_Handler
-                0x0000000008002fd8        0x4 ./src/stm32l1xx_it.o
-                0x0000000008002fd8                BusFault_Handler
+                0x00000000080029b4        0x4 ./src/stm32l1xx_it.o
+                0x00000000080029b4                BusFault_Handler
  .text.UsageFault_Handler
-                0x0000000008002fdc        0x4 ./src/stm32l1xx_it.o
-                0x0000000008002fdc                UsageFault_Handler
+                0x00000000080029b8        0x4 ./src/stm32l1xx_it.o
+                0x00000000080029b8                UsageFault_Handler
  .text.SVC_Handler
-                0x0000000008002fe0        0x4 ./src/stm32l1xx_it.o
-                0x0000000008002fe0                SVC_Handler
+                0x00000000080029bc        0x4 ./src/stm32l1xx_it.o
+                0x00000000080029bc                SVC_Handler
  .text.DebugMon_Handler
-                0x0000000008002fe4        0x4 ./src/stm32l1xx_it.o
-                0x0000000008002fe4                DebugMon_Handler
+                0x00000000080029c0        0x4 ./src/stm32l1xx_it.o
+                0x00000000080029c0                DebugMon_Handler
  .text.PendSV_Handler
-                0x0000000008002fe8        0x4 ./src/stm32l1xx_it.o
-                0x0000000008002fe8                PendSV_Handler
+                0x00000000080029c4        0x4 ./src/stm32l1xx_it.o
+                0x00000000080029c4                PendSV_Handler
  .text.SysTick_Handler
-                0x0000000008002fec        0xc ./src/stm32l1xx_it.o
-                0x0000000008002fec                SysTick_Handler
- .text.USART1_IRQHandler
-                0x0000000008002ff8       0x10 ./src/stm32l1xx_it.o
-                0x0000000008002ff8                USART1_IRQHandler
+                0x00000000080029c8        0xc ./src/stm32l1xx_it.o
+                0x00000000080029c8                SysTick_Handler
  .text.USART3_IRQHandler
-                0x0000000008003008       0x10 ./src/stm32l1xx_it.o
-                0x0000000008003008                USART3_IRQHandler
+                0x00000000080029d4       0x10 ./src/stm32l1xx_it.o
+                0x00000000080029d4                USART3_IRQHandler
  .text.UART4_IRQHandler
-                0x0000000008003018       0x10 ./src/stm32l1xx_it.o
-                0x0000000008003018                UART4_IRQHandler
- .text.__errno  0x0000000008003028        0xc /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-errno.o)
-                0x0000000008003028                __errno
- .text.memcpy   0x0000000008003034       0x16 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
-                0x0000000008003034                memcpy
+                0x00000000080029e4       0x10 ./src/stm32l1xx_it.o
+                0x00000000080029e4                UART4_IRQHandler
+ .text.UART5_IRQHandler
+                0x00000000080029f4       0x10 ./src/stm32l1xx_it.o
+                0x00000000080029f4                UART5_IRQHandler
+ .text.__errno  0x0000000008002a04        0xc /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-errno.o)
+                0x0000000008002a04                __errno
  .text._vsnprintf_r
-                0x000000000800304a       0x56 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-vsnprintf.o)
-                0x000000000800304a                _vsnprintf_r
-                0x000000000800304a                _vsniprintf_r
+                0x0000000008002a10       0x56 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-vsnprintf.o)
+                0x0000000008002a10                _vsnprintf_r
+                0x0000000008002a10                _vsniprintf_r
+ *fill*         0x0000000008002a66        0x2 
  .text.vsnprintf
-                0x00000000080030a0       0x1c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-vsnprintf.o)
-                0x00000000080030a0                vsnprintf
-                0x00000000080030a0                vsniprintf
+                0x0000000008002a68       0x1c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-vsnprintf.o)
+                0x0000000008002a68                vsnprintf
+                0x0000000008002a68                vsniprintf
  .text.__ssputs_r
-                0x00000000080030bc       0xb2 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o)
-                0x00000000080030bc                __ssputs_r
- *fill*         0x000000000800316e        0x2 
+                0x0000000008002a84       0xb2 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o)
+                0x0000000008002a84                __ssputs_r
+ *fill*         0x0000000008002b36        0x2 
  .text._svfprintf_r
-                0x0000000008003170      0x1e8 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o)
-                0x0000000008003170                _svfprintf_r
-                0x0000000008003170                _svfiprintf_r
+                0x0000000008002b38      0x1e8 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o)
+                0x0000000008002b38                _svfprintf_r
+                0x0000000008002b38                _svfiprintf_r
  .text._printf_common
-                0x0000000008003358       0xec /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-vfprintf_i.o)
-                0x0000000008003358                _printf_common
+                0x0000000008002d20       0xec /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-vfprintf_i.o)
+                0x0000000008002d20                _printf_common
  .text._printf_i
-                0x0000000008003444      0x24c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-vfprintf_i.o)
-                0x0000000008003444                _printf_i
- .text.memchr   0x0000000008003690       0x1c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memchr-stub.o)
-                0x0000000008003690                memchr
- .text.memmove  0x00000000080036ac       0x36 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memmove.o)
-                0x00000000080036ac                memmove
- *fill*         0x00000000080036e2        0x2 
- .text._free_r  0x00000000080036e4       0x98 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-freer.o)
-                0x00000000080036e4                _free_r
+                0x0000000008002e0c      0x24c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-vfprintf_i.o)
+                0x0000000008002e0c                _printf_i
+ .text.memchr   0x0000000008003058       0x1c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memchr-stub.o)
+                0x0000000008003058                memchr
+ .text.memcpy   0x0000000008003074       0x16 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
+                0x0000000008003074                memcpy
+ .text.memmove  0x000000000800308a       0x36 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memmove.o)
+                0x000000000800308a                memmove
+ .text._free_r  0x00000000080030c0       0x98 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-freer.o)
+                0x00000000080030c0                _free_r
  .text._malloc_r
-                0x000000000800377c       0xbc /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-mallocr.o)
-                0x000000000800377c                _malloc_r
+                0x0000000008003158       0xbc /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-mallocr.o)
+                0x0000000008003158                _malloc_r
  .text._realloc_r
-                0x0000000008003838       0x4c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-reallocr.o)
-                0x0000000008003838                _realloc_r
- .text._sbrk_r  0x0000000008003884       0x20 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-sbrkr.o)
-                0x0000000008003884                _sbrk_r
+                0x0000000008003214       0x4c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-reallocr.o)
+                0x0000000008003214                _realloc_r
+ .text._sbrk_r  0x0000000008003260       0x20 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-sbrkr.o)
+                0x0000000008003260                _sbrk_r
  .text.__malloc_lock
-                0x00000000080038a4        0x2 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-mlock.o)
-                0x00000000080038a4                __malloc_lock
+                0x0000000008003280        0x2 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-mlock.o)
+                0x0000000008003280                __malloc_lock
  .text.__malloc_unlock
-                0x00000000080038a6        0x2 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-mlock.o)
-                0x00000000080038a6                __malloc_unlock
+                0x0000000008003282        0x2 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-mlock.o)
+                0x0000000008003282                __malloc_unlock
  .text._malloc_usable_size_r
-                0x00000000080038a8       0x14 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-msizer.o)
-                0x00000000080038a8                _malloc_usable_size_r
+                0x0000000008003284       0x14 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-msizer.o)
+                0x0000000008003284                _malloc_usable_size_r
  *(.rodata .rodata.* .constdata .constdata.*)
  .rodata.str1.4
-                0x00000000080038bc      0x146 ./system/src/cortexm/exception_handlers.o
- *fill*         0x0000000008003a02        0x2 
+                0x0000000008003298      0x146 ./system/src/cortexm/exception_handlers.o
+ *fill*         0x00000000080033de        0x2 
  .rodata.AHBPrescTable
-                0x0000000008003a04       0x10 ./system/src/cmsis/system_stm32l1xx.o
-                0x0000000008003a04                AHBPrescTable
+                0x00000000080033e0       0x10 ./system/src/cmsis/system_stm32l1xx.o
+                0x00000000080033e0                AHBPrescTable
  .rodata.APBPrescTable
-                0x0000000008003a14        0x8 ./system/src/cmsis/system_stm32l1xx.o
-                0x0000000008003a14                APBPrescTable
+                0x00000000080033f0        0x8 ./system/src/cmsis/system_stm32l1xx.o
+                0x00000000080033f0                APBPrescTable
  .rodata.PLLMulTable
-                0x0000000008003a1c        0x9 ./system/src/cmsis/system_stm32l1xx.o
-                0x0000000008003a1c                PLLMulTable
- *fill*         0x0000000008003a25        0x3 
+                0x00000000080033f8        0x9 ./system/src/cmsis/system_stm32l1xx.o
+                0x00000000080033f8                PLLMulTable
+ *fill*         0x0000000008003401        0x3 
  .rodata.str1.4
-                0x0000000008003a28        0x5 ./src/LPS22HB.o
- *fill*         0x0000000008003a2d        0x3 
- .rodata        0x0000000008003a30       0xe5 ./src/main.o
- *fill*         0x0000000008003b15        0x3 
+                0x0000000008003404        0x5 ./src/LPS22HB.o
+ *fill*         0x0000000008003409        0x3 
+ .rodata        0x000000000800340c       0xe5 ./src/main.o
+ *fill*         0x00000000080034f1        0x3 
  .rodata.str1.4
-                0x0000000008003b18       0xf0 ./src/main.o
+                0x00000000080034f4       0xf0 ./src/main.o
                                          0xef (size before relaxing)
  .rodata.str1.1
-                0x0000000008003c08       0x11 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o)
+                0x00000000080035e4       0x11 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o)
  .rodata.str1.1
-                0x0000000008003c19       0x22 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-vfprintf_i.o)
+                0x00000000080035f5       0x22 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-vfprintf_i.o)
  *(vtable)
  *(.eh_frame*)
  *(.glue_7)
- .glue_7        0x0000000008003c3b        0x0 linker stubs
+ .glue_7        0x0000000008003617        0x0 linker stubs
  *(.glue_7t)
- .glue_7t       0x0000000008003c3b        0x0 linker stubs
+ .glue_7t       0x0000000008003617        0x0 linker stubs
 
-.vfp11_veneer   0x0000000008003c3c        0x0
- .vfp11_veneer  0x0000000008003c3c        0x0 linker stubs
+.vfp11_veneer   0x0000000008003618        0x0
+ .vfp11_veneer  0x0000000008003618        0x0 linker stubs
 
-.v4_bx          0x0000000008003c3c        0x0
- .v4_bx         0x0000000008003c3c        0x0 linker stubs
+.v4_bx          0x0000000008003618        0x0
+ .v4_bx         0x0000000008003618        0x0 linker stubs
 
-.iplt           0x0000000008003c3c        0x0
- .iplt          0x0000000008003c3c        0x0 ./system/src/stm32l1xx/stm32l1xx_hal.o
+.iplt           0x0000000008003618        0x0
+ .iplt          0x0000000008003618        0x0 ./system/src/stm32l1xx/stm32l1xx_hal.o
 
-.rel.dyn        0x0000000008003c3c        0x0
- .rel.iplt      0x0000000008003c3c        0x0 ./system/src/stm32l1xx/stm32l1xx_hal.o
+.rel.dyn        0x0000000008003618        0x0
+ .rel.iplt      0x0000000008003618        0x0 ./system/src/stm32l1xx/stm32l1xx_hal.o
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x0000000008003c3c                . = ALIGN (0x4)
-                0x0000000008003c3c                __exidx_start = .
+                0x0000000008003618                . = ALIGN (0x4)
+                0x0000000008003618                __exidx_start = .
 
 .ARM.exidx
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-                0x0000000008003c3c                __exidx_end = .
-                0x0000000008003c3c                . = ALIGN (0x4)
-                0x0000000008003c3c                _etext = .
-                0x0000000008003c3c                __etext = .
+                0x0000000008003618                __exidx_end = .
+                0x0000000008003618                . = ALIGN (0x4)
+                0x0000000008003618                _etext = .
+                0x0000000008003618                __etext = .
 
-.data_CCMRAM    0x0000000010000000        0x0 load address 0x0000000008003c3c
+.data_CCMRAM    0x0000000010000000        0x0 load address 0x0000000008003618
  FILL mask 0xff
  *(.data.CCMRAM .data.CCMRAM.*)
                 0x0000000010000000                . = ALIGN (0x4)
-                0x0000000008003c3c                _sidata = LOADADDR (.data)
+                0x0000000008003618                _sidata = LOADADDR (.data)
 
-.data           0x0000000020000000       0x78 load address 0x0000000008003c3c
+.data           0x0000000020000000       0x78 load address 0x0000000008003618
  FILL mask 0xff
                 0x0000000020000000                _sdata = .
                 0x0000000020000000                __data_start__ = .
@@ -4252,13 +4216,13 @@ END GROUP
                 0x0000000020000078                _edata = .
                 0x0000000020000078                __data_end__ = .
 
-.igot.plt       0x0000000020000078        0x0 load address 0x0000000008003cb4
+.igot.plt       0x0000000020000078        0x0 load address 0x0000000008003690
  .igot.plt      0x0000000020000078        0x0 ./system/src/stm32l1xx/stm32l1xx_hal.o
 
 .bss_CCMRAM     0x0000000010000000        0x0
  *(.bss.CCMRAM .bss.CCMRAM.*)
 
-.bss            0x0000000020000078      0x20c
+.bss            0x0000000020000078      0x208
                 0x0000000020000078                __bss_start__ = .
                 0x0000000020000078                _sbss = .
  *(.bss_begin .bss_begin.*)
@@ -4288,39 +4252,34 @@ END GROUP
                 0x0000000020000120                loraTries
  COMMON         0x0000000020000124        0x4 ./system/src/newlib/_syscalls.o
                 0x0000000020000124                errno
- COMMON         0x0000000020000128        0x3 ./src/LPS22HB.o
-                0x0000000020000128                MSBpressure1
-                0x0000000020000129                LSBpressure1
-                0x000000002000012a                MIDpressure1
- *fill*         0x000000002000012b        0x1 
- COMMON         0x000000002000012c      0x154 ./src/main.o
-                0x000000002000012c                huart3
-                0x000000002000016c                hi2c1
-                0x00000000200001c0                huart1
-                0x0000000020000200                huart4
-                0x0000000020000240                huart2
+ COMMON         0x0000000020000128      0x154 ./src/main.o
+                0x0000000020000128                huart3
+                0x0000000020000168                hi2c1
+                0x00000000200001bc                huart5
+                0x00000000200001fc                huart4
+                0x000000002000023c                huart2
  *(.bss_end .bss_end.*)
- .bss_end       0x0000000020000280        0x4 ./system/src/newlib/_startup.o
-                0x0000000020000284                . = ALIGN (0x4)
-                0x0000000020000284                __bss_end__ = .
-                0x0000000020000284                _ebss = .
+ .bss_end       0x000000002000027c        0x4 ./system/src/newlib/_startup.o
+                0x0000000020000280                . = ALIGN (0x4)
+                0x0000000020000280                __bss_end__ = .
+                0x0000000020000280                _ebss = .
 
 .noinit_CCMRAM
  *(.noinit.CCMRAM .noinit.CCMRAM.*)
 
-.noinit         0x0000000020000284        0x0
-                0x0000000020000284                _noinit = .
+.noinit         0x0000000020000280        0x0
+                0x0000000020000280                _noinit = .
  *(.noinit .noinit.*)
-                0x0000000020000284                . = ALIGN (0x4)
-                0x0000000020000284                _end_noinit = .
+                0x0000000020000280                . = ALIGN (0x4)
+                0x0000000020000280                _end_noinit = .
                 [!provide]                        PROVIDE (end, _end_noinit)
                 [!provide]                        PROVIDE (_end, _end_noinit)
                 [!provide]                        PROVIDE (__end, _end_noinit)
                 [!provide]                        PROVIDE (__end__, _end_noinit)
 
-._check_stack   0x0000000020000284      0x100
-                0x0000000020000384                . = (. + _Minimum_Stack_Size)
- *fill*         0x0000000020000284      0x100 
+._check_stack   0x0000000020000280      0x100
+                0x0000000020000380                . = (. + _Minimum_Stack_Size)
+ *fill*         0x0000000020000280      0x100 
 
 .b1text
  *(.b1text)
@@ -4435,15 +4394,15 @@ END GROUP
  .ARM.attributes
                 0x0000000000000417       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-impure.o)
  .ARM.attributes
-                0x0000000000000444       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
+                0x0000000000000444       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-vsnprintf.o)
  .ARM.attributes
-                0x0000000000000471       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-vsnprintf.o)
+                0x0000000000000471       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o)
  .ARM.attributes
-                0x000000000000049e       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o)
+                0x000000000000049e       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-vfprintf_i.o)
  .ARM.attributes
-                0x00000000000004cb       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-vfprintf_i.o)
+                0x00000000000004cb       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memchr-stub.o)
  .ARM.attributes
-                0x00000000000004f8       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memchr-stub.o)
+                0x00000000000004f8       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
  .ARM.attributes
                 0x0000000000000525       0x2d /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memmove.o)
  .ARM.attributes
@@ -4517,7 +4476,7 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x0000000000000000     0xca89
+.debug_info     0x0000000000000000     0xcac0
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x0000000000000000      0x6c6 ./system/src/stm32l1xx/stm32l1xx_hal.o
  .debug_info    0x00000000000006c6      0xefd ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
@@ -4536,11 +4495,11 @@ END GROUP
  .debug_info    0x00000000000089d7       0x87 ./system/src/cmsis/startup_stm32l152xe.o
  .debug_info    0x0000000000008a5e      0x417 ./system/src/cmsis/system_stm32l1xx.o
  .debug_info    0x0000000000008e75      0xaa0 ./src/LPS22HB.o
- .debug_info    0x0000000000009915     0x1aca ./src/main.o
- .debug_info    0x000000000000b3df      0xff6 ./src/stm32l1xx_hal_msp.o
- .debug_info    0x000000000000c3d5      0x6b4 ./src/stm32l1xx_it.o
+ .debug_info    0x0000000000009915     0x1ac8 ./src/main.o
+ .debug_info    0x000000000000b3dd     0x102f ./src/stm32l1xx_hal_msp.o
+ .debug_info    0x000000000000c40c      0x6b4 ./src/stm32l1xx_it.o
 
-.debug_abbrev   0x0000000000000000     0x1f9f
+.debug_abbrev   0x0000000000000000     0x1f9d
  *(.debug_abbrev)
  .debug_abbrev  0x0000000000000000      0x1d2 ./system/src/stm32l1xx/stm32l1xx_hal.o
  .debug_abbrev  0x00000000000001d2      0x304 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
@@ -4559,11 +4518,11 @@ END GROUP
  .debug_abbrev  0x00000000000016b0       0x12 ./system/src/cmsis/startup_stm32l152xe.o
  .debug_abbrev  0x00000000000016c2      0x104 ./system/src/cmsis/system_stm32l1xx.o
  .debug_abbrev  0x00000000000017c6      0x1b0 ./src/LPS22HB.o
- .debug_abbrev  0x0000000000001976      0x2ef ./src/main.o
- .debug_abbrev  0x0000000000001c65      0x1b1 ./src/stm32l1xx_hal_msp.o
- .debug_abbrev  0x0000000000001e16      0x189 ./src/stm32l1xx_it.o
+ .debug_abbrev  0x0000000000001976      0x2ed ./src/main.o
+ .debug_abbrev  0x0000000000001c63      0x1b1 ./src/stm32l1xx_hal_msp.o
+ .debug_abbrev  0x0000000000001e14      0x189 ./src/stm32l1xx_it.o
 
-.debug_line     0x0000000000000000     0x7f4d
+.debug_line     0x0000000000000000     0x7f50
  *(.debug_line)
  .debug_line    0x0000000000000000      0x784 ./system/src/stm32l1xx/stm32l1xx_hal.o
  .debug_line    0x0000000000000784      0x830 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
@@ -4582,11 +4541,11 @@ END GROUP
  .debug_line    0x00000000000060da       0x86 ./system/src/cmsis/startup_stm32l152xe.o
  .debug_line    0x0000000000006160      0x19e ./system/src/cmsis/system_stm32l1xx.o
  .debug_line    0x00000000000062fe      0x685 ./src/LPS22HB.o
- .debug_line    0x0000000000006983      0x818 ./src/main.o
- .debug_line    0x000000000000719b      0x6c0 ./src/stm32l1xx_hal_msp.o
- .debug_line    0x000000000000785b      0x6f2 ./src/stm32l1xx_it.o
+ .debug_line    0x0000000000006983      0x814 ./src/main.o
+ .debug_line    0x0000000000007197      0x6c7 ./src/stm32l1xx_hal_msp.o
+ .debug_line    0x000000000000785e      0x6f2 ./src/stm32l1xx_it.o
 
-.debug_frame    0x0000000000000000     0x1ac8
+.debug_frame    0x0000000000000000     0x1ad0
  *(.debug_frame)
  .debug_frame   0x0000000000000000      0x168 ./system/src/stm32l1xx/stm32l1xx_hal.o
  .debug_frame   0x0000000000000168      0x154 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
@@ -4605,64 +4564,64 @@ END GROUP
  .debug_frame   0x00000000000013d4       0x30 ./system/src/cmsis/system_stm32l1xx.o
  .debug_frame   0x0000000000001404       0x90 ./src/LPS22HB.o
  .debug_frame   0x0000000000001494      0x1c0 ./src/main.o
- .debug_frame   0x0000000000001654       0x98 ./src/stm32l1xx_hal_msp.o
- .debug_frame   0x00000000000016ec       0xf0 ./src/stm32l1xx_it.o
- .debug_frame   0x00000000000017dc       0x20 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-errno.o)
- .debug_frame   0x00000000000017fc       0x28 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
- .debug_frame   0x0000000000001824       0x48 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-vsnprintf.o)
- .debug_frame   0x000000000000186c       0x90 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o)
- .debug_frame   0x00000000000018fc       0x60 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-vfprintf_i.o)
- .debug_frame   0x000000000000195c       0x28 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memchr-stub.o)
- .debug_frame   0x0000000000001984       0x28 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memmove.o)
- .debug_frame   0x00000000000019ac       0x38 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-freer.o)
- .debug_frame   0x00000000000019e4       0x2c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-mallocr.o)
- .debug_frame   0x0000000000001a10       0x3c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-reallocr.o)
- .debug_frame   0x0000000000001a4c       0x2c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-sbrkr.o)
- .debug_frame   0x0000000000001a78       0x30 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-mlock.o)
- .debug_frame   0x0000000000001aa8       0x20 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-msizer.o)
+ .debug_frame   0x0000000000001654       0xa0 ./src/stm32l1xx_hal_msp.o
+ .debug_frame   0x00000000000016f4       0xf0 ./src/stm32l1xx_it.o
+ .debug_frame   0x00000000000017e4       0x20 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-errno.o)
+ .debug_frame   0x0000000000001804       0x48 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-vsnprintf.o)
+ .debug_frame   0x000000000000184c       0x90 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-svfprintf.o)
+ .debug_frame   0x00000000000018dc       0x60 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-vfprintf_i.o)
+ .debug_frame   0x000000000000193c       0x28 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memchr-stub.o)
+ .debug_frame   0x0000000000001964       0x28 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memcpy-stub.o)
+ .debug_frame   0x000000000000198c       0x28 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-memmove.o)
+ .debug_frame   0x00000000000019b4       0x38 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-freer.o)
+ .debug_frame   0x00000000000019ec       0x2c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-mallocr.o)
+ .debug_frame   0x0000000000001a18       0x3c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-reallocr.o)
+ .debug_frame   0x0000000000001a54       0x2c /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-sbrkr.o)
+ .debug_frame   0x0000000000001a80       0x30 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-mlock.o)
+ .debug_frame   0x0000000000001ab0       0x20 /Users/manupepermans/STM32Toolchain/gcc-arm/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7-m/libg_nano.a(lib_a-nano-msizer.o)
 
-.debug_str      0x0000000000000000    0x8966b
+.debug_str      0x0000000000000000    0x89675
  *(.debug_str)
- .debug_str     0x0000000000000000    0x84cf2 ./system/src/stm32l1xx/stm32l1xx_hal.o
-                                      0x85113 (size before relaxing)
- .debug_str     0x0000000000084cf2      0x3de ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
-                                      0x85260 (size before relaxing)
- .debug_str     0x00000000000850d0      0x288 ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
-                                      0x84cd1 (size before relaxing)
- .debug_str     0x0000000000085358      0xe75 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
-                                      0x85919 (size before relaxing)
- .debug_str     0x00000000000861cd      0x556 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
-                                      0x8509e (size before relaxing)
- .debug_str     0x0000000000086723      0x50c ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
-                                      0x85184 (size before relaxing)
- .debug_str     0x0000000000086c2f     0x10b6 ./system/src/newlib/_exit.o
+ .debug_str     0x0000000000000000    0x84cff ./system/src/stm32l1xx/stm32l1xx_hal.o
+                                      0x85120 (size before relaxing)
+ .debug_str     0x0000000000084cff      0x3de ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
+                                      0x8526d (size before relaxing)
+ .debug_str     0x00000000000850dd      0x288 ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
+                                      0x84cde (size before relaxing)
+ .debug_str     0x0000000000085365      0xe75 ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
+                                      0x85926 (size before relaxing)
+ .debug_str     0x00000000000861da      0x556 ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
+                                      0x850ab (size before relaxing)
+ .debug_str     0x0000000000086730      0x50c ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+                                      0x85191 (size before relaxing)
+ .debug_str     0x0000000000086c3c     0x10b6 ./system/src/newlib/_exit.o
                                        0x6e4b (size before relaxing)
- .debug_str     0x0000000000087ce5      0x4de ./system/src/newlib/_sbrk.o
+ .debug_str     0x0000000000087cf2      0x4de ./system/src/newlib/_sbrk.o
                                        0x6236 (size before relaxing)
- .debug_str     0x00000000000881c3      0x260 ./system/src/newlib/_startup.o
+ .debug_str     0x00000000000881d0      0x260 ./system/src/newlib/_startup.o
                                        0x5deb (size before relaxing)
- .debug_str     0x0000000000088423      0xaae ./system/src/newlib/_syscalls.o
+ .debug_str     0x0000000000088430      0xaae ./system/src/newlib/_syscalls.o
                                        0x7096 (size before relaxing)
- .debug_str     0x0000000000088ed1      0x16a ./system/src/diag/Trace.o
+ .debug_str     0x0000000000088ede      0x16a ./system/src/diag/Trace.o
                                        0x763b (size before relaxing)
- .debug_str     0x000000000008903b       0x4b ./system/src/diag/trace_impl.o
+ .debug_str     0x0000000000089048       0x4b ./system/src/diag/trace_impl.o
                                       0x4f494 (size before relaxing)
- .debug_str     0x0000000000089086       0x5e ./system/src/cortexm/_initialize_hardware.o
+ .debug_str     0x0000000000089093       0x5e ./system/src/cortexm/_initialize_hardware.o
                                       0x4b976 (size before relaxing)
- .debug_str     0x00000000000890e4      0x1e5 ./system/src/cortexm/exception_handlers.o
+ .debug_str     0x00000000000890f1      0x1e5 ./system/src/cortexm/exception_handlers.o
                                       0x502f5 (size before relaxing)
- .debug_str     0x00000000000892c9       0x9c ./system/src/cmsis/system_stm32l1xx.o
+ .debug_str     0x00000000000892d6       0x9c ./system/src/cmsis/system_stm32l1xx.o
                                       0x4ba35 (size before relaxing)
- .debug_str     0x0000000000089365       0xe1 ./src/LPS22HB.o
-                                      0x85079 (size before relaxing)
- .debug_str     0x0000000000089446      0x1bf ./src/main.o
-                                      0x857f9 (size before relaxing)
- .debug_str     0x0000000000089605       0x1b ./src/stm32l1xx_hal_msp.o
-                                      0x85499 (size before relaxing)
- .debug_str     0x0000000000089620       0x4b ./src/stm32l1xx_it.o
-                                      0x84e41 (size before relaxing)
+ .debug_str     0x0000000000089372       0xe1 ./src/LPS22HB.o
+                                      0x85086 (size before relaxing)
+ .debug_str     0x0000000000089453      0x1bd ./src/main.o
+                                      0x857f6 (size before relaxing)
+ .debug_str     0x0000000000089610       0x1b ./src/stm32l1xx_hal_msp.o
+                                      0x854a6 (size before relaxing)
+ .debug_str     0x000000000008962b       0x4a ./src/stm32l1xx_it.o
+                                      0x84e4d (size before relaxing)
 
-.debug_loc      0x0000000000000000     0x5873
+.debug_loc      0x0000000000000000     0x5878
  *(.debug_loc)
  .debug_loc     0x0000000000000000       0x6a ./system/src/stm32l1xx/stm32l1xx_hal.o
  .debug_loc     0x000000000000006a      0x548 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
@@ -4678,8 +4637,8 @@ END GROUP
  .debug_loc     0x000000000000524f      0x184 ./system/src/cortexm/exception_handlers.o
  .debug_loc     0x00000000000053d3      0x16b ./system/src/cmsis/system_stm32l1xx.o
  .debug_loc     0x000000000000553e       0x86 ./src/LPS22HB.o
- .debug_loc     0x00000000000055c4      0x18a ./src/main.o
- .debug_loc     0x000000000000574e      0x125 ./src/stm32l1xx_hal_msp.o
+ .debug_loc     0x00000000000055c4      0x18f ./src/main.o
+ .debug_loc     0x0000000000005753      0x125 ./src/stm32l1xx_hal_msp.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -4719,7 +4678,7 @@ OUTPUT(final.elf elf32-littlearm)
  .debug_ranges  0x00000000000007f0       0x30 ./src/stm32l1xx_hal_msp.o
  .debug_ranges  0x0000000000000820       0x68 ./src/stm32l1xx_it.o
 
-.debug_macro    0x0000000000000000    0x18324
+.debug_macro    0x0000000000000000    0x1832a
  .debug_macro   0x0000000000000000      0x364 ./system/src/stm32l1xx/stm32l1xx_hal.o
  .debug_macro   0x0000000000000364      0x874 ./system/src/stm32l1xx/stm32l1xx_hal.o
  .debug_macro   0x0000000000000bd8       0xee ./system/src/stm32l1xx/stm32l1xx_hal.o
@@ -4753,71 +4712,71 @@ OUTPUT(final.elf elf32-littlearm)
  .debug_macro   0x0000000000001ab3       0xd7 ./system/src/stm32l1xx/stm32l1xx_hal.o
  .debug_macro   0x0000000000001b8a       0x16 ./system/src/stm32l1xx/stm32l1xx_hal.o
  .debug_macro   0x0000000000001ba0      0x18b ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000001d2b       0x22 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000001d4d       0x88 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000001dd5       0x2e ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000001e03       0x22 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000001e25      0x34e ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000002173       0x34 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x00000000000021a7       0x34 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x00000000000021db      0xcb4 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000002e8f     0xbeb6 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x000000000000ed45       0x43 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x000000000000ed88     0x342b ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x00000000000121b3       0x56 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000012209      0xe3e ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000013047      0x363 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x00000000000133aa      0x141 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x00000000000134eb       0xc6 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x00000000000135b1      0x25d ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x000000000001380e      0x23a ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000013a48      0x113 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000013b5b      0x56c ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x00000000000140c7      0x225 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x00000000000142ec      0x1ed ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x00000000000144d9       0x22 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x00000000000144fb      0x287 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000014782      0x470 ./system/src/stm32l1xx/stm32l1xx_hal.o
- .debug_macro   0x0000000000014bf2      0x340 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
- .debug_macro   0x0000000000014f32      0x379 ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
- .debug_macro   0x00000000000152ab      0x38e ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
- .debug_macro   0x0000000000015639      0x37c ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
- .debug_macro   0x00000000000159b5      0x341 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
- .debug_macro   0x0000000000015cf6      0x19c ./system/src/newlib/_exit.o
- .debug_macro   0x0000000000015e92      0x10e ./system/src/newlib/_exit.o
- .debug_macro   0x0000000000015fa0       0x8d ./system/src/newlib/_exit.o
- .debug_macro   0x000000000001602d      0x151 ./system/src/newlib/_sbrk.o
- .debug_macro   0x000000000001617e       0x10 ./system/src/newlib/_sbrk.o
- .debug_macro   0x000000000001618e      0x23b ./system/src/newlib/_sbrk.o
- .debug_macro   0x00000000000163c9      0x15b ./system/src/newlib/_startup.o
- .debug_macro   0x0000000000016524      0x1ff ./system/src/newlib/_syscalls.o
- .debug_macro   0x0000000000016723       0x1c ./system/src/newlib/_syscalls.o
- .debug_macro   0x000000000001673f       0x10 ./system/src/newlib/_syscalls.o
- .debug_macro   0x000000000001674f       0x10 ./system/src/newlib/_syscalls.o
- .debug_macro   0x000000000001675f       0x10 ./system/src/newlib/_syscalls.o
- .debug_macro   0x000000000001676f       0x35 ./system/src/newlib/_syscalls.o
- .debug_macro   0x00000000000167a4      0x122 ./system/src/newlib/_syscalls.o
- .debug_macro   0x00000000000168c6       0x88 ./system/src/newlib/_syscalls.o
- .debug_macro   0x000000000001694e       0x2b ./system/src/newlib/_syscalls.o
- .debug_macro   0x0000000000016979      0x159 ./system/src/newlib/_syscalls.o
- .debug_macro   0x0000000000016ad2       0x16 ./system/src/newlib/_syscalls.o
- .debug_macro   0x0000000000016ae8      0x1d9 ./system/src/diag/Trace.o
- .debug_macro   0x0000000000016cc1       0x16 ./system/src/diag/Trace.o
- .debug_macro   0x0000000000016cd7       0x97 ./system/src/diag/Trace.o
- .debug_macro   0x0000000000016d6e       0xfd ./system/src/diag/Trace.o
- .debug_macro   0x0000000000016e6b       0x4c ./system/src/diag/Trace.o
- .debug_macro   0x0000000000016eb7      0x1d0 ./system/src/diag/trace_impl.o
- .debug_macro   0x0000000000017087       0x10 ./system/src/diag/trace_impl.o
- .debug_macro   0x0000000000017097       0xcf ./system/src/diag/trace_impl.o
- .debug_macro   0x0000000000017166       0xbe ./system/src/diag/trace_impl.o
- .debug_macro   0x0000000000017224       0x8a ./system/src/cortexm/_initialize_hardware.o
- .debug_macro   0x00000000000172ae      0x221 ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x00000000000174cf       0x3a ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x0000000000017509       0x22 ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x000000000001752b       0x10 ./system/src/cortexm/exception_handlers.o
- .debug_macro   0x000000000001753b       0x92 ./system/src/cmsis/system_stm32l1xx.o
- .debug_macro   0x00000000000175cd      0x351 ./src/LPS22HB.o
- .debug_macro   0x000000000001791e       0x46 ./src/LPS22HB.o
- .debug_macro   0x0000000000017964      0x336 ./src/main.o
- .debug_macro   0x0000000000017c9a      0x340 ./src/stm32l1xx_hal_msp.o
- .debug_macro   0x0000000000017fda      0x34a ./src/stm32l1xx_it.o
+ .debug_macro   0x0000000000001d2b       0x28 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000001d53       0x88 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000001ddb       0x2e ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000001e09       0x22 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000001e2b      0x34e ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000002179       0x34 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x00000000000021ad       0x34 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x00000000000021e1      0xcb4 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000002e95     0xbeb6 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x000000000000ed4b       0x43 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x000000000000ed8e     0x342b ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x00000000000121b9       0x56 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x000000000001220f      0xe3e ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x000000000001304d      0x363 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x00000000000133b0      0x141 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x00000000000134f1       0xc6 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x00000000000135b7      0x25d ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000013814      0x23a ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000013a4e      0x113 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000013b61      0x56c ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x00000000000140cd      0x225 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x00000000000142f2      0x1ed ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x00000000000144df       0x22 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000014501      0x287 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000014788      0x470 ./system/src/stm32l1xx/stm32l1xx_hal.o
+ .debug_macro   0x0000000000014bf8      0x340 ./system/src/stm32l1xx/stm32l1xx_hal_cortex.o
+ .debug_macro   0x0000000000014f38      0x379 ./system/src/stm32l1xx/stm32l1xx_hal_gpio.o
+ .debug_macro   0x00000000000152b1      0x38e ./system/src/stm32l1xx/stm32l1xx_hal_i2c.o
+ .debug_macro   0x000000000001563f      0x37c ./system/src/stm32l1xx/stm32l1xx_hal_rcc.o
+ .debug_macro   0x00000000000159bb      0x341 ./system/src/stm32l1xx/stm32l1xx_hal_uart.o
+ .debug_macro   0x0000000000015cfc      0x19c ./system/src/newlib/_exit.o
+ .debug_macro   0x0000000000015e98      0x10e ./system/src/newlib/_exit.o
+ .debug_macro   0x0000000000015fa6       0x8d ./system/src/newlib/_exit.o
+ .debug_macro   0x0000000000016033      0x151 ./system/src/newlib/_sbrk.o
+ .debug_macro   0x0000000000016184       0x10 ./system/src/newlib/_sbrk.o
+ .debug_macro   0x0000000000016194      0x23b ./system/src/newlib/_sbrk.o
+ .debug_macro   0x00000000000163cf      0x15b ./system/src/newlib/_startup.o
+ .debug_macro   0x000000000001652a      0x1ff ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000000000016729       0x1c ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000000000016745       0x10 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000000000016755       0x10 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000000000016765       0x10 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000000000016775       0x35 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00000000000167aa      0x122 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x00000000000168cc       0x88 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000000000016954       0x2b ./system/src/newlib/_syscalls.o
+ .debug_macro   0x000000000001697f      0x159 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000000000016ad8       0x16 ./system/src/newlib/_syscalls.o
+ .debug_macro   0x0000000000016aee      0x1d9 ./system/src/diag/Trace.o
+ .debug_macro   0x0000000000016cc7       0x16 ./system/src/diag/Trace.o
+ .debug_macro   0x0000000000016cdd       0x97 ./system/src/diag/Trace.o
+ .debug_macro   0x0000000000016d74       0xfd ./system/src/diag/Trace.o
+ .debug_macro   0x0000000000016e71       0x4c ./system/src/diag/Trace.o
+ .debug_macro   0x0000000000016ebd      0x1d0 ./system/src/diag/trace_impl.o
+ .debug_macro   0x000000000001708d       0x10 ./system/src/diag/trace_impl.o
+ .debug_macro   0x000000000001709d       0xcf ./system/src/diag/trace_impl.o
+ .debug_macro   0x000000000001716c       0xbe ./system/src/diag/trace_impl.o
+ .debug_macro   0x000000000001722a       0x8a ./system/src/cortexm/_initialize_hardware.o
+ .debug_macro   0x00000000000172b4      0x221 ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x00000000000174d5       0x3a ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x000000000001750f       0x22 ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x0000000000017531       0x10 ./system/src/cortexm/exception_handlers.o
+ .debug_macro   0x0000000000017541       0x92 ./system/src/cmsis/system_stm32l1xx.o
+ .debug_macro   0x00000000000175d3      0x351 ./src/LPS22HB.o
+ .debug_macro   0x0000000000017924       0x46 ./src/LPS22HB.o
+ .debug_macro   0x000000000001796a      0x336 ./src/main.o
+ .debug_macro   0x0000000000017ca0      0x340 ./src/stm32l1xx_hal_msp.o
+ .debug_macro   0x0000000000017fe0      0x34a ./src/stm32l1xx_it.o
