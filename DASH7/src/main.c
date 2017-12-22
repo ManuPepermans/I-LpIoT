@@ -64,31 +64,69 @@ static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 void DASH7Message(uint8_t[], int);
 int getHex(int);
+static void MX_USART1_UART_Init(void);
+void DASH7Message(uint8_t[], int);
+int getHex(int);
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+//DASH7 receive variables
+char Rx_indx, Rx_data[2], Rx_Buffer[100], BufferFlag;
 
-int main(void)
-{
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+int main(void) {
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
 
-  /* Configure the system clock */
-  SystemClock_Config();
+	/* Configure the system clock */
+	SystemClock_Config();
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART1_UART_Init();
+	/* Initialize all configured peripherals */
+	MX_GPIO_Init();
+	MX_USART1_UART_Init();
 
-  /* Infinite loop */
-  while (1)
-  {
+	char buf[BUFSIZE];
 
-	  /* Do something, maybe get sensordata. In this example the is an example data string send over uart*/
-	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-	  uint8_t uartTest [] = {0x4d, 0x4d, 0x45};
-	  int arrayLength = LENGTH_ARRAY(uartTest);
-	  DASH7Message(uartTest, 3);
-	  HAL_Delay(2000);
-  }
+	/* Infinite loop */
+	while (1) {
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+		uint8_t uartTest[] = { 0x4d, 0x01, 0x04 };
+		LENGTH_ARRAY(uartTest);
+		DASH7Message(uartTest, 3);
+
+		if (BufferFlag == 1) {
+			// Determine our data (1AE is the data with 1 = group number, A = alert and E = end):
+			// Àb×8&Pë A0A9:0 (1AEÀ modemf431551
+			// Overhead: c3 80 62 c3 97 38 26 50 c3 ab 20 41 30 41 39 3a 30 20 28
+			if (Rx_Buffer[19] == '1' & Rx_Buffer[20] == 'A') {
+				//Alert
+				HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+				HAL_Delay(100);
+				HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+			}
+		}
+
 }
+}
+
+//Rx receive interrupt callback routine
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	uint8_t i;
+	if (huart->Instance == USART1) {
+		//clear Rx_Buffer before receiving new data
+		if (Rx_indx == 0) {
+			for (i = 0; i < 100; i++)
+				Rx_Buffer[i] = 0;
+		}
+
+		if (Rx_data[0] != 'E') {
+			Rx_Buffer[Rx_indx++] = Rx_data[0];
+		} else {
+			Rx_indx = 0;
+			BufferFlag = 1;
+		}
+
+		HAL_UART_Receive_IT(&huart1, Rx_data, 1);
+	}
+}
+
 
 /** System Clock Configuration
 */
