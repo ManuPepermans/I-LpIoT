@@ -71,7 +71,7 @@ void LPS22HB_setI2CInterface(I2C_HandleTypeDef *hi2c);
 void LPS22HB_setUARTInterface(UART_HandleTypeDef *huart);
 HAL_I2C_StateTypeDef LPS22HB_readRegister(uint8_t reg, uint8_t pData[]);
 HAL_I2C_StateTypeDef LPS22HB_writeRegister(uint8_t reg, uint8_t pData[]);
-void LPS22HB_configure(I2C_HandleTypeDef *hi2c);
+void LPS22HB_configure();
 void LPS22HB_reset();
 void LPS22HB_powerdown();
 void LPS22HB_wakeUp();
