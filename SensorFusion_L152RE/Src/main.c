@@ -41,8 +41,8 @@
 #include "stm32l1xx_hal.h"
 
 /* USER CODE BEGIN Includes */
-//#include "../Inc/LPS22HB_driver.h"
 #include "LPS22HB_driver.cpp"
+#include "LSM303AGR_driver.cpp"
 #include <string.h>
 #include <stdio.h>
 #include <strings.h>
@@ -111,13 +111,102 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 	LPS22HB_setI2CInterface(&hi2c1);
-	LPS22HB_setUARTInterface(&huart2);
-	LPS22HB_configure(&hi2c1);
+	LPS22HB_init();
+	LSM303AGR_setI2CInterface(&hi2c1);
+	LSM303AGR_ACC_init();
+	LSM303AGR_MAG_init();
+
+	int temperature;
+	int pressure;
+
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
+
 	while (1) {
+
+		LPS22HB_readPressure(&pressure);
+		HAL_Delay(100);
+		LPS22HB_readTemperature(&temperature);
+		printf("The pressure: %d\r\n", pressure);
+		printf("The temperature: %d\r\n", temperature);
+		HAL_Delay(1000);
+
+		get_x_axes(axes_a);
+		printf("LSM303AGR [acc/mg]:  %6ld, %6ld, %6ld\r\n", axes_a[0],
+				axes_a[1], axes_a[2]);
+
+		get_m_axes(axes_m);
+		printf("LSM303AGR [mag/mgauss]:  %6ld, %6ld, %6ld\r\n", axes_m[0],
+				axes_m[1], axes_m[2]);
+
+		HAL_Delay(1000);
+
+		printf("\r\n");
+		roll_rad = atan2((float) axes_a[Y], axes_a[Z]);
+		roll = roll_rad * 57.296;
+
+		temp[0] = (float) axes_a[Y] * sin(roll_rad);
+		temp[1] = cos(roll_rad) * (float) axes_a[Z] + temp[0];
+		pitch_rad = -atan2((float) axes_a[X],
+				sqrt(pow((float) axes_a[Y], 2) + pow((float) axes_a[Z], 2))); //temp[1]);
+		pitch = pitch_rad * 57.296;
+		printf("Angle: roll: %6lf   pitch: %6lf \r\n ", roll, pitch);
+
+		//Determining where the head of the compass is pointed at
+		temp[0] = axes_m[Z] * sin(roll_rad) - axes_m[Y] * cos(roll_rad);
+		temp[1] = axes_m[Y] * sin(roll_rad) + axes_m[Z] * cos(roll_rad);
+		temp[2] = axes_m[X] * cos(pitch_rad) + temp[1] * sin(pitch_rad);
+		yaw_rad = atan2((float) temp[0], temp[2]);
+		degree = yaw_rad * 57.296; //180/PI
+		degree_int = (uint16_t) degree;
+		printf("float: %f, int16_t: %d\r\n", degree, degree_int);
+
+		buff[0] = "M";
+		buff[1] = degree_int & 0xFF;
+		buff[2] = degree_int >> 8;
+
+		printf("Chars: %c  %c  %c\r\n", buff[0], buff[1], buff[2]);
+
+		//Transforming degrees into a wind direction
+		if (degree > 360) {
+			degree = degree - 360;
+		}
+		if (degree < 0) {
+			degree = degree + 360;
+		}
+		printf("degree: %lf\r\n", degree);
+		if (degree > 22.5 && degree < 67.5) {
+			printf("Direction: North-East\r\n");
+		} else if (degree > 67.5 && degree < 112.5) {
+			printf("Direction: East\r\n");
+		} else if (degree > 112.5 && degree < 157.5) {
+			printf("Direction: South-East\r\n");
+		} else if (degree > 157.5 && degree < 202.5) {
+			printf("Direction: South\r\n");
+		} else if (degree > 202.5 && degree < 247.5) {
+			printf("Direction: South-West\r\n");
+		} else if (degree > 247.5 && degree < 292.5) {
+			printf("Direction: West\r\n");
+		} else if (degree > 292.5 && degree < 337.25) {
+			printf("Direction: North-West\r\n");
+		} else if (degree > 337.25 || degree < 22.5) {
+			printf("Direction: North\r\n");
+		}
+
+		HAL_Delay(2000);
+
+		//Convert data to be send over DASH7
+		buff[0] = "M";
+		buff[1] = degree_int & 0xFF;
+		buff[2] = degree_int >> 8;
+
+
+
+
+
+
 
 	}
 	/* USER CODE END 3 */
