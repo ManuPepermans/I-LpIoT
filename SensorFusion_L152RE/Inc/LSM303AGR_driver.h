@@ -21,7 +21,6 @@
 #define LSM303AGR_ACC_STATUS_REG_AUX_A 	0x07
 #define LSM303AGR_ACC_OUT_TEMP_L   		0x0C
 #define LSM303AGR_ACC_OUT_TEMP_H   		0x0D
-#define LSM303AGR_ACC_INT_COUNTER_REG   0x0E
 #define LSM303AGR_ACC_WHO_AM_I_REG      0x0F
 #define LSM303AGR_ACC_TEMP_CFG_REG      0x1F
 #define LSM303AGR_ACC_CTRL_REG1     	0x20
@@ -30,16 +29,14 @@
 #define LSM303AGR_ACC_CTRL_REG4    		0x23
 #define LSM303AGR_ACC_CTRL_REG5     	0x24
 #define LSM303AGR_ACC_CTRL_REG6     	0x25
-#define LSM303AGR_ACC_REFERENCE     	0x26
 #define LSM303AGR_ACC_STATUS_REG   		0x27
 #define LSM303AGR_ACC_OUT_X_L   		0x28
+#define LSM303AGR_ACC_MULTI_READ		(LSM303AGR_ACC_OUT_X_L | 0x80)
 #define LSM303AGR_ACC_OUT_X_H   		0x29
 #define LSM303AGR_ACC_OUT_Y_L   		0x2A
 #define LSM303AGR_ACC_OUT_Y_H   		0x2B
 #define LSM303AGR_ACC_OUT_Z_L   		0x2C
 #define LSM303AGR_ACC_OUT_Z_H   		0x2D
-
-#define LSM303AGR_ACC_MULTI_READ		(LSM303AGR_ACC_OUT_X_L | 0x80)
 
 //LSM303AGR Magnetometer
 #define LSM303AGR_MAG_OFFSET_X_REG_L    0x45
@@ -54,13 +51,12 @@
 #define LSM303AGR_MAG_CFG_REG_C     	0x62
 #define LSM303AGR_MAG_STATUS    		0x67
 #define LSM303AGR_MAG_OUTX_L    		0x68
+#define LSM303AGR_MAG_MULTI_READ		(LSM303AGR_MAG_OUTX_L | 0x80)
 #define LSM303AGR_MAG_OUTX_H    		0x69
 #define LSM303AGR_MAG_OUTY_L    		0x6A
 #define LSM303AGR_MAG_OUTY_H    		0x6B
 #define LSM303AGR_MAG_OUTZ_L    		0x6C
 #define LSM303AGR_MAG_OUTZ_H    		0x6D
-
-#define LSM303AGR_MAG_MULTI_READ		(LSM303AGR_MAG_OUTX_L | 0x80)
 
 /*LPS22HB WHO_AM_I response*/
 #define LSM303AGR_ACC_WHO_AM_I_RSP 		0x33
@@ -183,8 +179,9 @@ HAL_I2C_StateTypeDef LSM303AGR_ACC_readRegister(uint8_t reg, uint8_t pData[]);
 HAL_I2C_StateTypeDef LSM303AGR_MAG_readRegister(uint8_t reg, uint8_t pData[]);
 HAL_I2C_StateTypeDef LSM303AGR_ACC_writeRegister(uint8_t reg, uint8_t pData[]);
 HAL_I2C_StateTypeDef LSM303AGR_MAG_writeRegister(uint8_t reg, uint8_t pData[]);
-void LSM303AGR_ACC_init();
-void LSM303AGR_MAG_init();
+void LSM303AGR_init();
+void LSM303AGR_reset();
+void LSM303AGR_powerdown();
 void LSM303AGR_ACC_readAccelerationData();
 void LSM303AGR_MAG_readMagneticData();
 void get_x_axes(int32_t *pData);

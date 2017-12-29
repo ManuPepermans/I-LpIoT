@@ -12,23 +12,27 @@ void LSM303AGR_setI2CInterface(I2C_HandleTypeDef *hi2c) {
 
 	LSM303AGR_hi2c = hi2c;
 }
+
 HAL_I2C_StateTypeDef LSM303AGR_ACC_readRegister(uint8_t reg, uint8_t pData[]) {
 
 	return HAL_I2C_Mem_Read(LSM303AGR_hi2c, LSM303AGR_ACC_I2C_ADDRESS, reg,
 	I2C_MEMADD_SIZE_8BIT, pData, sizeof(pData), HAL_MAX_DELAY);
 }
+
 HAL_I2C_StateTypeDef LSM303AGR_MAG_readRegister(uint8_t reg, uint8_t pData[]) {
 
 	return HAL_I2C_Mem_Read(LSM303AGR_hi2c, LSM303AGR_MAG_I2C_ADDRESS, reg,
 	I2C_MEMADD_SIZE_8BIT, pData, sizeof(pData), HAL_MAX_DELAY);
 
 }
+
 HAL_I2C_StateTypeDef LSM303AGR_ACC_writeRegister(uint8_t reg, uint8_t pData[]) {
 
 	return HAL_I2C_Mem_Write(LSM303AGR_hi2c, LSM303AGR_ACC_I2C_ADDRESS, reg,
 	I2C_MEMADD_SIZE_8BIT, pData, sizeof(pData), HAL_MAX_DELAY);
 
 }
+
 HAL_I2C_StateTypeDef LSM303AGR_MAG_writeRegister(uint8_t reg, uint8_t pData[]) {
 
 	return HAL_I2C_Mem_Write(LSM303AGR_hi2c, LSM303AGR_MAG_I2C_ADDRESS, reg,
@@ -36,10 +40,42 @@ HAL_I2C_StateTypeDef LSM303AGR_MAG_writeRegister(uint8_t reg, uint8_t pData[]) {
 
 }
 
+void LSM303AGR_init() {
+
+	//Wait 5ms so that the Accelerometer can downloads it's calibration coefficients from
+	//the embedded flash to the internal registers
+	Hal_delay(5);
+	//Enables the data-ready interrupt
+	LSM303AGR_settings[0] = LSM303AGR_ACC_I1_DRDY2_EN;
+	LSM303AGR_ACC_writeRegister(LSM303AGR_ACC_CTRL_REG3, LSM303AGR_settings);
+	//Enables the X, Y and Z axes and put the accelerometer in powerdown
+	LSM303AGR_settings[0] = LSM303AGR_ACC_ODR_POWERDOWN | LSM303AGR_ACC_X_EN
+			| LSM303AGR_ACC_Y_EN | LSM303AGR_ACC_Z_EN;
+	LSM303AGR_ACC_writeRegister(LSM303AGR_ACC_CTRL_REG1, LSM303AGR_settings);
+}
+
+void LSM303AGR_reset() {
+
+}
+void LSM303AGR_powerdown() {
+	uint8_t registerValue[2];
+	LSM303AGR_ACC_readRegister(LSM303AGR_ACC_CTRL_REG1, registerValue[0]);
+	LSM303AGR_MAG_readRegister(LSM303AGR_MAG_CFG_REG_A, registerValue[1]);
+	uint8_t mask = 0xF0;
+	//Clear the 7th, 6th, 5th and 4th bit (powerdown mode)
+	registerValue[0] &= (~mask);
+	//Sets the 1st bit and clears the 0th bit (idle mode)
+	//registerValue[1] = (registerValue[1] & ~())~((1 << 1) | (1 << 0));
+
+	LPS22HB_readRegister(LPS22HB_CTRL_REG1, registerValue);
+	//Clears 6th, 5th and 4th bit (powerdown mode)
+	registerValue[0] &= ~((1 << 6) | (1 << 5) | (1 << 4));
+	LPS22HB_settings[0] = registerValue[0];
+	LPS22HB_writeRegister(LPS22HB_CTRL_REG1, LPS22HB_settings);
+}
+
 void LSM303AGR_ACC_init() {
 
-	LSM303AGR_settings[0] = LSM303AGR_ACC_ODR_100HZ | LSM303AGR_ACC_X_EN
-			| LSM303AGR_ACC_Y_EN | LSM303AGR_ACC_Z_EN;
 	LSM303AGR_ACC_writeRegister(LSM303AGR_ACC_CTRL_REG1, LSM303AGR_settings);
 	LSM303AGR_settings[0] = LSM303AGR_ACC_I1_DRDY2_EN;
 	LSM303AGR_ACC_writeRegister(LSM303AGR_ACC_CTRL_REG3, LSM303AGR_settings);
