@@ -1,10 +1,7 @@
-/**
- * LPS22HB_driver.h
- * Purpose: A low power driver for the LPS22HB pressure sensor
- *
- * @author: Levi Mariën
- * @version 1.0 11/12/2017
- */
+/********************************************************
+ * @author: Mariën Levi
+ * @description: A low power driver for the LPS22HB sensor
+ ********************************************************/
 
 #include "stm32l1xx_hal.h"
 #include "math.h"
@@ -43,7 +40,7 @@ typedef union {
 	uint8_t LSBtemp[1];
 	uint16_t LPS22HB_temperatureRaw;
 	int LPS22HB_temperature;
-} LPS22HB_tempData;
+} LPS22HB_temperatureData;
 typedef union {
 	uint8_t temp_data_overrun;
 	uint8_t press_data_overrun;
@@ -69,19 +66,21 @@ I2C_HandleTypeDef *LPS22HB_hi2c;
 #define LPS22HB_IF_ADD_INC 			0x02
 #define LPS22HB_SWRESET 			0x04
 #define LPS22HB_ONESHOT 			0x11
+#define LPS22HB_LOW_NOISE			0x00
+#define LPS22HB_LOW_CURRENT			0x01
 
 /*Function prototypes for the LPS22HB*/
 void LPS22HB_setI2CInterface(I2C_HandleTypeDef *hi2c);
 HAL_I2C_StateTypeDef LPS22HB_readRegister(uint8_t reg, uint8_t pData[]);
 HAL_I2C_StateTypeDef LPS22HB_writeRegister(uint8_t reg, uint8_t pData[]);
 void LPS22HB_init();
-void LPS22HB_configure();
-void LPS22HB_setODR(uint8_t ODR);
 void LPS22HB_reset();
 void LPS22HB_powerdown();
-void LPS22HB_wakeUp();
+void LPS22HB_setOneShotMode();
+void LPS22HB_setLowCurrentMode();
+void LPS22HB_setODR(uint8_t ODR);
+uint8_t LPS22HB_getODR();
 void LPS22HB_checkStatus();
-void LPS22HB_readPressure();
-void LPS22HB_readTemperature();
+void LPS22HB_getPressureAndTemperature(int* pressure, int* temperature);
 
 #endif /* LPS22HB_DRIVER_H_ */
