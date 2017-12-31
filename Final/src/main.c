@@ -119,9 +119,11 @@ int main(void)
 	  switch (state) {
 
 	  		case safe_zone:
-	  			DASH7Message(0x01,0x01);
-	  			HAL_Delay(3000);
+	  			//DASH7Message(0x01,0x01);
+	  			//HAL_Delay(3000);
 	  			//state = in_danger_zone;
+
+	  			// Only for testing purpose
 	  			state = lora_ready;
 	  		break;
 	  		case in_danger_zone:
@@ -350,7 +352,7 @@ __HAL_UART_FLUSH_DRREGISTER(&huart5);
 
 			//
 			/* check for the end of the GLL sentence and check if it's a GLL sentence */
-			if (*character == '\n' && buffer[1] == 'G') {
+			if (*character == '\n' ) {
 
 				//AT COMMAND: AT+SEND=2:<gps data><CR><LF>
 				uint8_t AT_COMMAND[] = { 0x41, 0x54, 0x2b, 0x53, 0x45, 0x4e,
@@ -409,6 +411,8 @@ void DASH7Message(uint8_t data[], int lengthDash7)
           }
 
 HAL_UART_Transmit(&huart2, ALP, sizeof(ALP),HAL_MAX_DELAY);
+HAL_UART_Transmit(&huart4, ALP, sizeof(ALP),HAL_MAX_DELAY);
+
 }
 
 /** System Clock Configuration
@@ -500,7 +504,7 @@ static void MX_UART4_Init(void)
 
 }
 
-/* UART5 init function */
+/* GPS UART*/
 static void MX_UART5_Init(void)
 {
 
@@ -519,7 +523,7 @@ static void MX_UART5_Init(void)
 
 }
 
-/* USART2 init function */
+/* Debug UART */
 static void MX_USART2_UART_Init(void)
 {
 
