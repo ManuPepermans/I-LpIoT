@@ -41,12 +41,7 @@ typedef union {
 	uint16_t LPS22HB_temperatureRaw;
 	int LPS22HB_temperature;
 } LPS22HB_temperatureData;
-typedef union {
-	uint8_t temp_data_overrun;
-	uint8_t press_data_overrun;
-	uint8_t temp_data_available;
-	uint8_t press_data_available;
-} LPS22HB_statusRegister;
+
 
 uint8_t LPS22HB_settings[1];
 uint8_t LPS22HB_statusRegisterValue[1];

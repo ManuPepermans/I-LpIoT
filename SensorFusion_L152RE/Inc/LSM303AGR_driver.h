@@ -18,25 +18,17 @@
 
 /*LSM303AGR register map*/
 //LSM303AGR Accelerometer
-#define LSM303AGR_ACC_STATUS_REG_AUX_A 	0x07
-#define LSM303AGR_ACC_OUT_TEMP_L   		0x0C
-#define LSM303AGR_ACC_OUT_TEMP_H   		0x0D
 #define LSM303AGR_ACC_WHO_AM_I_REG      0x0F
-#define LSM303AGR_ACC_TEMP_CFG_REG      0x1F
 #define LSM303AGR_ACC_CTRL_REG1     	0x20
-#define LSM303AGR_ACC_CTRL_REG2     	0x21
-#define LSM303AGR_ACC_CTRL_REG3     	0x22
 #define LSM303AGR_ACC_CTRL_REG4    		0x23
-#define LSM303AGR_ACC_CTRL_REG5     	0x24
-#define LSM303AGR_ACC_CTRL_REG6     	0x25
 #define LSM303AGR_ACC_STATUS_REG   		0x27
 #define LSM303AGR_ACC_OUT_X_L   		0x28
-#define LSM303AGR_ACC_MULTI_READ		(LSM303AGR_ACC_OUT_X_L | 0x80)
 #define LSM303AGR_ACC_OUT_X_H   		0x29
 #define LSM303AGR_ACC_OUT_Y_L   		0x2A
 #define LSM303AGR_ACC_OUT_Y_H   		0x2B
 #define LSM303AGR_ACC_OUT_Z_L   		0x2C
 #define LSM303AGR_ACC_OUT_Z_H   		0x2D
+#define LSM303AGR_ACC_MULTI_READ		(LSM303AGR_ACC_OUT_X_L | 0x80)
 
 //LSM303AGR Magnetometer
 #define LSM303AGR_MAG_OFFSET_X_REG_L    0x45
@@ -51,37 +43,38 @@
 #define LSM303AGR_MAG_CFG_REG_C     	0x62
 #define LSM303AGR_MAG_STATUS    		0x67
 #define LSM303AGR_MAG_OUTX_L    		0x68
-#define LSM303AGR_MAG_MULTI_READ		(LSM303AGR_MAG_OUTX_L | 0x80)
 #define LSM303AGR_MAG_OUTX_H    		0x69
 #define LSM303AGR_MAG_OUTY_L    		0x6A
 #define LSM303AGR_MAG_OUTY_H    		0x6B
 #define LSM303AGR_MAG_OUTZ_L    		0x6C
 #define LSM303AGR_MAG_OUTZ_H    		0x6D
+#define LSM303AGR_MAG_MULTI_READ		(LSM303AGR_MAG_OUTX_L | 0x80)
 
 /*LPS22HB WHO_AM_I response*/
 #define LSM303AGR_ACC_WHO_AM_I_RSP 		0x33
 #define LSM303AGR_MAG_WHO_AM_I_RSP 		0x40
 
 /* Datatype definition */
-typedef short int i16_t;
-typedef unsigned char u8_t;
+//typedef short int i16_t;
+//typedef unsigned char u8_t;
 typedef union {
-	i16_t i16bit[3];
-	u8_t u8bit[6];
-} Type3Axis16bit_U;
+	short int i16bit[3];
+	unsigned char u8bit[6];
+} LSM303AGR_ACC_TEMP_DATA;
 
 #define X 0
 #define Y 1
 #define Z 2
 
-int32_t axes_a[3];
-int32_t axes_m[3];
+//int32_t axes_a[3];
+//int32_t axes_m[3];
 float roll = 0, pitch = 0, roll_rad = 0, pitch_rad = 0;
 float yaw_rad = 0, degree = 0, godr = 0;
 float temp[3] = { }, hardCor[3] = { };
 char buff[3];
 uint16_t degree_int = 0;
 
+//uint8_t settings;
 uint8_t LSM303AGR_settings[1];
 uint8_t LSM303AGR_statusRegisterValue[1];
 
@@ -183,7 +176,8 @@ void LSM303AGR_init();
 void LSM303AGR_reset();
 void LSM303AGR_powerdown();
 void LSM303AGR_ACC_readAccelerationData();
-void LSM303AGR_MAG_readMagneticData();
+void LSM303AGR_MAG_readMagneticData(int32_t *pData);
+
 void get_x_axes(int32_t *pData);
 void LSM303AGR_ACC_Get_Acceleration(int *buff);
 void get_m_axes(int32_t *pData);
