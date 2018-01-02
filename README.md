@@ -4,7 +4,8 @@ The buildup of the project is as follow:
 - Final: this is the final and latest version of the mobil node,
 - Ecompass: a full working ecompass module based on the LSM303AGR,
 - IKS01A2_Driver: low power drivers for the X-NUCLEO-IKS01A2 motion MEMS and environmental sensor expansion board,
-- Scratch: working pieces of the project that where made for testing purpose but coulkd still be usefull as examples. 
+- Scratch: working pieces of the project that where made for testing purpose but coulkd still be usefull as examples, 
+- Documentation: the documentation about every component used in the project.
 
 ## Explantation of the project
 The project is a tracking/monitor system for the elderly in retirement homes. This system is capapble to track somebody indoors on multiple floors by using the kNN algorithm on the RSSI values from dash7 messages to different gateways. To know on which floor the person is we use a barometer. When the person is leaving the building the system will automatically switch to using a GPS for localization. The coordinates are send over LoRa instead over Dash7. Besides tracking a person the system will be able to check the temperature and direction that the person is going to via the ecompass. The nurse can monitor all the parameters on a backend and every mobile node has an alarm function where the user can activate an alarm for the nurce. 
