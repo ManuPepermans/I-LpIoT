@@ -8,16 +8,23 @@ The buildup of the project is as follow:
 - Documentation: the documentation about every component used in the project.
 
 ## Explantation of the project
-The project is a tracking/monitor system for the elderly in retirement homes. This system is capapble to track somebody indoors on multiple floors by using the kNN algorithm on the RSSI values from dash7 messages to different gateways. To know on which floor the person is we use a barometer. When the person is leaving the building the system will automatically switch to using a GPS for localization. The coordinates are send over LoRa instead over Dash7. Besides tracking a person the system will be able to check the temperature and direction that the person is going to via the ecompass. The nurse can monitor all the parameters on a backend and every mobile node has an alarm function where the user can activate an alarm for the nurce. 
+The project is a tracking/monitor system for the elderly in retirement homes. This system is capapble to track somebody indoors on multiple floors by using the kNN algorithm on the RSSI values from dash7 messages to different gateways. These dash7 messages contains sensordata. To know on which floor the person is we use a barometer. When the person is leaving the building the system will automatically switch to using a GPS for localization. The coordinates are send over LoRa instead over Dash7. Besides tracking a person the system will be able to check the temperature and direction that the person is going to via the ecompass. The nurse can monitor all the parameters on a backend and every mobile node has an alarm function where the user can activate an alarm for the nurce. 
 
 ## Hardware
 The following hardware is used for this project:
 - NUCLEO-L152RE (STM32 Nucleo-64 development board)
-- B-L072Z-LRWAN1 LoRa®Discovery kit
+- 2 x B-L072Z-LRWAN1 LoRa®Discovery kit (LoRa & DASH7)
 - X-NUCLEO-IKS01A2 is a motion MEMS and environmental sensor expansion board
 - GLOBALSAT GPS Module - EM506
+- A few resistors and transistors to toggle the modules
 
 ![alt text](https://i.imgur.com/m5MR2cx.png "Hardware setup")
+
+In this setup we used two small circuits to switch ON/OFF the pheriphals such as the GPS and LoRa modules with a transistor similar to this design.
+
+
+![alt text](https://imgur.com/a/KAQG4 "Circuit")
+
 
 ## Software
 ## Backend
