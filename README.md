@@ -37,7 +37,7 @@ After setting the GPS in the right mode we get following data structure:
 ## kNN
 We use kNN for fingerprinting.
 
-## ecompass
+## Ecompass
 The sensor used for the ecompass is the LSM303AGR accelerometer and magnetometer found on the X-NUCLEO-IKS01A2 motion MEMS and environmental sensor expansion board. The algorithm is based on the Design tip DT0058 of ST (Computing tilt measurement and tilt-compensated e-compass). A timer is integrated in the ecompass to wake the NUCLEO-L152RE periodically for power reduction. Once the timer shoots an interrupt the NUCLEO-L152RE awakes, awekes the sensors, performs the calculation, put the sensors to sleep and at last goes to sleep itself untill the next interrupt is fired.
 
 ## IKS01A2
