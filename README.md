@@ -9,6 +9,7 @@ The following hardware is used for this project:
 - NUCLEO-L152RE (STM32 Nucleo-64 development board)
 - B-L072Z-LRWAN1 LoRa®Discovery kit
 - X-NUCLEO-IKS01A2 is a motion MEMS and environmental sensor expansion board
+- GLOBALSAT GPS Module - EM506
 
 ![alt text](https://i.imgur.com/m5MR2cx.png "Hardware setup")
 
@@ -20,7 +21,7 @@ The backend is based on a Raspberry PI 3. The received data from the vmobile nod
 We use Dash7 to send local data from the mobile node to the backend. Dash7 will also be used for sending data from our backend to the node (i.e. warning signals).
 
 ## GPS
-To get the positionlongtitude and latitude from the EM-506 GPS module with a Nucleo F401RE. The EM-506 GPS module uses uart to communicate with the Nucleo. In the datasheet we can find that the GPS uses NMEA commands. The NMEA commands has different formats.
+To get the positionlongtitude and latitude from the EM-506 GPS module with a Nucleo L152RE. The EM-506 GPS module uses uart to communicate with the Nucleo. In the datasheet we can find that the GPS uses NMEA commands. The NMEA commands has different formats.
 
 In this project we use the GGL format which displays the following: $GPGLL, Latitude, N/S, Longtitude, E/W, Time, Data valid. The EM-506 module sends by default multiple NMEA command in different formats. To set the required GLL format whe use NMEA Input Commands. These can be found on page 12 in the datasheet. To generate the checksum we used following site: http://www.hhhh.org/wiml/proj/nmeaxor.html. For testing and setting the preferences we used an USB->TTL converter.
 
