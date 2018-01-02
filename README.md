@@ -23,7 +23,7 @@ The following hardware is used for this project:
 In this setup we used two small circuits to switch ON/OFF the pheriphals such as the GPS and LoRa modules with a transistor similar to this design.
 
 
-![alt text](https://imgur.com/a/KAQG4 "Circuit")
+![alt text](https://i.imgur.com/fONZKLY.jpg "Circuit")
 
 
 ## Software
