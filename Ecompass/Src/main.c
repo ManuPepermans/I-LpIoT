@@ -71,11 +71,7 @@ static void MX_I2C1_Init(void);
 #else
 #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
-/**
- * @brief  Retargets the C library printf function to the USART.
- * @param  None
- * @retval None
- */
+
 PUTCHAR_PROTOTYPE {
 	/* Place your implementation of fputc here */
 	/* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
@@ -119,7 +115,7 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 
-	LSM303AGR_setI2CInterface(&hi2c1);
+	LSM303AGR_setI2CInterface(&hi2c1);;
 	LSM303AGR_init();
 
 	/* USER CODE END 2 */
@@ -132,6 +128,7 @@ int main(void) {
 		/* USER CODE BEGIN 3 */
 
 		ecompassAlgorithm();
+		calculate();
 
 		HAL_Delay(2000);
 
@@ -267,7 +264,64 @@ static void MX_GPIO_Init(void) {
 
 /* USER CODE BEGIN 4 */
 
+void calculate() {
+
+	printf("Start calculate\r\n");
+
+	int32_t axes_m[3];
+	int32_t axes_a[3];
+	float axes_aF[3];
+	float axes_aT[3];
+	float roll, pitch, x, y, h, dir;
+	uint16_t dirUint16_t;
+
+	LSM303AGR_ACC_readAccelerationData(lsm303agrAccData);
+	LSM303AGR_MAG_readMagneticData(lsm303agrMagData);
+
+	// The sensitivity is already taken into account.
+	LSM303AGR_ACC_readAccelerationData(axes_a);
+	LSM303AGR_MAG_readMagneticData(axes_m);
+	axes_aF[0] = (float) axes_a[0];
+	axes_aF[1] = (float) axes_a[1];
+	axes_aF[2] = (float) axes_a[2];
+
+	// Resolution is 2^(8) = 256
+	axes_aT[0] = (axes_aF[0] * 2 / 256);
+	axes_aT[1] = (axes_aF[1] * 2 / 256);
+	axes_aT[2] = (axes_aF[2] * 2 / 256);
+
+	// Some math to get the thing working
+	roll = atan2f(axes_aT[1], axes_aT[2]);
+	pitch = atan2f(-axes_aT[0],
+			axes_aT[1] * sinf(roll) + axes_aT[2] * cosf(roll));
+
+	x = axes_m[0] * cosf(pitch)
+			+ (axes_m[1] * sinf(roll) + axes_m[2] * cosf(roll)) * sinf(pitch);
+	y = axes_m[2] * sinf(roll) - axes_m[1] * cosf(roll);
+
+	// Convert to degrees, look in what quadrant the value lays and if it's negative add 360° to achieve correct positioning.
+	h = atan2f(y, x);
+	dir = h * (180 / 3.1415);
+	if (dir < 0)
+		dir += 360;
+
+	// Convert for transmission over DASH7
+	dirUint16_t = (uint16_t) dir;
+
+	printf("LSM303AGR [mag/mgauss]:  %6ld, %6ld, %6ld\r\n", axes_m[0],
+			axes_m[1], axes_m[2]);
+	printf("LSM303AGR [acc/mg]:  %6ld, %6ld, %6ld\r\n", axes_a[0], axes_a[1],
+			axes_a[2]);
+	printf("richting: %6d graden\r\n", dirUint16_t);
+
+	printf("Finished calculate\r\n");
+	printf("---------------------------------------------------------\r\n");
+
+}
+
 void ecompassAlgorithm() {
+
+	printf("Start ecompassAlgorithm\r\n");
 
 	LSM303AGR_ACC_readAccelerationData(lsm303agrAccData);
 	LSM303AGR_MAG_readMagneticData(lsm303agrMagData);
@@ -298,6 +352,15 @@ void ecompassAlgorithm() {
 			lsm303agrAccDataFloat[2]);
 	printf("Data Magnetometer: %0.2f %0.2f %0.2f\r\n", lsm303agrMagDataFloat[0],
 			lsm303agrMagDataFloat[1], lsm303agrMagDataFloat[2]);
+
+	printf("---------------------------------------------------------\r\n");
+
+	lsm303agrAccDataFloat[0] = (lsm303agrAccDataFloat[0] * 2)
+			/ pow(2, (resolution - 1));
+	lsm303agrAccDataFloat[1] = (lsm303agrAccDataFloat[1] * 2)
+			/ pow(2, (resolution - 1));
+	lsm303agrAccDataFloat[2] = (lsm303agrAccDataFloat[2] * 2)
+			/ pow(2, (resolution - 1));
 
 	//Computation of Phi (roll angle) in radians and degrees
 	rollRad = atan2f(lsm303agrAccDataFloat[1], lsm303agrAccDataFloat[2]);
@@ -338,6 +401,9 @@ void ecompassAlgorithm() {
 		yawDegree += 360;
 
 	printf("Psi (yaw angle or heading, in degrees) is: %0.2f\r\n", yawDegree);
+
+	printf("Finished ecompassAlgorithm\r\n");
+	printf("---------------------------------------------------------\r\n");
 
 }
 

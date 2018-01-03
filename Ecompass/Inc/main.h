@@ -64,6 +64,7 @@
 /* USER CODE BEGIN Private defines */
 
 #define PI 3.14159265359
+#define resolution 8
 
 float lsm303agrAccDataTemp;
 float rollRad;
@@ -84,7 +85,9 @@ float dir;
 uint16_t dirInt;
 
 void ecompassAlgorithm();
+void calculate();
 void callibration();
+
 
 /* USER CODE END Private defines */
 
