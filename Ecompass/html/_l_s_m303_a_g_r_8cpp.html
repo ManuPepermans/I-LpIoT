@@ -82,10 +82,10 @@ $(function() {
 Functions</h2></td></tr>
 <tr class="memitem:a114b5d0f68ee247850b3eb758de3f6da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#a114b5d0f68ee247850b3eb758de3f6da">LSM303AGR_setI2CInterface</a> (I2C_HandleTypeDef *hi2c)</td></tr>
 <tr class="separator:a114b5d0f68ee247850b3eb758de3f6da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36f10fb4a6a6dbe750f17b19ee2f55c2"><td class="memItemLeft" align="right" valign="top">HAL_StatusTypeDef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#a36f10fb4a6a6dbe750f17b19ee2f55c2">LSM303AGR_readRegister</a> (uint8_t LSM303AGR_reg, uint8_t *LSM303AGR_data, uint8_t ACC_MAG)</td></tr>
-<tr class="separator:a36f10fb4a6a6dbe750f17b19ee2f55c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72db27d38b3c6b151b8f2e7946b325fb"><td class="memItemLeft" align="right" valign="top">HAL_StatusTypeDef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#a72db27d38b3c6b151b8f2e7946b325fb">LSM303AGR_writeRegister</a> (uint8_t LSM303AGR_reg, uint8_t *LSM303AGR_data, uint8_t ACC_MAG)</td></tr>
-<tr class="separator:a72db27d38b3c6b151b8f2e7946b325fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac71a94395845429f9270cb91e5e02052"><td class="memItemLeft" align="right" valign="top">HAL_StatusTypeDef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#ac71a94395845429f9270cb91e5e02052">LSM303AGR_readRegister</a> (uint8_t LSM303AGR_reg, uint8_t LSM303AGR_data, uint8_t ACC_MAG)</td></tr>
+<tr class="separator:ac71a94395845429f9270cb91e5e02052"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a569b98faf80a6270eb082bfa820f900d"><td class="memItemLeft" align="right" valign="top">HAL_StatusTypeDef&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#a569b98faf80a6270eb082bfa820f900d">LSM303AGR_writeRegister</a> (uint8_t LSM303AGR_reg, uint8_t LSM303AGR_data, uint8_t ACC_MAG)</td></tr>
+<tr class="separator:a569b98faf80a6270eb082bfa820f900d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a808c0f0fc9b18cbecf59798027580dbc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#a808c0f0fc9b18cbecf59798027580dbc">LSM303AGR_init</a> ()</td></tr>
 <tr class="separator:a808c0f0fc9b18cbecf59798027580dbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac047f4c4e5bca8c254faabf08af0869a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#ac047f4c4e5bca8c254faabf08af0869a">LSM303AGR_ACC_reset</a> ()</td></tr>
@@ -104,6 +104,8 @@ Functions</h2></td></tr>
 <tr class="separator:afa6724fb6af473e194b54c30bc9768c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a035df0b4af3eb940e008c1f65caf1fc3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#a035df0b4af3eb940e008c1f65caf1fc3">LSM303AGR_MAG_readMagneticData</a> (int32_t *pData)</td></tr>
 <tr class="separator:a035df0b4af3eb940e008c1f65caf1fc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae40c558cd76aaccb9c0e64fcce424c1c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#ae40c558cd76aaccb9c0e64fcce424c1c">LSM303AGR_MAG_readMagneticRawData</a> (int16_t *pData)</td></tr>
+<tr class="separator:ae40c558cd76aaccb9c0e64fcce424c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A low power driver for the LSM303AGR that is ready for use, no settings needs to be adjusted (this is designed on purpose). </p>
@@ -197,7 +199,31 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Reads the output registers of the magnetometer </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Reads the output registers of the magnetometer and applies the sensitivity </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pData</td><td>a pointer to where the data needs to be stored </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae40c558cd76aaccb9c0e64fcce424c1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae40c558cd76aaccb9c0e64fcce424c1c">&#9670;&nbsp;</a></span>LSM303AGR_MAG_readMagneticRawData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void LSM303AGR_MAG_readMagneticRawData </td>
+          <td>(</td>
+          <td class="paramtype">int16_t *&#160;</td>
+          <td class="paramname"><em>pData</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Read the output registers of the magnetometer </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pData</td><td>a pointer to where the data needs to be stored </td></tr>
   </table>
@@ -260,8 +286,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a36f10fb4a6a6dbe750f17b19ee2f55c2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36f10fb4a6a6dbe750f17b19ee2f55c2">&#9670;&nbsp;</a></span>LSM303AGR_readRegister()</h2>
+<a id="ac71a94395845429f9270cb91e5e02052"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac71a94395845429f9270cb91e5e02052">&#9670;&nbsp;</a></span>LSM303AGR_readRegister()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -275,7 +301,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramtype">uint8_t&#160;</td>
           <td class="paramname"><em>LSM303AGR_data</em>, </td>
         </tr>
         <tr>
@@ -367,8 +393,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a72db27d38b3c6b151b8f2e7946b325fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a72db27d38b3c6b151b8f2e7946b325fb">&#9670;&nbsp;</a></span>LSM303AGR_writeRegister()</h2>
+<a id="a569b98faf80a6270eb082bfa820f900d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a569b98faf80a6270eb082bfa820f900d">&#9670;&nbsp;</a></span>LSM303AGR_writeRegister()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -382,7 +408,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramtype">uint8_t&#160;</td>
           <td class="paramname"><em>LSM303AGR_data</em>, </td>
         </tr>
         <tr>

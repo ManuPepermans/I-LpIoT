@@ -75,16 +75,15 @@ int32_t lsm303agrAccData[3];
 float lsm303agrAccDataFloat[3];
 int32_t lsm303agrMagData[3];
 float lsm303agrMagDataFloat[3];
-//float yawTemp[3];
+float yawTemp[3];
 float yawRad;
 float yawDegree;
-float x_direction;
-float y_direction;
+//float x_direction;
+//float y_direction;
 float dir;
 uint16_t dirInt;
 
-void ecompassAlgorithm();
-void calculate();
+uint16_t ecompassAlgorithm();
 void callibration();
 
 /* USER CODE END Private defines */
