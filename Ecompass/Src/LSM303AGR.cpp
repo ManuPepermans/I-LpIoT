@@ -1,11 +1,33 @@
+/**
+ *
+ * @file LSM303AGR.cpp
+ * @author: Mariën Levi
+ * @date: 04/01/2018
+ * @brief A low power driver for the LSM303AGR that is ready for use, no settings needs to be adjusted (this is designed on purpose).
+ */
+
 #include "LSM303AGR.h"
 #include "stm32l1xx_hal.h"
 
+/**
+ * Sets the I2C interface for the LSM303AGR
+ * @param hi2c: the I2C interface
+ */
 void LSM303AGR_setI2CInterface(I2C_HandleTypeDef *hi2c) {
 
 	LSM303AGR_hi2c = hi2c;
 }
 
+/**
+ * Read a certain register of the LSM303AGR depending on the value of ACC_MAG:
+ * 		- if this value is 0: read out a register of the accelerometer
+ * 		- if this value is 1: read out a register of the magnetormeter
+ * The standard HAL library values are used for the size of the register and time-out.
+ * @param LSM303AGR_reg: the register that needs to be read of the LSM303AGR
+ * @param LSM303AGR_data: a pointer where the data of the register needs to be stored
+ * @param ACC_MAG: depending on the value a value a register of the accelerometer of magnetometer are read
+ * @return returns the status of the I2C transfer
+ */
 HAL_StatusTypeDef LSM303AGR_readRegister(uint8_t LSM303AGR_reg,
 		uint8_t* LSM303AGR_data, uint8_t ACC_MAG) {
 
@@ -20,6 +42,16 @@ HAL_StatusTypeDef LSM303AGR_readRegister(uint8_t LSM303AGR_reg,
 	}
 }
 
+/**
+ * Writes a cerain value to a certain register of the LSM303AGR depending on the value of ACC_MAG:
+ *   	- if this value is 0: write to a register of the accelerometer
+ * 		- if this value is 1: write to a register of the magnetormeter
+ * the standard HAL library values are used for the size of the register and time-out.
+ * @param LSM303AGR_reg: the register where data needs to be written to
+ * @param LSM303AGR_data: a pointer to the data that needs to be written
+ * @param ACC_MAG: depending on the value, a write is performed to the accelerometer of magnetometer
+ * @return returns the status of the I2C transfer
+ */
 HAL_StatusTypeDef LSM303AGR_writeRegister(uint8_t LSM303AGR_reg,
 		uint8_t* LSM303AGR_data, uint8_t ACC_MAG) {
 
@@ -35,6 +67,19 @@ HAL_StatusTypeDef LSM303AGR_writeRegister(uint8_t LSM303AGR_reg,
 
 }
 
+/**
+ * Initialization of the LSM303AGR accelerometer and magnetometer.
+ * The accelerometer is initialized with the following values:
+ * 		- ODR of 1Hz,
+ * 		- X, Y and Z-axes enabled
+ * 		- BDU enabled (output registers are not updated until the MSB and LSB have been read)
+ * 	the magnetometer is initialized with the following values:
+ * 		- Temperature compensation enabled,
+ * 		- Low-power mode enabled,
+ * 		- Offset cancelation enabled,
+ * 		- Low pass filter enabled,
+ * 		- BDU enabled
+ */
 void LSM303AGR_init() {
 
 	LSM303AGR_setting = LSM303AGR_ACC_ODR_1HZ | LSM303AGR_ACC_X_EN
@@ -56,6 +101,9 @@ void LSM303AGR_init() {
 
 }
 
+/**
+ * Resets the LSM303AGR accelerometer
+ */
 void LSM303AGR_ACC_reset() {
 
 	LSM303AGR_setting = LSM303AGR_ACC_BOOT;
@@ -63,6 +111,9 @@ void LSM303AGR_ACC_reset() {
 
 }
 
+/**
+ * Resets the LSM303AGR magnetometer
+ */
 void LSM303AGR_MAG_reset() {
 
 	LSM303AGR_setting = LSM303AGR_MAG_SOFT_RST;
@@ -70,10 +121,17 @@ void LSM303AGR_MAG_reset() {
 
 }
 
+/**
+ *	Puts the LSM303AGR in sleep/idle mode (both the accelerometer and magnetometer).
+ */
 void LSM303AGR_powerdown() {
 
 }
 
+/**
+ * Reads the output registers of the accelerometer
+ * @param pData: a pointer to where the data needs to be stored
+ */
 void LSM303AGR_ACC_readAccelerationData(int32_t *pData) {
 
 	LSM303AGR_ACC_TEMP_DATA rawData;
@@ -100,14 +158,20 @@ void LSM303AGR_ACC_readAccelerationData(int32_t *pData) {
 
 }
 
+/**
+ * Reads the output registers of the magnetometer
+ * @param pData: a pointer to where the data needs to be stored
+ */
 void LSM303AGR_MAG_readMagneticData(int32_t *pData) {
 
 	LSM303AGR_MAG_TEMP_DATA rawData;
 
-	HAL_I2C_Mem_Read(LSM303AGR_hi2c, LSM303AGR_MAG_I2C_ADDRESS,
-	LSM303AGR_MAG_MULTI_READ,
-	I2C_MEMADD_SIZE_8BIT, rawData.registerData, sizeof(rawData.registerData),
-	HAL_MAX_DELAY);
+	LSM303AGR_readRegister(LSM303AGR_MAG_MULTI_READ, rawData.registerData, 1);
+
+//	HAL_I2C_Mem_Read(LSM303AGR_hi2c, LSM303AGR_MAG_I2C_ADDRESS,
+//	LSM303AGR_MAG_MULTI_READ,
+//	I2C_MEMADD_SIZE_8BIT, rawData.registerData, sizeof(rawData.registerData),
+//	HAL_MAX_DELAY);
 
 	rawData.rawData[0] = (rawData.registerData[1] << 8)
 			| rawData.registerData[0];
