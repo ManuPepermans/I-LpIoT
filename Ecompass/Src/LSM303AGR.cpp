@@ -1,5 +1,4 @@
 /**
- *
  * @file LSM303AGR.cpp
  * @author: Mariën Levi
  * @date: 04/01/2018
@@ -70,10 +69,12 @@ HAL_StatusTypeDef LSM303AGR_writeRegister(uint8_t LSM303AGR_reg,
 /**
  * Initialization of the LSM303AGR accelerometer and magnetometer.
  * The accelerometer is initialized with the following values:
- * 		- ODR of 1Hz,
+ * 		- Powerdown,
  * 		- X, Y and Z-axes enabled
  * 		- BDU enabled (output registers are not updated until the MSB and LSB have been read)
- * 	the magnetometer is initialized with the following values:
+ *
+ * The magnetometer is initialized with the following values:
+ * 		- Idle mode,
  * 		- Temperature compensation enabled,
  * 		- Low-power mode enabled,
  * 		- Offset cancelation enabled,
@@ -82,7 +83,7 @@ HAL_StatusTypeDef LSM303AGR_writeRegister(uint8_t LSM303AGR_reg,
  */
 void LSM303AGR_init() {
 
-	LSM303AGR_setting = LSM303AGR_ACC_ODR_1HZ | LSM303AGR_ACC_X_EN
+	LSM303AGR_setting = LSM303AGR_ACC_ODR_POWERDOWN | LSM303AGR_ACC_X_EN
 			| LSM303AGR_ACC_Y_EN | LSM303AGR_ACC_Z_EN;
 	LSM303AGR_writeRegister(LSM303AGR_ACC_CTRL_REG1, &LSM303AGR_setting, 0);
 
@@ -90,7 +91,7 @@ void LSM303AGR_init() {
 	LSM303AGR_writeRegister(LSM303AGR_ACC_CTRL_REG4, &LSM303AGR_setting, 0);
 
 	LSM303AGR_setting = LSM303AGR_MAG_COMP_TEMP_EN | LSM303AGR_MAG_LP_EN
-			| LSM303AGR_MAG_ODR_10HZ;
+			| LSM303AGR_MAG_ODR_10HZ | LSM303AGR_MAG_MD_IDLE;
 	LSM303AGR_writeRegister(LSM303AGR_MAG_CFG_REG_A, &LSM303AGR_setting, 1);
 
 	LSM303AGR_setting = LSM303AGR_MAG_OFF_CANC | LSM303AGR_MAG_LPF;
@@ -122,9 +123,45 @@ void LSM303AGR_MAG_reset() {
 }
 
 /**
- *	Puts the LSM303AGR in sleep/idle mode (both the accelerometer and magnetometer).
+ * Put the accelerometer in power-down mode
  */
-void LSM303AGR_powerdown() {
+void LSM303AGR_powerDownAccelerometer() {
+
+	LSM303AGR_setting = LSM303AGR_ACC_ODR_POWERDOWN | LSM303AGR_ACC_X_EN
+			| LSM303AGR_ACC_Y_EN | LSM303AGR_ACC_Z_EN;
+	LSM303AGR_writeRegister(LSM303AGR_ACC_CTRL_REG1, &LSM303AGR_setting, 0);
+
+}
+
+/**
+ * Put the magnetometer in idle mode
+ */
+void LSM303AGR_powerDownMagnetometer() {
+
+	LSM303AGR_setting = LSM303AGR_MAG_COMP_TEMP_EN | LSM303AGR_MAG_LP_EN
+			| LSM303AGR_MAG_ODR_10HZ | LSM303AGR_MAG_MD_IDLE;
+	LSM303AGR_writeRegister(LSM303AGR_MAG_CFG_REG_A, &LSM303AGR_setting, 1);
+}
+
+/**
+ * Wake up the accelerometer from powerdown mode
+ */
+void LSM303AGR_wakeUpAccelerometer() {
+
+	LSM303AGR_setting = LSM303AGR_ACC_ODR_1HZ | LSM303AGR_ACC_X_EN
+			| LSM303AGR_ACC_Y_EN | LSM303AGR_ACC_Z_EN;
+	LSM303AGR_writeRegister(LSM303AGR_ACC_CTRL_REG1, &LSM303AGR_setting, 0);
+
+}
+
+/**
+ * Wake up the magnetometer from idle mode
+ */
+void LSM303AGR_wakeUpMagnetometer() {
+
+	LSM303AGR_setting = LSM303AGR_MAG_COMP_TEMP_EN | LSM303AGR_MAG_LP_EN
+			| LSM303AGR_MAG_ODR_10HZ | LSM303AGR_MAG_MD_SIGNLE;
+	LSM303AGR_writeRegister(LSM303AGR_MAG_CFG_REG_A, &LSM303AGR_setting, 1);
 
 }
 
@@ -137,11 +174,6 @@ void LSM303AGR_ACC_readAccelerationData(int32_t *pData) {
 	LSM303AGR_ACC_TEMP_DATA rawData;
 
 	LSM303AGR_readRegister(LSM303AGR_ACC_MULTI_READ, rawData.registerData, 0);
-
-//	HAL_I2C_Mem_Read(LSM303AGR_hi2c, LSM303AGR_ACC_I2C_ADDRESS,
-//	LSM303AGR_ACC_MULTI_READ,
-//	I2C_MEMADD_SIZE_8BIT, rawData.registerData, sizeof(rawData.registerData),
-//	HAL_MAX_DELAY);
 
 	rawData.rawData[0] = (rawData.registerData[1] << 8)
 			| rawData.registerData[0];
@@ -167,11 +199,6 @@ void LSM303AGR_MAG_readMagneticData(int32_t *pData) {
 	LSM303AGR_MAG_TEMP_DATA rawData;
 
 	LSM303AGR_readRegister(LSM303AGR_MAG_MULTI_READ, rawData.registerData, 1);
-
-//	HAL_I2C_Mem_Read(LSM303AGR_hi2c, LSM303AGR_MAG_I2C_ADDRESS,
-//	LSM303AGR_MAG_MULTI_READ,
-//	I2C_MEMADD_SIZE_8BIT, rawData.registerData, sizeof(rawData.registerData),
-//	HAL_MAX_DELAY);
 
 	rawData.rawData[0] = (rawData.registerData[1] << 8)
 			| rawData.registerData[0];

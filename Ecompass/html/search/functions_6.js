@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['main',['main',['../main_8c.html#a840291bc02cba5474a4cb46a9b9566fe',1,'main.c']]],
-  ['mx_5fgpio_5finit',['MX_GPIO_Init',['../main_8c.html#ae89fdd15729ad41a66911190fcbab23a',1,'main.c']]],
-  ['mx_5fi2c1_5finit',['MX_I2C1_Init',['../main_8c.html#a4230d11f81d0b16e112f1cc3f40cb42f',1,'main.c']]],
-  ['mx_5ftim3_5finit',['MX_TIM3_Init',['../main_8c.html#a73ff2ff527606fb2be261e9f85aab83c',1,'main.c']]],
-  ['mx_5fusart2_5fuart_5finit',['MX_USART2_UART_Init',['../main_8c.html#a6db1014d713f6f5c0f52a13299ee0733',1,'main.c']]]
+  ['initialise_5fmonitor_5fhandles',['initialise_monitor_handles',['../syscalls_8c.html#a25c7f100d498300fff65568c2fcfe639',1,'syscalls.c']]],
+  ['itm_5fcheckchar',['ITM_CheckChar',['../group___c_m_s_i_s__core___debug_functions.html#gae61ce9ca5917735325cd93b0fb21dd29',1,'core_cm3.h']]],
+  ['itm_5freceivechar',['ITM_ReceiveChar',['../group___c_m_s_i_s__core___debug_functions.html#gac3ee2c30a1ac4ed34c8a866a17decd53',1,'core_cm3.h']]],
+  ['itm_5fsendchar',['ITM_SendChar',['../group___c_m_s_i_s__core___debug_functions.html#gac90a497bd64286b84552c2c553d3419e',1,'core_cm3.h']]]
 ];

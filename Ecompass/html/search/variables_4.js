@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['systemcoreclock',['SystemCoreClock',['../group___s_t_m32_l1xx___system___private___variables.html#gaa3cd3e43291e81e795d642b79b6088e6',1,'system_stm32l1xx.c']]]
+  ['pitchdegree',['pitchDegree',['../main_8h.html#ac1eb6c5c8e98196fa712a34c8278dbda',1,'main.h']]],
+  ['pitchrad',['pitchRad',['../main_8h.html#a906bba231f020212ae25d07e63913bad',1,'main.h']]],
+  ['putchar_5fprototype',['PUTCHAR_PROTOTYPE',['../main_8c.html#a6b71e3c5cd86d6941c8f4a8beb1b354f',1,'main.c']]]
 ];

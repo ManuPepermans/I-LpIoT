@@ -1,10 +1,6 @@
 var searchData=
 [
-  ['main',['main',['../main_8c.html#a840291bc02cba5474a4cb46a9b9566fe',1,'main.c']]],
-  ['main_2ec',['main.c',['../main_8c.html',1,'']]],
-  ['max_5fstack_5fsize',['MAX_STACK_SIZE',['../syscalls_8c.html#accbb358028675c83675d8b34c386268d',1,'syscalls.c']]],
-  ['mx_5fgpio_5finit',['MX_GPIO_Init',['../main_8c.html#ae89fdd15729ad41a66911190fcbab23a',1,'main.c']]],
-  ['mx_5fi2c1_5finit',['MX_I2C1_Init',['../main_8c.html#a4230d11f81d0b16e112f1cc3f40cb42f',1,'main.c']]],
-  ['mx_5ftim3_5finit',['MX_TIM3_Init',['../main_8c.html#a73ff2ff527606fb2be261e9f85aab83c',1,'main.c']]],
-  ['mx_5fusart2_5fuart_5finit',['MX_USART2_UART_Init',['../main_8c.html#a6db1014d713f6f5c0f52a13299ee0733',1,'main.c']]]
+  ['resolution',['resolution',['../main_8h.html#a518902ce4d6b0c41b04e9fcd3c648916',1,'main.h']]],
+  ['rolldegree',['rollDegree',['../main_8h.html#abdb3b0c52b436d502b38b26bd1b871ff',1,'main.h']]],
+  ['rollrad',['rollRad',['../main_8h.html#ac4722dca2ee10c0385be08850723b3fc',1,'main.h']]]
 ];

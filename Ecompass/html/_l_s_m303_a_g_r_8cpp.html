@@ -92,8 +92,14 @@ Functions</h2></td></tr>
 <tr class="separator:ac047f4c4e5bca8c254faabf08af0869a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa379c04a279f7641703b0bf142876d73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#aa379c04a279f7641703b0bf142876d73">LSM303AGR_MAG_reset</a> ()</td></tr>
 <tr class="separator:aa379c04a279f7641703b0bf142876d73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade02fd4e107e6261712cf7538324a9bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#ade02fd4e107e6261712cf7538324a9bc">LSM303AGR_powerdown</a> ()</td></tr>
-<tr class="separator:ade02fd4e107e6261712cf7538324a9bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a289a7bd8de1cb1e311b195e59c2bd266"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#a289a7bd8de1cb1e311b195e59c2bd266">LSM303AGR_powerDownAccelerometer</a> ()</td></tr>
+<tr class="separator:a289a7bd8de1cb1e311b195e59c2bd266"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c5bb5d9b46bf5f43bd1ff2076599047"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#a7c5bb5d9b46bf5f43bd1ff2076599047">LSM303AGR_powerDownMagnetometer</a> ()</td></tr>
+<tr class="separator:a7c5bb5d9b46bf5f43bd1ff2076599047"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38c8499a01e86fea1acca690b821d92e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#a38c8499a01e86fea1acca690b821d92e">LSM303AGR_wakeUpAccelerometer</a> ()</td></tr>
+<tr class="separator:a38c8499a01e86fea1acca690b821d92e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab189060b5f98f1c2b6b914481fba0b83"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#ab189060b5f98f1c2b6b914481fba0b83">LSM303AGR_wakeUpMagnetometer</a> ()</td></tr>
+<tr class="separator:ab189060b5f98f1c2b6b914481fba0b83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa6724fb6af473e194b54c30bc9768c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#afa6724fb6af473e194b54c30bc9768c7">LSM303AGR_ACC_readAccelerationData</a> (int32_t *pData)</td></tr>
 <tr class="separator:afa6724fb6af473e194b54c30bc9768c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a035df0b4af3eb940e008c1f65caf1fc3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_l_s_m303_a_g_r_8cpp.html#a035df0b4af3eb940e008c1f65caf1fc3">LSM303AGR_MAG_readMagneticData</a> (int32_t *pData)</td></tr>
@@ -161,9 +167,12 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Initialization of the LSM303AGR accelerometer and magnetometer. The accelerometer is initialized with the following values:</p><ul>
-<li>ODR of 1Hz,</li>
+<li>Powerdown,</li>
 <li>X, Y and Z-axes enabled</li>
-<li>BDU enabled (output registers are not updated until the MSB and LSB have been read) the magnetometer is initialized with the following values:</li>
+<li>BDU enabled (output registers are not updated until the MSB and LSB have been read)</li>
+</ul>
+<p>The magnetometer is initialized with the following values:</p><ul>
+<li>Idle mode,</li>
 <li>Temperature compensation enabled,</li>
 <li>Low-power mode enabled,</li>
 <li>Offset cancelation enabled,</li>
@@ -215,21 +224,39 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ade02fd4e107e6261712cf7538324a9bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade02fd4e107e6261712cf7538324a9bc">&#9670;&nbsp;</a></span>LSM303AGR_powerdown()</h2>
+<a id="a289a7bd8de1cb1e311b195e59c2bd266"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a289a7bd8de1cb1e311b195e59c2bd266">&#9670;&nbsp;</a></span>LSM303AGR_powerDownAccelerometer()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void LSM303AGR_powerdown </td>
+          <td class="memname">void LSM303AGR_powerDownAccelerometer </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Puts the LSM303AGR in sleep/idle mode (both the accelerometer and magnetometer). </p>
+<p>Put the accelerometer in power-down mode </p>
+
+</div>
+</div>
+<a id="a7c5bb5d9b46bf5f43bd1ff2076599047"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c5bb5d9b46bf5f43bd1ff2076599047">&#9670;&nbsp;</a></span>LSM303AGR_powerDownMagnetometer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void LSM303AGR_powerDownMagnetometer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Put the magnetometer in idle mode </p>
 
 </div>
 </div>
@@ -301,6 +328,42 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a38c8499a01e86fea1acca690b821d92e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38c8499a01e86fea1acca690b821d92e">&#9670;&nbsp;</a></span>LSM303AGR_wakeUpAccelerometer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void LSM303AGR_wakeUpAccelerometer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Wake up the accelerometer from powerdown mode </p>
+
+</div>
+</div>
+<a id="ab189060b5f98f1c2b6b914481fba0b83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab189060b5f98f1c2b6b914481fba0b83">&#9670;&nbsp;</a></span>LSM303AGR_wakeUpMagnetometer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void LSM303AGR_wakeUpMagnetometer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Wake up the magnetometer from idle mode </p>
 
 </div>
 </div>

@@ -74,7 +74,10 @@ $(function() {
 <div class="title">main.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;main.h&quot;</code><br />
+
+<p>Main program body of the ecompass.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="main_8h_source.html">main.h</a>&quot;</code><br />
 <code>#include &quot;stm32l1xx_hal.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="_l_s_m303_a_g_r_8cpp.html">LSM303AGR.cpp</a>&quot;</code><br />
 </div><table class="memberdecls">
@@ -97,10 +100,8 @@ Functions</h2></td></tr>
 <tr class="separator:a4230d11f81d0b16e112f1cc3f40cb42f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a840291bc02cba5474a4cb46a9b9566fe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a840291bc02cba5474a4cb46a9b9566fe">main</a> (void)</td></tr>
 <tr class="separator:a840291bc02cba5474a4cb46a9b9566fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe1d8348c24e6589bc7c0b3f689316a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#afe1d8348c24e6589bc7c0b3f689316a7">calculate</a> ()</td></tr>
-<tr class="separator:afe1d8348c24e6589bc7c0b3f689316a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e52862a5f02251d2423fdaa92f7c2cb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a5e52862a5f02251d2423fdaa92f7c2cb">ecompassAlgorithm</a> ()</td></tr>
-<tr class="separator:a5e52862a5f02251d2423fdaa92f7c2cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8a5d83b5aa24bbc11f72d8dd0565ea7"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#aa8a5d83b5aa24bbc11f72d8dd0565ea7">ecompassAlgorithm</a> ()</td></tr>
+<tr class="separator:aa8a5d83b5aa24bbc11f72d8dd0565ea7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc6ad2d7f26373c340e8bec6eec390ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#afc6ad2d7f26373c340e8bec6eec390ea">callibration</a> ()</td></tr>
 <tr class="separator:afc6ad2d7f26373c340e8bec6eec390ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a829116a51f1db1a72ebd1120f60719d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a829116a51f1db1a72ebd1120f60719d5">_Error_Handler</a> (char *file, int line)</td></tr>
@@ -120,7 +121,11 @@ Variables</h2></td></tr>
 <tr class="memitem:a0523c05685d59544dca911cb6a3db77d"><td class="memItemLeft" align="right" valign="top">return&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8c.html#a0523c05685d59544dca911cb6a3db77d">ch</a></td></tr>
 <tr class="separator:a0523c05685d59544dca911cb6a3db77d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Main program body of the ecompass. </p>
+<dl class="section author"><dt>Author</dt><dd>Mariën Levi </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>04/01/2018 </dd></dl>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ac040eb6679fed6e591776425aa7abd9d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac040eb6679fed6e591776425aa7abd9d">&#9670;&nbsp;</a></span>PUTCHAR_PROTOTYPE</h2>
 
@@ -178,23 +183,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="afe1d8348c24e6589bc7c0b3f689316a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe1d8348c24e6589bc7c0b3f689316a7">&#9670;&nbsp;</a></span>calculate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void calculate </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="afc6ad2d7f26373c340e8bec6eec390ea"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afc6ad2d7f26373c340e8bec6eec390ea">&#9670;&nbsp;</a></span>callibration()</h2>
 
@@ -209,23 +197,33 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Callibrates the ecompass. The algorithm is based on: <a href="https://github.com/kriswiner/MPU-6050/wiki/Simple-and-Effective-Magnetometer-Calibration">https://github.com/kriswiner/MPU-6050/wiki/Simple-and-Effective-Magnetometer-Calibration</a> </p>
 
 </div>
 </div>
-<a id="a5e52862a5f02251d2423fdaa92f7c2cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e52862a5f02251d2423fdaa92f7c2cb">&#9670;&nbsp;</a></span>ecompassAlgorithm()</h2>
+<a id="aa8a5d83b5aa24bbc11f72d8dd0565ea7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8a5d83b5aa24bbc11f72d8dd0565ea7">&#9670;&nbsp;</a></span>ecompassAlgorithm()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void ecompassAlgorithm </td>
+          <td class="memname">uint16_t ecompassAlgorithm </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>The ecompass algorithm, it does the following:</p><ol type="1">
+<li>Read the data from the accelerometer and magnetomerer</li>
+<li>Convert the data from integer to float</li>
+<li>Apply the resolution on the accelerometer data</li>
+<li>Calculate the phi (roll angle) value</li>
+<li>Calculate the theta (pitch angle or attitude) value</li>
+<li>Calculate of the Psi (yaw angle or heading) value</li>
+</ol>
+<dl class="section return"><dt>Returns</dt><dd>the value of the heading in uint16_t format. </dd></dl>
 
 </div>
 </div>
@@ -297,6 +295,7 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>I2C1 init function </p>
 
 </div>
 </div>
@@ -323,6 +322,7 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>TIM3 init function </p>
 
 </div>
 </div>
@@ -349,6 +349,7 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>USART2 init function </p>
 
 </div>
 </div>
@@ -373,6 +374,7 @@ Variables</h2></td></tr>
 <p>Initializes the CPU, AHB and APB busses clocks</p>
 <p>Configure the Systick interrupt time</p>
 <p>Configure the Systick</p>
+<p>SysTick_IRQn interrupt configuration </p>
 
 </div>
 </div>
@@ -402,15 +404,6 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>File Name : <a class="el" href="main_8c.html">main.c</a> Description : Main program body</p>
-<p>This notice applies to any and all portions of this file that are not between comment pairs USER CODE BEGIN and USER CODE END. Other portions of this file, whether inserted by the user or by software development tools are owned by their respective copyright owners.</p>
-<p>COPYRIGHT(c) 2018 STMicroelectronics</p>
-<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p><ol type="1">
-<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-<li>Neither the name of STMicroelectronics nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.</li>
-</ol>
-<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. </p>
 
 </div>
 </div>
@@ -453,8 +446,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">{</div><div class="line">    </div><div class="line">    </div><div class="line">    HAL_UART_Transmit(&amp;<a class="code" href="main_8c.html#aa9479c261d65eecedd3d9582f7f0f89c">huart2</a>, (uint8_t *) &amp;<a class="code" href="main_8c.html#a0523c05685d59544dca911cb6a3db77d">ch</a>, 1, 0xFFFF)</div><div class="ttc" id="main_8c_html_aa9479c261d65eecedd3d9582f7f0f89c"><div class="ttname"><a href="main_8c.html#aa9479c261d65eecedd3d9582f7f0f89c">huart2</a></div><div class="ttdeci">UART_HandleTypeDef huart2</div><div class="ttdef"><b>Definition:</b> main.c:51</div></div>
-<div class="ttc" id="main_8c_html_a0523c05685d59544dca911cb6a3db77d"><div class="ttname"><a href="main_8c.html#a0523c05685d59544dca911cb6a3db77d">ch</a></div><div class="ttdeci">return ch</div><div class="ttdef"><b>Definition:</b> main.c:80</div></div>
+<b>Initial value:</b><div class="fragment"><div class="line">{</div><div class="line">    HAL_UART_Transmit(&amp;<a class="code" href="main_8c.html#aa9479c261d65eecedd3d9582f7f0f89c">huart2</a>, (uint8_t *) &amp;<a class="code" href="main_8c.html#a0523c05685d59544dca911cb6a3db77d">ch</a>, 1, 0xFFFF)</div><div class="ttc" id="main_8c_html_aa9479c261d65eecedd3d9582f7f0f89c"><div class="ttname"><a href="main_8c.html#aa9479c261d65eecedd3d9582f7f0f89c">huart2</a></div><div class="ttdeci">UART_HandleTypeDef huart2</div><div class="ttdef"><b>Definition:</b> main.c:23</div></div>
+<div class="ttc" id="main_8c_html_a0523c05685d59544dca911cb6a3db77d"><div class="ttname"><a href="main_8c.html#a0523c05685d59544dca911cb6a3db77d">ch</a></div><div class="ttdeci">return ch</div><div class="ttdef"><b>Definition:</b> main.c:49</div></div>
 </div><!-- fragment -->
 </div>
 </div>

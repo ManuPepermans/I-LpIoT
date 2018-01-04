@@ -51,6 +51,7 @@
 /*LSM303AGR settings*/
 //LSM303AGR Accelerometer
 //CTRL_REG_1 (0x20)
+#define LSM303AGR_ACC_ODR_POWERDOWN		0x00
 #define LSM303AGR_ACC_ODR_1HZ			0x10
 #define LSM303AGR_ACC_Z_EN				0x04
 #define LSM303AGR_ACC_Y_EN				0x02
@@ -93,14 +94,17 @@ uint8_t LSM303AGR_setting;
 I2C_HandleTypeDef *LSM303AGR_hi2c;
 
 void LSM303AGR_setI2CInterface(I2C_HandleTypeDef *hi2c);
-HAL_StatusTypeDef LSM303AGR_readRegister(uint8_t LSM303AGR_reg, uint8_t* LSM303AGR_data,
-		uint8_t ACC_MAG);
-HAL_StatusTypeDef LSM303AGR_writeRegister(uint8_t LSM303AGR_reg, uint8_t* LSM303AGR_data,
-		uint8_t ACC_MAG);
+HAL_StatusTypeDef LSM303AGR_readRegister(uint8_t LSM303AGR_reg,
+		uint8_t* LSM303AGR_data, uint8_t ACC_MAG);
+HAL_StatusTypeDef LSM303AGR_writeRegister(uint8_t LSM303AGR_reg,
+		uint8_t* LSM303AGR_data, uint8_t ACC_MAG);
 void LSM303AGR_init();
 void LSM303AGR_ACC_reset();
 void LSM303AGR_MAG_reset();
-void LSM303AGR_powerdown();
+void LSM303AGR_powerDownAccelerometer();
+void LSM303AGR_powerDownMagnetomerer();
+void LSM303AGR_wakeUpAccelerometer();
+void LSM303AGR_wakeUpMagnetometer();
 void LSM303AGR_ACC_readAccelerationData();
 void LSM303AGR_MAG_readMagneticData();
 

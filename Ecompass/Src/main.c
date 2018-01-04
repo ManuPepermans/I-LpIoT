@@ -1,37 +1,9 @@
 /**
  ******************************************************************************
- * File Name          : main.c
- * Description        : Main program body
- ******************************************************************************
- ** This notice applies to any and all portions of this file
- * that are not between comment pairs USER CODE BEGIN and
- * USER CODE END. Other portions of this file, whether
- * inserted by the user or by software development tools
- * are owned by their respective copyright owners.
- *
- * COPYRIGHT(c) 2018 STMicroelectronics
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *   1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
- *   2. Redistributions in binary form must reproduce the above copyright notice,
- *      this list of conditions and the following disclaimer in the documentation
- *      and/or other materials provided with the distribution.
- *   3. Neither the name of STMicroelectronics nor the names of its contributors
- *      may be used to endorse or promote products derived from this software
- *      without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * @file main.c
+ * @author Mariën Levi
+ * @date 04/01/2018
+ * @brief Main program body of the ecompass.
  *
  ******************************************************************************
  */
@@ -73,10 +45,7 @@ static void MX_I2C1_Init(void);
 #endif /* __GNUC__ */
 
 PUTCHAR_PROTOTYPE {
-	/* Place your implementation of fputc here */
-	/* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
 	HAL_UART_Transmit(&huart2, (uint8_t *) &ch, 1, 0xFFFF);
-
 	return ch;
 }
 /* USER CODE END PFP */
@@ -115,7 +84,8 @@ int main(void) {
 
 	/* USER CODE BEGIN 2 */
 
-	LSM303AGR_setI2CInterface(&hi2c1);;
+	LSM303AGR_setI2CInterface(&hi2c1);
+	;
 	LSM303AGR_init();
 
 	/* USER CODE END 2 */
@@ -182,11 +152,11 @@ void SystemClock_Config(void) {
 	 */
 	HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
-	/* SysTick_IRQn interrupt configuration */
+	/** SysTick_IRQn interrupt configuration */
 	HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
-/* I2C1 init function */
+/** I2C1 init function */
 static void MX_I2C1_Init(void) {
 
 	hi2c1.Instance = I2C1;
@@ -204,7 +174,7 @@ static void MX_I2C1_Init(void) {
 
 }
 
-/* TIM3 init function */
+/** TIM3 init function */
 static void MX_TIM3_Init(void) {
 
 	TIM_ClockConfigTypeDef sClockSourceConfig;
@@ -233,7 +203,7 @@ static void MX_TIM3_Init(void) {
 
 }
 
-/* USART2 init function */
+/** USART2 init function */
 static void MX_USART2_UART_Init(void) {
 
 	huart2.Instance = USART2;
@@ -263,78 +233,28 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
-
-void calculate() {
-
-	printf("Start calculate\r\n");
-
-	int32_t axes_m[3];
-	int32_t axes_a[3];
-	float axes_aF[3];
-	float axes_aT[3];
-	float roll, pitch, x, y, h, dir;
-	uint16_t dirUint16_t;
-
-	LSM303AGR_ACC_readAccelerationData(lsm303agrAccData);
-	LSM303AGR_MAG_readMagneticData(lsm303agrMagData);
-
-	// The sensitivity is already taken into account.
-	LSM303AGR_ACC_readAccelerationData(axes_a);
-	LSM303AGR_MAG_readMagneticData(axes_m);
-	axes_aF[0] = (float) axes_a[0];
-	axes_aF[1] = (float) axes_a[1];
-	axes_aF[2] = (float) axes_a[2];
-
-	// Resolution is 2^(8) = 256
-	axes_aT[0] = (axes_aF[0] * 2 / 256);
-	axes_aT[1] = (axes_aF[1] * 2 / 256);
-	axes_aT[2] = (axes_aF[2] * 2 / 256);
-
-	// Some math to get the thing working
-	roll = atan2f(axes_aT[1], axes_aT[2]);
-	pitch = atan2f(-axes_aT[0],
-			axes_aT[1] * sinf(roll) + axes_aT[2] * cosf(roll));
-
-	x = axes_m[0] * cosf(pitch)
-			+ (axes_m[1] * sinf(roll) + axes_m[2] * cosf(roll)) * sinf(pitch);
-	y = axes_m[2] * sinf(roll) - axes_m[1] * cosf(roll);
-
-	// Convert to degrees, look in what quadrant the value lays and if it's negative add 360° to achieve correct positioning.
-	h = atan2f(y, x);
-	dir = h * (180 / 3.1415);
-	if (dir < 0)
-		dir += 360;
-
-	// Convert for transmission over DASH7
-	dirUint16_t = (uint16_t) dir;
-
-	printf("LSM303AGR [mag/mgauss]:  %6ld, %6ld, %6ld\r\n", axes_m[0],
-			axes_m[1], axes_m[2]);
-	printf("LSM303AGR [acc/mg]:  %6ld, %6ld, %6ld\r\n", axes_a[0], axes_a[1],
-			axes_a[2]);
-	printf("richting: %6d graden\r\n", dirUint16_t);
-
-	printf("Finished calculate\r\n");
-	printf("---------------------------------------------------------\r\n");
-
-}
-
-void ecompassAlgorithm() {
+/**
+ * The ecompass algorithm, it does the following:
+ * 		1. Read the data from the accelerometer and magnetomerer
+ * 		2. Convert the data from integer to float
+ * 		3. Apply the resolution on the accelerometer data
+ * 		4. Calculate the phi (roll angle) value
+ * 		5. Calculate the  theta (pitch angle or attitude) value
+ * 		6. Calculate of the Psi (yaw angle or heading) value
+ *
+ * @return the value of the heading in uint16_t format.
+ */
+uint16_t ecompassAlgorithm() {
 
 	printf("Start ecompassAlgorithm\r\n");
 
 	LSM303AGR_ACC_readAccelerationData(lsm303agrAccData);
 	LSM303AGR_MAG_readMagneticData(lsm303agrMagData);
 
-	printf("Data accelerometer: %ld %ld %ld\r\n", lsm303agrAccData[0],
+	printf("Data accelerometer: %d %d %d\r\n", lsm303agrAccData[0],
 			lsm303agrAccData[1], lsm303agrAccData[2]);
-	printf("Data Magnetometer: %ld %ld %ld\r\n", lsm303agrMagData[0],
+	printf("Data Magnetometer: %d %d %d\r\n", lsm303agrMagData[0],
 			lsm303agrMagData[1], lsm303agrMagData[2]);
-
-	printf("Data accelerometer: %ld %ld %ld\r\n", accelerationData[0],
-			accelerationData[1], accelerationData[2]);
-	printf("Data Magnetometer: %ld %ld %ld\r\n", magnetometerData[0],
-			magnetometerData[1], magnetometerData[2]);
 
 	printf("---------------------------------------------------------\r\n");
 
@@ -382,19 +302,15 @@ void ecompassAlgorithm() {
 //	yawTemp[2] = lsm303agrMagDataFloat[0] * cosf(pitchRad) + yawTemp[1] * sinf(pitchRad);
 //	yawRad = atan2f(yawTemp[0], yawTemp[2]);
 //	yawDegree = yawRad * (180 / PI);
-//
-//	if (yawDegree < 0) {
-//		yawDegree += 360;
-//	}
 
-	x = lsm303agrMagDataFloat[0] * cosf(pitchRad)
+	x_direction = lsm303agrMagDataFloat[0] * cosf(pitchRad)
 			+ (lsm303agrMagDataFloat[1] * sinf(rollRad)
 					+ lsm303agrMagDataFloat[2] * cosf(rollRad))
 					* sinf(pitchRad);
-	y = lsm303agrMagDataFloat[2] * sinf(rollRad)
+	y_direction = lsm303agrMagDataFloat[2] * sinf(rollRad)
 			- lsm303agrMagDataFloat[1] * cosf(rollRad);
 
-	yawRad = atan2f(y, x);
+	yawRad = atan2f(y_direction, x_direction);
 	yawDegree = yawRad * (180 / PI);
 
 	if (yawDegree < 0)
@@ -402,12 +318,22 @@ void ecompassAlgorithm() {
 
 	printf("Psi (yaw angle or heading, in degrees) is: %0.2f\r\n", yawDegree);
 
+	return (uint16_t) yawDegree;
 	printf("Finished ecompassAlgorithm\r\n");
 	printf("---------------------------------------------------------\r\n");
 
 }
 
+/**
+ * Callibrates the ecompass. The algorithm is based on: https://github.com/kriswiner/MPU-6050/wiki/Simple-and-Effective-Magnetometer-Calibration
+ *
+ */
 void callibration() {
+
+	int32_t xmin, xmax;
+	int32_t
+
+	printf("Start callibration\r\n");
 
 }
 
