@@ -339,40 +339,50 @@ uint16_t ecompassAlgorithm() {
 void callibration() {
 
 	int16_t axes[3];
-	int16_t x_min, y_min, z_min;
-	int16_t x_max, y_max, z_max;
-	int16_t x_bias, y_bias, z_bias;
+	int16_t xMin, yMin, zMin;
+	int16_t xMax, yMax, zMax;
+	int16_t xAvg, yAvg, zAvg;
+
 	uint8_t registerValue;
 
 	printf("Start callibration\r\n");
 
 	LSM303AGR_MAG_readMagneticRawData(axes);
-	axes[0] = x_min = x_max;
-	axes[1] = y_min = y_max;
-	axes[2] = z_min = z_max;
+	axes[0] = xMin = xMax;
+	axes[1] = yMin = yMax;
+	axes[2] = zMin = zMax;
 
 	for (uint8_t i = 0; i < 127; ++i) {
 		LSM303AGR_MAG_readMagneticRawData(axes);
 
-		if (axes[0] > x_max)
-			x_max = axes[0];
-		else if (axes[0] < x_min)
-			x_min = axes[0];
+		if (axes[0] > xMax)
+			xMax = axes[0];
+		else if (axes[0] < xMin)
+			xMin = axes[0];
 
-		if (axes[1] > y_max)
-			y_max = axes[1];
-		else if (axes[1] < y_min)
-			y_min = axes[1];
+		if (axes[1] > yMax)
+			yMax = axes[1];
+		else if (axes[1] < yMin)
+			yMin = axes[1];
 
-		if (axes[2] > z_max)
-			z_max = axes[2];
-		else if (axes[2] < z_min)
-			z_min = axes[2];
+		if (axes[2] > zMax)
+			zMax = axes[2];
+		else if (axes[2] < zMin)
+			zMin = axes[2];
 
-		HAL_Delay(50);
+		HAL_Delay(100);
 	}
+	
+	xAvg = (xMax + xMin)/2;
+	yAvg = (yMax + yMin)/2;
+	zAvg = (zMax + zMin)/2;
 
-	registerValue =
+
+
+
+	
+
+	//registerValue =
 
 
 
