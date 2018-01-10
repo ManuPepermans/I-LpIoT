@@ -15,6 +15,8 @@ import paho.mqtt.client as mqtt
 import signal
 
 import struct
+import math
+import binascii
 
 from d7a.alp.command import Command
 from d7a.alp.operations.responses import ReturnFileData
@@ -44,6 +46,7 @@ class Backend:
         argparser.add_argument("-P", "--password", help="password for MQTT broker", required=True)
         argparser.add_argument("-n", "--node", help="node name", default="4337313400210032")
 
+
         self.mq = None
         self.connected_to_mqtt = False
 
@@ -55,7 +58,7 @@ class Backend:
 
         ThingsBoard.start_api(self.config)
         #ThingsBoardMQTT.start_mqtt("thingsboard.idlab.uantwerpen.be", "98qEWhtBm4FRzWGTvIER", 'v1/gateway/telemetry')
-        ThingsBoardMQTT.start_mqtt(self.config.url, self.config.tokenmqtt, self.config.telemetry)
+        ThingsBoardMQTT.start_mqtt("thingsboard.idlab.uantwerpen.be", self.config)
 
     def connect_to_mqtt(self):
         self.connected_to_mqtt = False
@@ -88,47 +91,63 @@ class Backend:
         self.connected_to_mqtt = True
 
     def on_mqtt_message(self, client, config, msg):
-        print("MQTT received from {}".format(msg.topic))
+        #print("MQTT received from {}".format(msg.topic))
 
         if str(msg.topic) == "/loriot/":
             self.lorawan_topic(msg)
-        elif str(msg.topic) == "/tb/":
+        elif str(msg.topic) == "/tb":
             self.dash7_topic(msg)
+            #print("D&")
 
     def lorawan_topic(self, msg):
+
         try:
             obj = jsonpickle.json.loads(msg.payload)
         except:
-            # print("Payload not valid JSON, skipping")
+            #print("Payload not valid JSON, skipping")
             return
 
-        node_id = obj["EUI"]
-        if node_id == "BE7A000000001B94":
-            print("***Right node: {}".format("BE7A000000001B94"))
+        if obj["EUI"] == "BE7A000000001B94" and obj["cmd"] == "rx":
+            print("***Right node: {}".format(obj["EUI"]))
 
             cmd = jsonpickle.decode(jsonpickle.json.dumps(obj["data"]))
 
-            #5117.1421,N,0000428.4897,E,230746.000,A,A*56
+            [GPGLL, latitude, la, longitude, lon, time, A1, A2] = cmd.split(',')
 
-        value_type = "G"
-        print("Parse LORA")
-        if value_type == "G":  # GPS information form loriot
-            # gps_value1 = struct.unpack(fmt, bytearray(action.operand.data))[1]
-            # gps_value2 = struct.unpack(fmt, bytearray(action.operand.data))[2]
+            latitude = float(latitude)
+            deg = math.floor(latitude/100)
+            min = latitude-(deg*100)
 
-            ThingsBoardMQTT.on_mqtt_publish(51.1776, 4.4149)
+            latitude = deg + min/60
+
+            longitude = float(longitude)
+            degl = math.floor(longitude / 100)
+            minl = longitude - (degl * 100)
+
+            longitude = degl + minl / 60
+
+            if la == 'S':
+                latitude *= -1
+            if lon == 'W':
+                longitude *= -1
+
+            ThingsBoardMQTT.on_mqtt_publish(latitude, longitude)
+
 
     def dash7_topic(self, msg):
         global json_str
 
         try:
             obj = jsonpickle.json.loads(msg.payload)
+            print(obj)
+            cmd = jsonpickle.decode(jsonpickle.json.dumps(obj["alp"]))
+            print("cmd")
         except:
-            # print("Payload not valid JSON, skipping")
+            print("Payload not valid JSON, skipping")
             return
 
         gateway = obj["deviceId"]
-        cmd = jsonpickle.decode(jsonpickle.json.dumps(obj["alp"]))
+
         node_id = gateway  # overwritten below with remote node ID when received over D7 interface
 
         # get remote node id (when this is received over D7 interface)
@@ -139,14 +158,14 @@ class Backend:
         if node_id == self.config.node:
             print("***Right node: {}".format(node_id))
             json_str = {}
+            print(cmd)
+
 
             for action in cmd.actions:
-                if type(action.operation) is ReturnFileData and action.operand.offset.id == 1:
-
+                if type(action.operation) is ReturnFileData and action.operand.offset.id == 64:
                     length = len(action.operand.data)
                     fmt = "c" * length
-                    value_type = struct.unpack(fmt, bytearray(action.operand.data))[
-                        0]  # parse binary payload (adapt to your needs)
+                    value_type = struct.unpack(fmt, bytearray(action.operand.data))[0]  # parse binary payload (adapt to your needs)
                     print("Incoming data is from kind", format(value_type))
 
                     if value_type == "M":  # Magnetometer information
@@ -157,7 +176,7 @@ class Backend:
                         # : adds formatting options for this variable (otherwise it would represent decimal 6),
                         # 08 formats the number to eight digits zero-padded on the left,
                         # b converts the number to its binary representation
-
+                        print(magn_value)
                         dir = self.magnetometer_to_direction(magn_value)
                         print("Direction is: ", format(dir))
                         json_str = {"direction": dir}
@@ -166,32 +185,31 @@ class Backend:
                         baro_value1 = struct.unpack(fmt, bytearray(action.operand.data))[1]
                         baro_value2 = struct.unpack(fmt, bytearray(action.operand.data))[2]
                         baro_value3 = struct.unpack(fmt, bytearray(action.operand.data))[3]
+                        temp_value1 = struct.unpack(fmt, bytearray(action.operand.data))[4]
+                        temp_value2 = struct.unpack(fmt, bytearray(action.operand.data))[5]
+
                         baro_value = int(
                             '{0:08b}'.format(ord(baro_value1)) + '{0:08b}'.format(
                                 ord(baro_value2)) + '{0:08b}'.format(
                                 ord(baro_value3)), 2)
+                        temperature = int(
+                            '{0:08b}'.format(ord(temp_value1)) + '{0:08b}'.format(
+                                ord(temp_value2)), 2)
 
-                        level = self.barometer_calculate(baro_value)
+                        print("Temperature is: ", format(temperature))
+                        json_str = {"temp": temperature}
+                        ThingsBoard.send_json(self.config, json_str)
+
+                        level = self.barometer_calculate(baro_value, temperature)
                         print("Level is: ", format(level))
                         json_str = {"level": level}
-                        ThingsBoard.send_json(self.config, json_str)
-                    elif value_type == "T":  # Temperature information
-                        global temperature
-                        temp_value1 = struct.unpack(fmt, bytearray(action.operand.data))[1]
-                        temp_value2 = struct.unpack(fmt, bytearray(action.operand.data))[2]
-                        temp_value = int('{0:08b}'.format(ord(temp_value1)) + '{0:08b}'.format(ord(temp_value2)), 2)
-
-                        print("Temperature is: ", format(temp_value))
-                        json_str = {"Temperature": temp_value}
                         ThingsBoard.send_json(self.config, json_str)
 
         else:
             # print("Wrong node: {}".format(node_id))
             return
 
-    def barometer_calculate(self, baro_value):
-        global temperature
-
+    def barometer_calculate(self, baro_value, temperature):
         pressurehpa = baro_value / 4096
         top = pow((1001.1 / pressurehpa), 0.1902)
         top1 = top - 1
@@ -201,21 +219,21 @@ class Backend:
         return top3
 
     def magnetometer_to_direction(self, magn_value):
-        if 338 < magn_value or magn_value <= 23:
+        if 338 < magn_value and magn_value <= 23:
             direction = "N"
-        elif 23 < magn_value or magn_value <= 68:
+        elif 23 < magn_value and magn_value <= 68:
             direction = "NE"
-        elif 68 < magn_value or magn_value <= 113:
+        elif 68 < magn_value and magn_value <= 113:
             direction = "E"
-        elif 113 < magn_value or magn_value <= 158:
+        elif 113 < magn_value and magn_value <= 158:
             direction = "SE"
-        elif 158 < magn_value or magn_value <= 203:
+        elif 158 < magn_value and magn_value <= 203:
             direction = "S"
-        elif 203 < magn_value or magn_value <= 248:
+        elif 203 < magn_value and magn_value <= 248:
             direction = "SW"
-        elif 248 < magn_value or magn_value <= 293:
+        elif 248 < magn_value and magn_value <= 293:
             direction = "W"
-        elif 293 < magn_value or magn_value <= 338:
+        elif 293 < magn_value and magn_value <= 338:
             direction = "NW"
         else:
             direction = "NULL"

@@ -37,6 +37,8 @@ class knn:
         argparser.add_argument("-U", "--user", help="username for MQTT broker", required=True)
         argparser.add_argument("-P", "--password", help="password for MQTT broker", required=True)
         argparser.add_argument("-n", "--node", help="node name", default="4337313400210032")
+        argparser.add_argument("-d", "--device", help="device ID of the gateway modem to send the command to",
+                               default="c2c4ebd0-b95a-11e7-bebc-85e6dd10a2e8")
 
         self.mqtt_config = None
         self.mqtt_connected = False
@@ -283,6 +285,12 @@ class knn:
         elif results == 0:
             xPixel = 937
             yPixel = 536
+
+            #ALERT
+
+            ThingsBoard.execute_rpc_command(self.config, [0x31, 0x41, 0x45])
+            sleep(10)
+            ThingsBoard.execute_rpc_command(self.config, [0x31, 0x41, 0x45])
 
         return xPixel, yPixel
 

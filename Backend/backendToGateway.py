@@ -39,7 +39,8 @@ class backendToGateway:
         api_client_config.api_key_prefix['X-Authorization'] = 'Bearer'
         self.api_client = ApiClient(api_client_config)
 
-    def execute_rpc_command(self, device_id, json_alp_cmd):
+    def execute_rpc_command(self, device_id, rpc_data):
+
         # we will do it by a manual POST to /api/plugins/rpc/oneway/ , which is the route specified
         # in the documentation
         cmd = {"method": "execute-alp-async", "params": jsonpickle.encode(json_alp_cmd), "timeout": 500}
