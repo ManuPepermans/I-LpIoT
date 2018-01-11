@@ -174,7 +174,7 @@ class Backend:
                         # : adds formatting options for this variable (otherwise it would represent decimal 6),
                         # 08 formats the number to eight digits zero-padded on the left,
                         # b converts the number to its binary representation
-                        print(magn_value)
+                        print("Magnotometer value: ", format(magn_value))
                         dir = self.magnetometer_to_direction(magn_value)
                         print("Direction is: ", format(dir))
                         json_str = {"direction": dir}

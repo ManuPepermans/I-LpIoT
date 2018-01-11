@@ -161,21 +161,21 @@ class knn:
         for x in range(len(measurement)):
             nodeSet = measurement[x]
             for y in range(len(nodeSet)):
-                print("Step: {}".format(x))
-                print("Measurement: {}".format(nodeSet[y]))
+                #print("Measurement: {}".format(nodeSet[y]))
                 neighbors = self.getNeighbors(train, nodeSet[y], k)
-                print("Get Neighbors: {}".format(neighbors))
+                #print("Get Neighbors: {}".format(neighbors))
                 result = self.getResponse(neighbors)
-                print("Voting: {}".format(result))
+                #print("Voting: {}".format(result))
                 xPixel, yPixel = self.getPixels(result)
-                print("Pixels: x = {} and y = {}".format(xPixel, yPixel))
+                #print("Pixels: x = {} and y = {}".format(xPixel, yPixel))
 
                 if x == result:
                     count += 1
-                    print("correct")
-        print(count)
-        procent = float(count)/len(measurement)*100
-        print(procent)
+                    #print("correct")
+        length = len(measurement[0])*len(measurement)
+        procent = float(count)/length*100
+        #print("Accuracy: {}%".format(procent))
+        print("{}   |{}".format(k,procent))
 
 
 
@@ -184,35 +184,31 @@ class knn:
         print("Started")
         input2 = raw_input("Split = ")
         split = int(input2)
-        keep_running = True
-        while keep_running:
-            try:
-                input = raw_input("K = ")
-                k = int(input)
 
-                test = []
-                train = []
-                list = []
-                list2 = []
-                trainingSet = self.loadDataset()
-                print(train)
-                for x in range(len(trainingSet)):
-                    nodeSet = trainingSet[x]
-                    for y in range(len(nodeSet)):
 
-                        if y < split:
-                            list2 = []
-                            list.append(nodeSet[y])
-                        else:
-                            list = []
-                            list2.append(nodeSet[y])
-                    train.append(list)
-                    test.append(list2)
+        test = []
+        train = []
+        list = []
+        list2 = []
+        trainingSet = self.loadDataset()
+        for x in range(len(trainingSet)):
+            nodeSet = trainingSet[x]
+            for y in range(len(nodeSet)):
 
-                self.calculate(test, train, k)
-            except KeyboardInterrupt:
-                print("received KeyboardInterrupt... stopping processing")
-                keep_running = False
+                if y < split:
+                    list2 = []
+                    list.append(nodeSet[y])
+                else:
+                    list = []
+                    list2.append(nodeSet[y])
+
+            train.append(list)
+            test.append(list2)
+
+        print("K   |Accuracy")
+        for k in range(9):
+            self.calculate(test, train, k+1)
+
 
 
 
