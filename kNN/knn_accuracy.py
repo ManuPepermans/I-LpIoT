@@ -12,6 +12,7 @@ import argparse
 import pickle
 
 import ThingsBoard
+import random
 
 firstRun = True
 newBatch = True
@@ -183,7 +184,7 @@ class knn:
     def run(self):
         print("Started")
         input2 = raw_input("Split = ")
-        split = int(input2)
+        splitProcent = int(input2)
 
 
         test = []
@@ -193,8 +194,9 @@ class knn:
         trainingSet = self.loadDataset()
         for x in range(len(trainingSet)):
             nodeSet = trainingSet[x]
+            random.shuffle(nodeSet)
+            split = len(nodeSet)*splitProcent/100
             for y in range(len(nodeSet)):
-
                 if y < split:
                     list2 = []
                     list.append(nodeSet[y])
@@ -202,8 +204,10 @@ class knn:
                     list = []
                     list2.append(nodeSet[y])
 
+
             train.append(list)
             test.append(list2)
+
 
         print("K   |Accuracy")
         for k in range(9):
