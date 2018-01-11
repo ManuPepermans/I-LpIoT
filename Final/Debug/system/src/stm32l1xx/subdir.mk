@@ -18,7 +18,8 @@ C_SRCS += \
 ../system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.c \
 ../system/src/stm32l1xx/stm32l1xx_hal_tim.c \
 ../system/src/stm32l1xx/stm32l1xx_hal_tim_ex.c \
-../system/src/stm32l1xx/stm32l1xx_hal_uart.c 
+../system/src/stm32l1xx/stm32l1xx_hal_uart.c \
+../system/src/stm32l1xx/stm32l1xx_hal_wwdg.c 
 
 OBJS += \
 ./system/src/stm32l1xx/stm32l1xx_hal.o \
@@ -35,7 +36,8 @@ OBJS += \
 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o \
 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o \
 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o \
-./system/src/stm32l1xx/stm32l1xx_hal_uart.o 
+./system/src/stm32l1xx/stm32l1xx_hal_uart.o \
+./system/src/stm32l1xx/stm32l1xx_hal_wwdg.o 
 
 C_DEPS += \
 ./system/src/stm32l1xx/stm32l1xx_hal.d \
@@ -52,14 +54,15 @@ C_DEPS += \
 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.d \
 ./system/src/stm32l1xx/stm32l1xx_hal_tim.d \
 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.d \
-./system/src/stm32l1xx/stm32l1xx_hal_uart.d 
+./system/src/stm32l1xx/stm32l1xx_hal_uart.d \
+./system/src/stm32l1xx/stm32l1xx_hal_wwdg.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 system/src/stm32l1xx/%.o: ../system/src/stm32l1xx/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross ARM GNU C Compiler'
-	arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -DDEBUG -DTRACE -DSTM32L152xE -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32l1xx" -I"../system/include/cmsis/device" -std=gnu11 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -D__weak="__attribute__((weak))" -D__packed="__attribute__((__packed__))" -DUSE_HAL_DRIVER -DSTM32L152xE -DDEBUG -DTRACE -I../Inc -I../Drivers/STM32L1xx_HAL_Driver/Inc -I../Drivers/STM32L1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L1xx/Include -I../Drivers/CMSIS/Include -I"../include" -I"../system/include" -I"../system/include/cmsis" -I"../system/include/stm32l1xx" -I"../system/include/cmsis/device" -std=gnu11 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

@@ -57,8 +57,11 @@ final.siz \
 # All Target
 all: final.elf secondary-outputs
 
+dependents:
+	-cd /Users/kevinvdm/STM32Toolchain/projects/final/Release && $(MAKE) clean all
+
 # Tool invocations
-final.elf: $(OBJS) $(USER_OBJS)
+final.elf: $(OBJS) $(USER_OBJS) /Users/kevinvdm/STM32Toolchain/projects/final/Release/final.elf
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM GNU C++ Linker'
 	arm-none-eabi-g++ -mcpu=cortex-m3 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -T mem.ld -T libs.ld -T sections.ld -nostartfiles -Xlinker --gc-sections -L"../ldscripts" -Wl,-Map,"final.map" --specs=nano.specs -o "final.elf" $(OBJS) $(USER_OBJS) $(LIBS)
@@ -85,6 +88,6 @@ clean:
 secondary-outputs: $(SECONDARY_FLASH) $(SECONDARY_SIZE)
 
 .PHONY: all clean dependents
-.SECONDARY:
+/Users/kevinvdm/STM32Toolchain/projects/final/Release/final.elf:
 
 -include ../makefile.targets

@@ -42,10 +42,19 @@
 
 I2C_HandleTypeDef hi2c1;
 
+TIM_HandleTypeDef htim3;
+
+/* WWDG handler declaration */
+WWDG_HandleTypeDef   WwdgHandle;
+
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
+
+//move to appropriate header file
+#define LD2_Pin GPIO_PIN_5
+#define LD2_GPIO_Port GPIOA
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -55,6 +64,11 @@ static void MX_USART3_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_UART5_Init(void);
+
+/*Buzzer functions */
+static void MX_GPIO_Init(void);
+static void MX_TIM3_Init(void);
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 /*
  *  The different states:
@@ -86,8 +100,38 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-  /* Initialize booleans*/
+  /*##-1- Check if the system has resumed from WWDG reset ####################*/
+    if(__HAL_RCC_GET_FLAG(RCC_FLAG_WWDGRST) != RESET)
+    {
+      /* WWDGRST flag set*/
+    	HAL_UART_Transmit(&huart2, "WWDGRST FLAG SET\n", sizeof("WWDGRST FLAG SET\n")-1, HAL_MAX_DELAY);
 
+      /* Clear reset flags */
+      __HAL_RCC_CLEAR_RESET_FLAGS();
+    }
+    else
+    {
+      /* WWDGRST flag is not set*/
+    	HAL_UART_Transmit(&huart2, "WWDGRST FLAG NOT SET\n", sizeof("WWDGRST FLAG NOT SET\n")-1, HAL_MAX_DELAY);
+    }
+
+    /*##-2- Configure the WWDG peripheral ######################################*/
+    /* WWDG clock counter = (PCLK1 (2MHz)/4096)/8) = 61 Hz (0.01639 s)
+       WWDG Window value = 80 means that the WWDG counter should be refreshed only
+       when the counter is below 254 (and greater than 64) otherwise a reset will
+       be generated.
+       WWDG Counter value = 255, WWDG timeout = ~0.01639s*64 = 1.04896 s
+
+
+    	   This means: WWDG starts counting at 255*0.01639s=4.17945s, reset has to be between
+    	   ~0.01639s*254=4.16306s and ~0.01639s*64=1.04896s.								*/
+    WwdgHandle.Instance = WWDG;
+
+    WwdgHandle.Init.Prescaler = WWDG_PRESCALER_8;
+    WwdgHandle.Init.Window    = 254;
+    WwdgHandle.Init.Counter   = 255;
+
+  /* Initialize booleans*/
   loraTries = 0;
   lora_gps_powered = false;
 
@@ -111,7 +155,19 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
 
+  MX_GPIO_Init();
+  MX_TIM3_Init();
+
+  //PWM timer Initialize
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+
   uint8_t Rx_Buffer[100];
+
+  /*##-5- Start the WWDG #####################################################*/
+  if(HAL_WWDG_Init(&WwdgHandle) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
   /* Infinite loop */
   while (1)
@@ -125,6 +181,9 @@ int main(void)
 
 	  			// Only for testing purpose
 	  			state = lora_ready;
+		  			/* Refresh WWDG: update counter value to 255, he refresh window is:
+		  	    		~780 * (127-80) = 36.6ms < refresh window < ~780 * 64 = 49.9ms */
+		  		resetWWDG();
 	  		break;
 	  		case in_danger_zone:
 
@@ -135,29 +194,37 @@ int main(void)
 	  			  				lora_gps_powered = true;
 	  			  			}
 	  			  			initLora();
+	  			  			resetWWDG();
 	  			  			loraTries = loraTries + 1;
 	  			  			if (loraTries >= 5) {
 	  			  				state = alarm_state;
 	  			  			}
+	  			  			resetWWDG();
+
 	  		break;
 	  		case lora_ready:
 	  			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //power Lora and GPS-module
 	  			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6); //power dash7
+
 	  			HAL_Delay(5000);
 	  			initGPS();
 	  			state = lora_sending;
+	  			resetWWDG();
 	  			break;
 
 
 	  		case alarm_state:
 	  			HAL_UART_Transmit(&huart2, "Alarm\n", sizeof("Alarm\n")-1,
 	  					HAL_MAX_DELAY);
+	  			BuzzerAlert();
 	  			loraError();
 	  			HAL_Delay(2000);
+	  			resetWWDG();
 	  			break;
 
 	  		case lora_sending:
 	  			sendGPS();
+	  			resetWWDG();
 	  			break;
 
 
@@ -196,6 +263,7 @@ int main(void)
 		  				HAL_Delay(100);
 		  				HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 		  				message = atoi(Rx_Buffer[15]);
+		  				resetWWDG();
 		  			}
 
 	  }
@@ -334,6 +402,27 @@ void initGPS() {
 	HAL_UART_Transmit(&huart2, "GPS is initialized!\n", sizeof("GPS is initialized!\n") - 1,
 	HAL_MAX_DELAY);
 
+}
+
+void BuzzerAlert(void){
+	  HAL_UART_Transmit(&huart2, "BUZZER GOING OFF\n", 11, HAL_MAX_DELAY);
+	  for (int i=0;i<=200;i++)  //darkest to brightest: 0-100% duty cycle
+	    {
+	    __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, i); //update pwm value
+	    HAL_Delay(2);
+	    }
+	   HAL_Delay(400);  //hold for 400ms
+	   for (int k=200;k>=0;k--)  //brightest to darkest: 100-0% duty cycle
+	    {
+	    __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, k);
+	    HAL_Delay(2);
+	    }
+	   HAL_Delay(400); //hold for 400ms
+}
+
+void resetWWDG(void){
+	HAL_WWDG_Refresh(&WwdgHandle);
+	HAL_UART_Transmit(&huart2, "WWDGRESET\n", sizeof("WWDGRESET\n")-1, HAL_MAX_DELAY);
 }
 
 void sendGPS() {
@@ -561,6 +650,42 @@ static void MX_USART3_UART_Init(void)
 
 }
 
+static void MX_TIM3_Init(void)
+{
+
+  TIM_MasterConfigTypeDef sMasterConfig;
+  TIM_OC_InitTypeDef sConfigOC;
+
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 24;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 500;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  HAL_TIM_MspPostInit(&htim3);
+
+}
+
 /** Configure pins as 
         * Analog 
         * Input 
@@ -583,6 +708,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PC13 */
@@ -597,6 +725,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LD2_Pin */
+  GPIO_InitStruct.Pin = LD2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PB6 */
   GPIO_InitStruct.Pin = GPIO_PIN_6;

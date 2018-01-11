@@ -50,6 +50,7 @@
 #define BUFSIZE 200
 #define CMD_LENGTH 19
 #define FRAME_LENGTH
+
 //functions
 void sendGPS(void);
 void initLora();
