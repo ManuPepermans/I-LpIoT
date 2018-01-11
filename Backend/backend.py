@@ -174,11 +174,14 @@ class Backend:
                         # : adds formatting options for this variable (otherwise it would represent decimal 6),
                         # 08 formats the number to eight digits zero-padded on the left,
                         # b converts the number to its binary representation
+
                         print("Magnotometer value: ", format(magn_value))
+
                         dir = self.magnetometer_to_direction(magn_value)
                         print("Direction is: ", format(dir))
                         json_str = {"direction": dir}
                         ThingsBoard.send_json(self.config, json_str)
+
                     elif value_type == "B":  # Barometer information
                         baro_value1 = struct.unpack(fmt, bytearray(action.operand.data))[1]
                         baro_value2 = struct.unpack(fmt, bytearray(action.operand.data))[2]
@@ -201,6 +204,10 @@ class Backend:
                         level = self.barometer_calculate(baro_value, temperature)
                         print("Level is: ", format(level))
                         json_str = {"level": level}
+                        ThingsBoard.send_json(self.config, json_str)
+                        
+                    elif value_type == "E": #LoRa ERROR
+                        json_str = {"lora_error": "1"}
                         ThingsBoard.send_json(self.config, json_str)
 
         else:
