@@ -112,26 +112,28 @@ class Backend:
 
             cmd = jsonpickle.decode(jsonpickle.json.dumps(obj["data"]))
 
-            [GPGLL, latitude, la, longitude, lon, time, A1, A2] = cmd.split(',')
+            [GPGLL, latitude, la, longitude, lon, time, valid, A2] = cmd.decode('hex').split(',')
 
-            latitude = float(latitude)
-            deg = math.floor(latitude/100)
-            min = latitude-(deg*100)
+            if valid == "A":
 
-            latitude = deg + min/60
+                latitude = float(latitude)
+                deg = math.floor(latitude/100)
+                min = latitude-(deg*100)
 
-            longitude = float(longitude)
-            degl = math.floor(longitude / 100)
-            minl = longitude - (degl * 100)
+                latitude = deg + min/60
 
-            longitude = degl + minl / 60
+                longitude = float(longitude)
+                degl = math.floor(longitude / 100)
+                minl = longitude - (degl * 100)
 
-            if la == 'S':
-                latitude *= -1
-            if lon == 'W':
-                longitude *= -1
+                longitude = degl + minl / 60
 
-            ThingsBoardMQTT.on_mqtt_publish(latitude, longitude)
+                if la == 'S':
+                    latitude *= -1
+                if lon == 'W':
+                    longitude *= -1
+
+                ThingsBoardMQTT.on_mqtt_publish(latitude, longitude)
 
 
     def dash7_topic(self, msg):
@@ -139,11 +141,9 @@ class Backend:
 
         try:
             obj = jsonpickle.json.loads(msg.payload)
-            print(obj)
             cmd = jsonpickle.decode(jsonpickle.json.dumps(obj["alp"]))
-            print("cmd")
         except:
-            print("Payload not valid JSON, skipping")
+            #print("Payload not valid JSON, skipping")
             return
 
         gateway = obj["deviceId"]
@@ -158,8 +158,6 @@ class Backend:
         if node_id == self.config.node:
             print("***Right node: {}".format(node_id))
             json_str = {}
-            print(cmd)
-
 
             for action in cmd.actions:
                 if type(action.operation) is ReturnFileData and action.operand.offset.id == 64:
