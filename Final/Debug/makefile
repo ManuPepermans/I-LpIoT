@@ -48,46 +48,43 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 SECONDARY_FLASH += \
-final.bin \
+Final.bin \
 
 SECONDARY_SIZE += \
-final.siz \
+Final.siz \
 
 
 # All Target
-all: final.elf secondary-outputs
-
-dependents:
-	-cd /Users/kevinvdm/STM32Toolchain/projects/final/Release && $(MAKE) clean all
+all: Final.elf secondary-outputs
 
 # Tool invocations
-final.elf: $(OBJS) $(USER_OBJS) /Users/kevinvdm/STM32Toolchain/projects/final/Release/final.elf
+Final.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM GNU C++ Linker'
-	arm-none-eabi-g++ -mcpu=cortex-m3 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -T mem.ld -T libs.ld -T sections.ld -nostartfiles -Xlinker --gc-sections -L"../ldscripts" -Wl,-Map,"final.map" --specs=nano.specs -o "final.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-g++ -mcpu=cortex-m3 -mthumb -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants -Wall -Wextra  -g3 -T mem.ld -T libs.ld -T sections.ld -nostartfiles -Xlinker --gc-sections -L"../ldscripts" -Wl,-Map,"Final.map" --specs=nano.specs -o "Final.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-final.bin: final.elf
+Final.bin: Final.elf
 	@echo 'Invoking: Cross ARM GNU Create Flash Image'
-	arm-none-eabi-objcopy -O binary "final.elf"  "final.bin"
+	arm-none-eabi-objcopy -O binary "Final.elf"  "Final.bin"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-final.siz: final.elf
+Final.siz: Final.elf
 	@echo 'Invoking: Cross ARM GNU Print Size'
-	arm-none-eabi-size --format=berkeley "final.elf"
+	arm-none-eabi-size --format=berkeley "Final.elf"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(CC_DEPS)$(C++_DEPS)$(OBJS)$(C_UPPER_DEPS)$(CXX_DEPS)$(SECONDARY_FLASH)$(SECONDARY_SIZE)$(ASM_DEPS)$(S_UPPER_DEPS)$(C_DEPS)$(CPP_DEPS) final.elf
+	-$(RM) $(CC_DEPS)$(C++_DEPS)$(OBJS)$(C_UPPER_DEPS)$(CXX_DEPS)$(SECONDARY_FLASH)$(SECONDARY_SIZE)$(ASM_DEPS)$(S_UPPER_DEPS)$(C_DEPS)$(CPP_DEPS) Final.elf
 	-@echo ' '
 
 secondary-outputs: $(SECONDARY_FLASH) $(SECONDARY_SIZE)
 
 .PHONY: all clean dependents
-/Users/kevinvdm/STM32Toolchain/projects/final/Release/final.elf:
+.SECONDARY:
 
 -include ../makefile.targets

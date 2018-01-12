@@ -42,7 +42,7 @@
 
 I2C_HandleTypeDef hi2c1;
 
-TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim2;
 
 /* WWDG handler declaration */
 WWDG_HandleTypeDef   WwdgHandle;
@@ -65,10 +65,12 @@ static void MX_I2C1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_UART5_Init(void);
 
+
 /*Buzzer functions */
 static void MX_GPIO_Init(void);
-static void MX_TIM3_Init(void);
+static void MX_TIM2_Init(void);
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+void getAndSendAltitude();
 
 /*
  *  The different states:
@@ -89,6 +91,9 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
  *			* buzzer
  *
  * */
+
+
+
 
 int main(void)
 {
@@ -138,14 +143,12 @@ int main(void)
   /* Define the state to start with*/
   state = safe_zone;
   int message;
+  int j;
+  j = 0;
 
-
-  /* Initialize all sensors */
-  setBarInterface(&hi2c1, &huart2);
-
-  HAL_UART_Transmit(&huart2, "Starting...\n", 11, HAL_MAX_DELAY);
 
   HAL_Delay(5000);
+
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
@@ -156,12 +159,16 @@ int main(void)
   MX_UART5_Init();
 
   MX_GPIO_Init();
-  MX_TIM3_Init();
+  MX_TIM2_Init();
+
+  LSM303AGR_init();
 
   //PWM timer Initialize
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
 
-  uint8_t Rx_Buffer[100];
+
+  HAL_UART_Transmit(&huart2, "Starting ElderTrack...\n",
+  	  			sizeof("Starting ElderTrack...\n") -1, HAL_MAX_DELAY);
 
   /*##-5- Start the WWDG #####################################################*/
   if(HAL_WWDG_Init(&WwdgHandle) != HAL_OK)
@@ -169,20 +176,63 @@ int main(void)
     Error_Handler();
   }
 
+
+  int i;
+  uint8_t buffer[200];
+  uint8_t D7Rx[1];
+
+	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6); //power dash7
+	  HAL_Delay(3000);
+
+
+
   /* Infinite loop */
-  while (1)
-  {
+  while (1){
+	  //HAL_Delay(1000);
+
 	  switch (state) {
 
 	  		case safe_zone:
-	  			//DASH7Message(0x01,0x01);
+	  			j = j + 1;
+	  		  if(HAL_UART_Receive_IT(&huart4,D7Rx, 1) == HAL_OK){
+	  		 	  			  					  			buffer[i] = *D7Rx;
+	  		 	  			  					  			if (buffer[i]== 'E') {
+	  		 	  			  					  			if (buffer[i-1] == 'A' & buffer[i-2] == '1' ) {
+	  		 	  			  					  				message = 1;
+	  		 	  			  					  				i = 0;
+	  		 	  			  		  					  		buffer[0] = '0';}
+	  		 	  			  		  					  	else {
+	  		 	  			  		  					  	i = 0;
+	  		 	  			  		  					  	}
+	  		 	  			  					  			}
+
+	  		 	  			  					  			i = i + 1;
+	  		 	  			  					  			if (i > 199)
+	  		 	  			  					  			{
+	  		 	  			  					  				i = 0;
+	  		 	  			  					  			}
+	  		 	  			  				  }
+	  		  if(j>100000)
+	  		  {
+	  				getAndSendAltitude();
+	  				ecompassAlgorithm();
+	  				j = 0;
+
+	  		  }
+
 	  			//HAL_Delay(3000);
-	  			//state = in_danger_zone;
+	  			//getAndSendAltitude();
+
+
+				  //DASH7Message(0x01,1);
+	  			//HAL_Delay(3000);
+				  //state = safe_zone;
 
 	  			// Only for testing purpose
-	  			state = lora_ready;
+	  			//state = in_danger_zone;
 		  			/* Refresh WWDG: update counter value to 255, he refresh window is:
 		  	    		~780 * (127-80) = 36.6ms < refresh window < ~780 * 64 = 49.9ms */
+
 		  		resetWWDG();
 	  		break;
 	  		case in_danger_zone:
@@ -203,8 +253,8 @@ int main(void)
 
 	  		break;
 	  		case lora_ready:
-	  			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //power Lora and GPS-module
-	  			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6); //power dash7
+	  			//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //power Lora and GPS-module
+	  			//HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6); //power dash7
 
 	  			HAL_Delay(5000);
 	  			initGPS();
@@ -254,22 +304,7 @@ int main(void)
 	   * zie naar GPS zo is datook gedaan ;)
 	   *  */
 
-
-	  if(HAL_UART_Receive_IT(&huart4,Rx_Buffer, 20) == HAL_OK){
-
-		  if (Rx_Buffer[19] == '1' & Rx_Buffer[20] == 'A') {
-		  				//Alert
-		  				HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-		  				HAL_Delay(100);
-		  				HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-		  				message = atoi(Rx_Buffer[15]);
-		  				resetWWDG();
-		  			}
-
 	  }
-
-
-  }
 }
 
 /* Initializes LoRa Module */
@@ -305,8 +340,8 @@ void initLora() {
 
 		/* Check if the previous command has arrived */
 		HAL_UART_Receive(&huart3, init, 4, HAL_MAX_DELAY);
-		HAL_UART_Transmit(&huart2, "No or poor connection with Lora Module\n",
-				39, HAL_MAX_DELAY);
+		HAL_UART_Transmit(&huart2, "N0 OR POOR CONNECTION WITH MODULE, TRY AGAIN\n",
+						sizeof("N0 OR POOR CONNECTION WITH MODULE, TRY AGAIN\n") -1, HAL_MAX_DELAY);
 
 		if (init[2] == 'O' && init[3] == 'K') {
 
@@ -315,8 +350,8 @@ void initLora() {
 
 		}
 		else{
-			HAL_UART_Transmit(&huart2, "No or poor connection with Lora Module\n",
-							39, HAL_MAX_DELAY);
+			HAL_UART_Transmit(&huart2, "N0 OR POOR CONNECTION WITH MODULE, TRY AGAIN\n",
+					sizeof("N0 OR POOR CONNECTION WITH MODULE, TRY AGAIN\n") -1, HAL_MAX_DELAY);
 		}
 
 		/* When AT+COMMANDS are not getting an OK -> alarm state */
@@ -331,8 +366,6 @@ void checkNetwork() {
 	int check_joined = 0;
 	bool joined_lora;
 
-	HAL_UART_Transmit(&huart2, "Check Connection\n",
-					sizeof("Check Connection\n")-1, HAL_MAX_DELAY);
 	HAL_Delay(8000);
 
 	while (check_joined <50) {
@@ -368,7 +401,7 @@ void checkNetwork() {
 /* Function that sends an error message over Dash7 to the backend */
 void loraError() {
 	HAL_UART_Transmit(&huart2, "JOIN ERROR\n", 11, HAL_MAX_DELAY);
-	uint8_t join_error[] = { 0x65, 0x72, 0x72, 0x6f, 0x72 };
+	uint8_t join_error[] = { 0x65};
 	DASH7Message(join_error, 5);
 }
 
@@ -404,25 +437,23 @@ void initGPS() {
 
 }
 
+
 void BuzzerAlert(void){
-	  HAL_UART_Transmit(&huart2, "BUZZER GOING OFF\n", 11, HAL_MAX_DELAY);
-	  for (int i=0;i<=200;i++)  //darkest to brightest: 0-100% duty cycle
-	    {
-	    __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, i); //update pwm value
-	    HAL_Delay(2);
-	    }
-	   HAL_Delay(400);  //hold for 400ms
-	   for (int k=200;k>=0;k--)  //brightest to darkest: 100-0% duty cycle
-	    {
-	    __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, k);
-	    HAL_Delay(2);
-	    }
-	   HAL_Delay(400); //hold for 400ms
-}
+	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 154);
+		  HAL_Delay(20);
+		  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 0);
+		  HAL_Delay(200);
+		  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 154);
+		  HAL_Delay(20);
+		  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 0);
+		  HAL_Delay(200);
+		  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 154);
+		  HAL_Delay(20);
+		  __HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 0);
+		  HAL_Delay(200);}
 
 void resetWWDG(void){
 	HAL_WWDG_Refresh(&WwdgHandle);
-	HAL_UART_Transmit(&huart2, "WWDGRESET\n", sizeof("WWDGRESET\n")-1, HAL_MAX_DELAY);
 }
 
 void sendGPS() {
@@ -499,10 +530,297 @@ void DASH7Message(uint8_t data[], int lengthDash7)
               ALP[CMD_LENGTH+k] = data[k];
           }
 
-HAL_UART_Transmit(&huart2, ALP, sizeof(ALP),HAL_MAX_DELAY);
 HAL_UART_Transmit(&huart4, ALP, sizeof(ALP),HAL_MAX_DELAY);
 
 }
+
+void getAndSendAltitude()   {
+    //Set one shot mode for barometer for low power consumption
+    Settings = LPS22HB_ONE__SHOT_ENABLE;
+    HAL_I2C_Mem_Write(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_CTRL_REG2, 1,&Settings, 1, 100);
+    //Read barometer dataRegister(LSB) and print
+    HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_PRESS_OUT_XL, 1,&LSBpressure, 1, 100);
+    //Read barometer dataRegister(MID) and print
+    HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_OUT_L, 1,&MIDpressure, 1, 100);
+    //Read barometer dataRegister(MSB) and print
+    HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_OUT_H, 1,&MSBpressure, 1, 100);
+    //Read temperature dataRegister(LSB) and print
+    HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_TEMP_OUT_L, 1,&LSBtemp, 1, 100);
+    //Read temperature dataRegister(MSB) and print
+    HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_TEMP_OUT_H, 1,&MSBtemp, 1, 100);
+    temperature = (((uint16_t) MSBtemp << 8 | LSBtemp));
+    int temperature2 = ((int) temperature) / 100;
+    if (temperature2 > 30 || temperature2 < 15) {
+        // TODO buzzerAlert();
+    }
+    uint8_t dataToSend[] = { 0x42, MSBpressure, MIDpressure, LSBpressure,
+            MSBtemp, LSBtemp };
+    DASH7Message(dataToSend, 6);
+	HAL_UART_Transmit(&huart2, "Sensor used!\n", sizeof("Sensor used!\n") - 1,HAL_MAX_DELAY);
+
+
+}
+
+//void getAndSendAltitude(int firstTime) {
+//
+//	//Set one shot mode for barometer for low power consumption
+//	Settings = LPS22HB_ONE__SHOT_ENABLE;
+//	HAL_I2C_Mem_Write(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_CTRL_REG2, 1,
+//			&Settings, 1, 100);
+//
+//	HAL_Delay(50);
+//
+//	//Read barometer dataRegister(LSB) and print
+//	HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_PRESS_OUT_XL, 1,
+//			&LSBpressure, 1, 100);
+//
+//	//Read barometer dataRegister(MID) and print
+//	HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_OUT_L, 1,
+//			&MIDpressure, 1, 100);
+//
+//	//Read barometer dataRegister(MSB) and print
+//	HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_OUT_H, 1,
+//			&MSBpressure, 1, 100);
+//
+//	//Read temperature dataRegister(LSB) and print
+//	HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_TEMP_OUT_L, 1,
+//			&LSBtemp, 1, 100);
+//
+//	//Read temperature dataRegister(MSB) and print
+//	HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_TEMP_OUT_H, 1,
+//			&MSBtemp, 1, 100);
+//
+//	temperature = (((uint16_t) MSBtemp << 8 | LSBtemp));
+//	int temperature2 = ((int) temperature) / 100;
+//
+//	if (temperature2 > 30 || temperature2 < 15) {
+//		// TODO buzzerAlert();
+//	}
+//	if (firstTime == 1) {
+//		// First send the character 'A' and then the sensor data
+//		uint8_t dataToSend[] = { 0x41, MSBpressure, MIDpressure, LSBpressure };
+//
+//		DASH7Message(dataToSend, 4);
+//	} else {
+//		// First send the character 'B' and then the sensor data
+//		uint8_t dataToSend[] = { 0x42, MSBpressure, MIDpressure, LSBpressure,
+//				MSBtemp, LSBtemp };
+//		DASH7Message(dataToSend, 6);
+//	}
+//}
+
+/**
+ * Read a certain register of the LSM303AGR depending on the value of ACC_MAG:
+ * 		- if this value is 0: read out a register of the accelerometer
+ * 		- if this value is 1: read out a register of the magnetormeter
+ * The standard HAL library values are used for the size of the register and time-out.
+ * @param LSM303AGR_reg: the register that needs to be read of the LSM303AGR
+ * @param LSM303AGR_data: a pointer where the data of the register needs to be stored
+ * @param ACC_MAG: depending on the value a value a register of the accelerometer of magnetometer are read
+ * @return returns the status of the I2C transfer
+ */
+void LSM303AGR_readRegister(uint8_t LSM303AGR_reg, uint8_t LSM303AGR_data,
+		uint8_t ACC_MAG) {
+
+	if (ACC_MAG == 0) {
+		HAL_I2C_Mem_Read(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS, LSM303AGR_reg,
+		I2C_MEMADD_SIZE_8BIT, &LSM303AGR_data, sizeof(LSM303AGR_data),
+		HAL_MAX_DELAY);
+	} else {
+		HAL_I2C_Mem_Read(&hi2c1, LSM303AGR_MAG_I2C_ADDRESS, LSM303AGR_reg,
+		I2C_MEMADD_SIZE_8BIT, &LSM303AGR_data, sizeof(LSM303AGR_data),
+		HAL_MAX_DELAY);
+	}
+
+}
+
+/**
+ * Writes a cerain value to a certain register of the LSM303AGR depending on the value of ACC_MAG:
+ *   	- if this value is 0: write to a register of the accelerometer
+ * 		- if this value is 1: write to a register of the magnetormeter
+ * the standard HAL library values are used for the size of the register and time-out.
+ * @param LSM303AGR_reg: the register where data needs to be written to
+ * @param LSM303AGR_data: a pointer to the data that needs to be written
+ * @param ACC_MAG: depending on the value, a write is performed to the accelerometer of magnetometer
+ * @return returns the status of the I2C transfer
+ */
+void LSM303AGR_writeRegister(uint8_t LSM303AGR_reg, uint8_t LSM303AGR_data,
+		uint8_t ACC_MAG) {
+
+	if (ACC_MAG == 0) {
+		HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS, LSM303AGR_reg,
+		I2C_MEMADD_SIZE_8BIT, &LSM303AGR_data, sizeof(LSM303AGR_data),
+		HAL_MAX_DELAY);
+	} else {
+		HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_MAG_I2C_ADDRESS, LSM303AGR_reg,
+		I2C_MEMADD_SIZE_8BIT, &LSM303AGR_data, sizeof(LSM303AGR_setting),
+		HAL_MAX_DELAY);
+	}
+
+}
+
+/**
+ * Initialization of the LSM303AGR accelerometer and magnetometer.
+ * The accelerometer is initialized with the following values:
+ * 		- Powerdown,
+ * 		- X, Y and Z-axes enabled
+ * 		- BDU enabled (output registers are not updated until the MSB and LSB have been read)
+ *
+ * The magnetometer is initialized with the following values:
+ * 		- Idle mode,
+ * 		- Temperature compensation enabled,
+ * 		- Low-power mode enabled,
+ * 		- Offset cancelation enabled,
+ * 		- Low pass filter enabled,
+ * 		- BDU enabled
+ */
+void LSM303AGR_init() {
+
+	LSM303AGR_setting = LSM303AGR_ACC_BOOT;
+	LSM303AGR_writeRegister(LSM303AGR_ACC_CTRL_REG5, LSM303AGR_setting, 0);
+
+	LSM303AGR_setting = LSM303AGR_MAG_SOFT_RST;
+	LSM303AGR_writeRegister(LSM303AGR_MAG_CFG_REG_A, LSM303AGR_setting, 1);
+
+	HAL_Delay(50);
+
+	LSM303AGR_setting = LSM303AGR_ACC_ODR_1HZ | LSM303AGR_ACC_X_EN
+			| LSM303AGR_ACC_Y_EN | LSM303AGR_ACC_Z_EN;
+	LSM303AGR_writeRegister(LSM303AGR_ACC_CTRL_REG1, LSM303AGR_setting, 0);
+
+	LSM303AGR_setting = LSM303AGR_ACC_BDU_EN;
+	LSM303AGR_writeRegister(LSM303AGR_ACC_CTRL_REG4, LSM303AGR_setting, 0);
+
+	LSM303AGR_setting = LSM303AGR_MAG_COMP_TEMP_EN | LSM303AGR_MAG_LP_EN
+			| LSM303AGR_MAG_ODR_10HZ;
+	LSM303AGR_writeRegister(LSM303AGR_MAG_CFG_REG_A, LSM303AGR_setting, 1);
+
+	LSM303AGR_setting = LSM303AGR_MAG_OFF_CANC | LSM303AGR_MAG_LPF;
+	LSM303AGR_writeRegister(LSM303AGR_MAG_CFG_REG_B, LSM303AGR_setting, 1);
+
+	LSM303AGR_setting = LSM303AGR_MAG_BDU;
+	LSM303AGR_writeRegister(LSM303AGR_MAG_CFG_REG_C, LSM303AGR_setting, 1);
+
+}
+
+/**
+ * Reads the output registers of the accelerometer
+ * @param pData: a pointer to where the data needs to be stored
+ */
+void LSM303AGR_ACC_readAccelerationData(int32_t *pData) {
+
+	LSM303AGR_ACC_TEMP_DATA rawData;
+
+	HAL_I2C_Mem_Read(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS,
+	LSM303AGR_ACC_MULTI_READ, I2C_MEMADD_SIZE_8BIT, rawData.registerData,
+			sizeof(rawData.registerData), HAL_MAX_DELAY);
+
+	rawData.rawData[0] = (rawData.registerData[1] << 8)
+			| rawData.registerData[0];
+	rawData.rawData[1] = (rawData.registerData[3] << 8)
+			| rawData.registerData[2];
+	rawData.rawData[2] = (rawData.registerData[5] << 8)
+			| rawData.registerData[4];
+
+	/* Apply proper shift and sensitivity */
+	// Normal mode 10-bit, shift = 6 and FS = 2
+	pData[0] = (int32_t) (((rawData.rawData[0] >> 6) * 3900 + 500) / 1000);
+	pData[1] = (int32_t) (((rawData.rawData[1] >> 6) * 3900 + 500) / 1000);
+	pData[2] = (int32_t) (((rawData.rawData[2] >> 6) * 3900 + 500) / 1000);
+
+}
+
+/**
+ * Reads the output registers of the magnetometer and applies the sensitivity
+ * @param pData: a pointer to where the data needs to be stored
+ */
+void LSM303AGR_MAG_readMagneticData(int32_t *pData) {
+
+	LSM303AGR_MAG_TEMP_DATA rawData;
+
+	HAL_I2C_Mem_Read(&hi2c1, LSM303AGR_MAG_I2C_ADDRESS,
+	LSM303AGR_MAG_MULTI_READ, I2C_MEMADD_SIZE_8BIT, rawData.registerData,
+			sizeof(rawData.registerData), HAL_MAX_DELAY);
+
+	rawData.rawData[0] = (rawData.registerData[1] << 8)
+			| rawData.registerData[0];
+	rawData.rawData[1] = (rawData.registerData[3] << 8)
+			| rawData.registerData[2];
+	rawData.rawData[2] = (rawData.registerData[5] << 8)
+			| rawData.registerData[4];
+
+	/* Calculate the data. */
+	pData[0] = (int32_t) (rawData.rawData[0] * 1.5f);
+	pData[1] = (int32_t) (rawData.rawData[1] * 1.5f);
+	pData[2] = (int32_t) (rawData.rawData[2] * 1.5f);
+
+}
+
+/**
+ * The ecompass algorithm, it does the following:
+ * 		1. Read the data from the accelerometer and magnetomerer
+ * 		2. Convert the data from integer to float
+ * 		3. Apply the resolution on the accelerometer data
+ * 		4. Calculate the phi (roll angle) value
+ * 		5. Calculate the  theta (pitch angle or attitude) value
+ * 		6. Calculate of the Psi (yaw angle or heading) value
+ *
+ * @return the value of the heading in uint16_t format.
+ */
+void ecompassAlgorithm() {
+
+	LSM303AGR_ACC_readAccelerationData(lsm303agrAccData);
+	LSM303AGR_MAG_readMagneticData(lsm303agrMagData);
+
+//Casting from integer to float (6 castings necessary)
+	lsm303agrAccDataFloat[0] = lsm303agrAccData[0];
+	lsm303agrAccDataFloat[1] = lsm303agrAccData[1];
+	lsm303agrAccDataFloat[2] = lsm303agrAccData[2];
+
+	lsm303agrMagDataFloat[0] = lsm303agrMagData[0];
+	lsm303agrMagDataFloat[1] = lsm303agrMagData[1];
+	lsm303agrMagDataFloat[2] = lsm303agrMagData[2];
+
+	lsm303agrAccDataFloat[0] = (lsm303agrAccDataFloat[0] * 2)
+			/ pow(2, (resolution - 1));
+	lsm303agrAccDataFloat[1] = (lsm303agrAccDataFloat[1] * 2)
+			/ pow(2, (resolution - 1));
+	lsm303agrAccDataFloat[2] = (lsm303agrAccDataFloat[2] * 2)
+			/ pow(2, (resolution - 1));
+
+	//Computation of Phi (roll angle) in radians and degrees
+	rollRad = atan2f(lsm303agrAccDataFloat[1], lsm303agrAccDataFloat[2]);
+	rollDegree = rollRad * (180 / PI);
+
+	//Computation of Theta (pitch angle or attitude) in radians and degrees
+	lsm303agrAccDataTemp = lsm303agrAccData[1] * sinf(rollRad)
+			+ lsm303agrAccData[2] * cosf(rollRad);
+	pitchRad = atan2f(-lsm303agrAccData[0], lsm303agrAccDataTemp);
+	pitchDegree = pitchRad * (180 / PI);
+
+	//Computation of Psi (yaw angle, or heading)
+	yawTemp[0] = lsm303agrMagDataFloat[2] * sinf(rollRad)
+			- lsm303agrMagDataFloat[1] * cosf(rollRad);
+	yawTemp[1] = lsm303agrMagDataFloat[1] * sinf(rollRad)
+			+ lsm303agrMagDataFloat[2] * cosf(rollRad);
+	yawTemp[2] = lsm303agrMagDataFloat[0] * cosf(pitchRad)
+			+ yawTemp[1] * sinf(pitchRad);
+	yawRad = atan2f(yawTemp[0], yawTemp[2]);
+	yawDegree = yawRad * (180 / PI);
+
+	if (yawDegree < 0)
+		yawDegree += 360;
+
+	uint8_t highPart = ((uint16_t) yawDegree) >> 8;
+	uint8_t lowPart = (uint16_t) yawDegree;
+
+	uint8_t dataToSend[] = { 0x4D, highPart, lowPart };
+	DASH7Message(dataToSend, 3);
+	HAL_UART_Transmit(&huart2, "Sensor used!\n", sizeof("Sensor used!\n") - 1,
+	HAL_MAX_DELAY);
+
+}
+
 
 /** System Clock Configuration
 */
@@ -636,7 +954,7 @@ static void MX_USART3_UART_Init(void)
 {
 
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
+  huart3.Init.BaudRate = 9600;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -650,25 +968,25 @@ static void MX_USART3_UART_Init(void)
 
 }
 
-static void MX_TIM3_Init(void)
+static void MX_TIM2_Init(void)
 {
 
   TIM_MasterConfigTypeDef sMasterConfig;
   TIM_OC_InitTypeDef sConfigOC;
 
-  htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 24;
-  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 500;
-  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 24;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 200;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
 
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
@@ -677,12 +995,12 @@ static void MX_TIM3_Init(void)
   sConfigOC.Pulse = 0;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
 
-  HAL_TIM_MspPostInit(&htim3);
+  HAL_TIM_MspPostInit(&htim2);
 
 }
 
@@ -738,6 +1056,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB3 */
+  GPIO_InitStruct.Pin = GPIO_PIN_3;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF1_TIM2;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
