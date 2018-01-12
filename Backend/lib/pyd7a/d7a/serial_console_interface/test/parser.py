@@ -125,6 +125,38 @@ class TestParser(unittest.TestCase):
     self.test_basic_valid_message()                    # cont. with valid msg
 
 
+  def test_continue_partial_second_frame(self):
+    alp_cmd_bytes = [
+      0x20,                                           # action=32/ReturnFileData
+      0x40,                                           # File ID
+      0x00,                                           # offset
+      0x04,                                           # length
+      0x00, 0xf3, 0x00, 0x00                          # data
+    ]
+
+    frame = [
+      0xC0,                                           # interface sync byte
+      0,                                              # interface version
+      len(alp_cmd_bytes),                             # ALP cmd length
+    ] + alp_cmd_bytes + [
+      # second, partial frame
+      0xC0,
+      0,
+      len(alp_cmd_bytes)
+    ]
+
+    # first frame should parse
+    (cmds, info) = self.parser.parse(frame)
+    self.assertEqual(cmds[0].actions[0].operation.op, 32)
+    self.assertEqual(cmds[0].actions[0].operation.operand.length, 4)
+    print info
+
+    # and now complete the second frame and check this is parsed as well
+    (cmds, info) = self.parser.parse(alp_cmd_bytes) # the missing bytes only, without the frame header
+    self.assertEqual(cmds[0].actions[0].operation.op, 32)
+    self.assertEqual(cmds[0].actions[0].operation.operand.length, 4)
+
+
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(TestParser)
   unittest.TextTestRunner(verbosity=2).run(suite)

@@ -54,22 +54,21 @@ def send_json(config, json_data):
                 json = json_data
             )
 
-            print("Updated json telemetry for node {}".format(config.node))
+            #print("Updated json telemetry for node {}".format(config.node))
         except ApiException as e:
             print("Exception when calling API: %s\n" % e)
 
-def execute_rpc_command(gateway, rpc_data):
-        cmd = Command.create_with_return_file_data_action(file_id=40,
-                                                          data=rpc_data, interface_type=InterfaceType.D7ASP,
-                                                          interface_configuration=D7config(
-                                                              qos=QoS(resp_mod=ResponseMode.RESP_MODE_NO),
-                                                              addressee=Addressee(access_class=0x11,
-                                                                                  id_type=IdType.NOID)))
-
+def execute_rpc_command(device_id, data):
+        json_alp_cmd = Command.create_with_return_file_data_action(file_id=40, data=data,
+                                                      interface_type=InterfaceType.D7ASP,
+                                                      interface_configuration=D7config(
+                                                          qos=QoS(resp_mod=ResponseMode.RESP_MODE_NO),
+                                                          addressee=Addressee(access_class=0x11,
+                                                                              id_type=IdType.NOID)))
         # we will do it by a manual POST to /api/plugins/rpc/oneway/ , which is the route specified
         # in the documentation
-        cmd = {"method": "execute-alp-async", "params": jsonpickle.encode(rpc_data), "timeout": 500}
-        path_params = {'deviceId': gateway}
+        cmd = {"method": "execute-alp-async", "params": jsonpickle.encode(json_alp_cmd), "timeout": 500}
+        path_params = {'deviceId': device_id}
         query_params = {}
         header_params = {}
         header_params['Accept'] = api_client.select_header_accept(['*/*'])

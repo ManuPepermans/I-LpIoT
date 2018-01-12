@@ -43,7 +43,7 @@ class knn:
 
         self.config = argparser.parse_args()
         self.config.knn = "/localisation/#"
-        self.config.gateway1 = "c2c4ebd0-b95a-11e7-bebc-85e6dd10a2e8"
+        self.config.gateway1 = "427ab180-f79e-11e7-8c87-85e6dd10a2e8"
         self.config.gateway2 = "b6b48ad0-b95a-11e7-bebc-85e6dd10a2e8"
         self.config.gateway3 = "f1f7e740-b8b0-11e7-bebc-85e6dd10a2e8"
         self.config.gateway4 = "43e01b20-b967-11e7-bebc-85e6dd10a2e8"
@@ -288,21 +288,24 @@ class knn:
             xPixel = 937
             yPixel = 536
 
+            json_str = {"alert": "ALERT: Patient outside"}
+            ThingsBoard.send_json(self.config, json_str)
+
             #ALERT
             ThingsBoard.execute_rpc_command(self.config.gateway1, [0x31, 0x41, 0x45])
-            sleep(2)
+            sleep(0.5)
             ThingsBoard.execute_rpc_command(self.config.gateway2, [0x31, 0x41, 0x45])
-            sleep(2)
+            sleep(0.5)
             ThingsBoard.execute_rpc_command(self.config.gateway3, [0x31, 0x41, 0x45])
-            sleep(2)
+            sleep(0.5)
             ThingsBoard.execute_rpc_command(self.config.gateway4, [0x31, 0x41, 0x45])
             sleep(2)
             ThingsBoard.execute_rpc_command(self.config.gateway1, [0x31, 0x41, 0x45])
-            sleep(2)
+            sleep(0.5)
             ThingsBoard.execute_rpc_command(self.config.gateway2, [0x31, 0x41, 0x45])
-            sleep(2)
+            sleep(0.5)
             ThingsBoard.execute_rpc_command(self.config.gateway3, [0x31, 0x41, 0x45])
-            sleep(2)
+            sleep(0.5)
             ThingsBoard.execute_rpc_command(self.config.gateway4, [0x31, 0x41, 0x45])
 
         return xPixel, yPixel

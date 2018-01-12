@@ -1,6 +1,6 @@
 
 from d7a.d7anp.addressee import Addressee, IdType
-from d7a.sp.qos import QoS
+from d7a.sp.qos import QoS, ResponseMode
 from d7a.alp.command import *
 from d7a.serial_console_interface.parser import *
 from pprint import pprint
@@ -22,7 +22,7 @@ output_serial_frame(
     data=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     interface_type=InterfaceType.D7ASP,
     interface_configuration=Configuration(
-      qos=QoS(resp_mod=QoS.RESP_MODE_ALL),
+      qos=QoS(resp_mod=ResponseMode.RESP_MODE_ALL),
       addressee=Addressee(
         access_class=0,
         id_type=IdType.UID,
@@ -39,10 +39,10 @@ output_serial_frame(
     data=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     interface_type=InterfaceType.D7ASP,
     interface_configuration=Configuration(
-      qos=QoS(resp_mod=QoS.RESP_MODE_ALL),
+      qos=QoS(resp_mod=ResponseMode.RESP_MODE_ALL),
       addressee=Addressee(
         access_class=2,
-        id_type=IdType.BCAST
+        id_type=IdType.NOID
       )
     )
   )
@@ -55,8 +55,8 @@ output_serial_frame(
     data=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     interface_type=InterfaceType.D7ASP,
     interface_configuration=Configuration(
-      qos=QoS(resp_mod=QoS.RESP_MODE_NO),
-      addressee=Addressee(id_type=IdType.BCAST)
+      qos=QoS(resp_mod=ResponseMode.RESP_MODE_NO),
+      addressee=Addressee(id_type=IdType.NOID)
     )
   )
 )
@@ -68,7 +68,7 @@ output_serial_frame(
     data=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     interface_type=InterfaceType.D7ASP,
     interface_configuration=Configuration(
-      qos=QoS(resp_mod=QoS.RESP_MODE_ANY),
+      qos=QoS(resp_mod=ResponseMode.RESP_MODE_ANY),
       addressee=Addressee(
         access_class=2,
         id_type=IdType.UID,
@@ -86,9 +86,9 @@ output_serial_frame(
     length=8,
     interface_type=InterfaceType.D7ASP,
     interface_configuration=Configuration(
-      qos=QoS(resp_mod=QoS.RESP_MODE_NO),
+      qos=QoS(resp_mod=ResponseMode.RESP_MODE_NO),
       addressee=Addressee(
-        id_type=IdType.BCAST,
+        id_type=IdType.NOID,
         access_class=2
       )
     )
