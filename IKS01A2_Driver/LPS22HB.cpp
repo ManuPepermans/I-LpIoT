@@ -143,6 +143,26 @@ void LPS22HB_checkStatus(uint8_t *statusRegisterValue) {
 	LPS22HB_readRegister(LPS22HB_STATUS, LPS22HB_statusRegisterValue);
 }
 
+void LPS22HB_getRawPressureAndTemperature(uint8_t *rawPressure, uint8_t *rawTemperature) {
+		LPS22HB_pressureData data;
+		LPS22HB_temperatureData tempTData;
+		
+		LPS22HB_setOneShotMode();
+
+		LPS22HB_readRegister(LPS22HB_PRESS_OUT_XL, data.LSBpressure);
+		LPS22HB_readRegister(LPS22HB_PRESS_OUT_L, data.MIDpressure);
+		LPS22HB_readRegister(LPS22HB_PRESS_OUT_H, data.MSBpressure);
+		LPS22HB_readRegister(LPS22HB_TEMP_OUT_L, tempTData.LSBtemp);
+		LPS22HB_readRegister(LPS22HB_TEMP_OUT_H, tempTData.MSBtemp);
+		
+		rawPressure[0] = data.MSBpressure;
+		rawPressure[1] = data.MIDpressure;
+		rawPressure[2] = data.LSBpressure;
+		
+		rawTemperature[0] = tempTData.MSBpressure;
+		rawTemperature[1] = tempTData.LSBpressure;
+}
+
 /**
  * Calculates the temperature (°C) and pressure (hPa)
  * @param pressure    [a pointer to the calculated pressure]

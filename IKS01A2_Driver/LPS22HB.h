@@ -76,6 +76,7 @@ void LPS22HB_setLowCurrentMode();
 void LPS22HB_setODR(uint8_t ODR);
 uint8_t LPS22HB_getODR();
 void LPS22HB_checkStatus();
+void LPS22HB_getRawPressureAndTemperature(uint8_t *rawPressure, uint8_t *rawTemperature);
 void LPS22HB_getPressureAndTemperature(int* pressure, int* temperature);
 
 #endif /* LPS22HB_H_ */
