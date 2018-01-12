@@ -58,7 +58,7 @@ def send_json(config, json_data):
         except ApiException as e:
             print("Exception when calling API: %s\n" % e)
 
-def execute_rpc_command(config, rpc_data):
+def execute_rpc_command(gateway, rpc_data):
         cmd = Command.create_with_return_file_data_action(file_id=40,
                                                           data=rpc_data, interface_type=InterfaceType.D7ASP,
                                                           interface_configuration=D7config(
@@ -69,7 +69,7 @@ def execute_rpc_command(config, rpc_data):
         # we will do it by a manual POST to /api/plugins/rpc/oneway/ , which is the route specified
         # in the documentation
         cmd = {"method": "execute-alp-async", "params": jsonpickle.encode(rpc_data), "timeout": 500}
-        path_params = {'deviceId': config.device}
+        path_params = {'deviceId': gateway}
         query_params = {}
         header_params = {}
         header_params['Accept'] = api_client.select_header_accept(['*/*'])

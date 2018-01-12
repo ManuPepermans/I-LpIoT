@@ -37,14 +37,16 @@ class knn:
         argparser.add_argument("-U", "--user", help="username for MQTT broker", required=True)
         argparser.add_argument("-P", "--password", help="password for MQTT broker", required=True)
         argparser.add_argument("-n", "--node", help="node name", default="4337313400210032")
-        argparser.add_argument("-d", "--device", help="device ID of the gateway modem to send the command to",
-                               default="c2c4ebd0-b95a-11e7-bebc-85e6dd10a2e8")
 
         self.mqtt_config = None
         self.mqtt_connected = False
 
         self.config = argparser.parse_args()
         self.config.knn = "/localisation/#"
+        self.config.gateway1 = "c2c4ebd0-b95a-11e7-bebc-85e6dd10a2e8"
+        self.config.gateway2 = "b6b48ad0-b95a-11e7-bebc-85e6dd10a2e8"
+        self.config.gateway3 = "f1f7e740-b8b0-11e7-bebc-85e6dd10a2e8"
+        self.config.gateway4 = "43e01b20-b967-11e7-bebc-85e6dd10a2e8"
         self.connect_to_mqtt()
 
         ThingsBoard.start_api(self.config)
@@ -287,10 +289,21 @@ class knn:
             yPixel = 536
 
             #ALERT
-
-            ThingsBoard.execute_rpc_command(self.config, [0x31, 0x41, 0x45])
-            sleep(10)
-            ThingsBoard.execute_rpc_command(self.config, [0x31, 0x41, 0x45])
+            ThingsBoard.execute_rpc_command(self.config.gateway1, [0x31, 0x41, 0x45])
+            sleep(2)
+            ThingsBoard.execute_rpc_command(self.config.gateway2, [0x31, 0x41, 0x45])
+            sleep(2)
+            ThingsBoard.execute_rpc_command(self.config.gateway3, [0x31, 0x41, 0x45])
+            sleep(2)
+            ThingsBoard.execute_rpc_command(self.config.gateway4, [0x31, 0x41, 0x45])
+            sleep(2)
+            ThingsBoard.execute_rpc_command(self.config.gateway1, [0x31, 0x41, 0x45])
+            sleep(2)
+            ThingsBoard.execute_rpc_command(self.config.gateway2, [0x31, 0x41, 0x45])
+            sleep(2)
+            ThingsBoard.execute_rpc_command(self.config.gateway3, [0x31, 0x41, 0x45])
+            sleep(2)
+            ThingsBoard.execute_rpc_command(self.config.gateway4, [0x31, 0x41, 0x45])
 
         return xPixel, yPixel
 
