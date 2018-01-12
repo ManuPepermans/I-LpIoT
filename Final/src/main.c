@@ -42,10 +42,19 @@
 
 I2C_HandleTypeDef hi2c1;
 
+TIM_HandleTypeDef htim3;
+
+/* WWDG handler declaration */
+WWDG_HandleTypeDef   WwdgHandle;
+
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
+
+//move to appropriate header file
+#define LD2_Pin GPIO_PIN_5
+#define LD2_GPIO_Port GPIOA
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -55,8 +64,13 @@ static void MX_USART3_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_UART5_Init(void);
-int * getDirections();
 
+
+/*Buzzer functions */
+static void MX_GPIO_Init(void);
+static void MX_TIM3_Init(void);
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+void getAndSendAltitude();
 
 /*
  *  The different states:
@@ -78,6 +92,9 @@ int * getDirections();
  *
  * */
 
+
+
+
 int main(void)
 {
 
@@ -88,26 +105,50 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-  /* Initialize booleans*/
+  /*##-1- Check if the system has resumed from WWDG reset ####################*/
+    if(__HAL_RCC_GET_FLAG(RCC_FLAG_WWDGRST) != RESET)
+    {
+      /* WWDGRST flag set*/
+    	HAL_UART_Transmit(&huart2, "WWDGRST FLAG SET\n", sizeof("WWDGRST FLAG SET\n")-1, HAL_MAX_DELAY);
 
+      /* Clear reset flags */
+      __HAL_RCC_CLEAR_RESET_FLAGS();
+    }
+    else
+    {
+      /* WWDGRST flag is not set*/
+    	HAL_UART_Transmit(&huart2, "WWDGRST FLAG NOT SET\n", sizeof("WWDGRST FLAG NOT SET\n")-1, HAL_MAX_DELAY);
+    }
+
+    /*##-2- Configure the WWDG peripheral ######################################*/
+    /* WWDG clock counter = (PCLK1 (2MHz)/4096)/8) = 61 Hz (0.01639 s)
+       WWDG Window value = 80 means that the WWDG counter should be refreshed only
+       when the counter is below 254 (and greater than 64) otherwise a reset will
+       be generated.
+       WWDG Counter value = 255, WWDG timeout = ~0.01639s*64 = 1.04896 s
+
+
+    	   This means: WWDG starts counting at 255*0.01639s=4.17945s, reset has to be between
+    	   ~0.01639s*254=4.16306s and ~0.01639s*64=1.04896s.								*/
+    WwdgHandle.Instance = WWDG;
+
+    WwdgHandle.Init.Prescaler = WWDG_PRESCALER_8;
+    WwdgHandle.Init.Window    = 254;
+    WwdgHandle.Init.Counter   = 255;
+
+  /* Initialize booleans*/
   loraTries = 0;
   lora_gps_powered = false;
 
   /* Define the state to start with*/
   state = safe_zone;
   int message;
-
-
-  HAL_Delay(1000);
-
-  /* Initialize all sensors */
-  setBarInterface(&hi2c1, &huart2);
-
-  HAL_UART_Transmit(&huart2, "Starting...\n", 11, HAL_MAX_DELAY);
-
+  int j;
+  j = 0;
 
 
   HAL_Delay(5000);
+
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
@@ -117,81 +158,71 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
 
+  MX_GPIO_Init();
+  MX_TIM3_Init();
+
+  //PWM timer Initialize
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+
+
   HAL_UART_Transmit(&huart2, "Starting ElderTrack...\n",
   	  			sizeof("Starting ElderTrack...\n") -1, HAL_MAX_DELAY);
-  // Start DASH7
-  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6); //power dash7
-  //HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //power Lora and GPS-module
+
+  /*##-5- Start the WWDG #####################################################*/
+  if(HAL_WWDG_Init(&WwdgHandle) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
 
   int i;
-  	  			uint8_t buffer[10];
-  	  			uint8_t D7Rx[1];
-	  			int* directions;
+  uint8_t buffer[200];
+  uint8_t D7Rx[1];
 
-	uint8_t uartTest[] = { 0x4d, 0x01, 0x04 };
+	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6); //power dash7
+	  HAL_Delay(3000);
+
+
+
   /* Infinite loop */
-  while (1)
-  {
+  while (1){
+	  //HAL_Delay(1000);
+
 	  switch (state) {
-	//	HAL_Delay(3000);
-	  	  	  __HAL_UART_FLUSH_DRREGISTER(&huart5);
 
 	  		case safe_zone:
-	  			//DASH7Message(uartTest, 3);
-	  			//HAL_UART_Transmit(&huart2, "Message send!\n",
-	  			//	  			  					sizeof("Message send!\n") -1, HAL_MAX_DELAY);
-	  			directions = getDirections();
-	  			HAL_UART_Transmit(&huart2, directions,
-	  				  				  			  					3, HAL_MAX_DELAY);
+	  			j = j + 1;
+	  			__HAL_UART_FLUSH_DRREGISTER(&huart4);
+	  		  if(HAL_UART_Receive_IT(&huart4,D7Rx, 1) == HAL_OK){
+	  		 	  			  					  			buffer[i] = *D7Rx;
+	  		 	  			  					  			if (buffer[i]== '1') {
+	  		 	  			  					  				DASH7Message(0x4FD,1);
+	  		 	  			  					  				state = in_danger_zone;
+	  		 	  			  					  				message = 1;
+	  		 	  			  					  			__HAL_UART_FLUSH_DRREGISTER(&huart4);
+	  		 	  			  					  			}
+	  		 	  			  				  }
+	  		if(j>100000)
+	  		  {
+	  			getAndSendAltitude();
+	  			j = 0;
 
-	  				  if(HAL_UART_Receive_IT(&huart4,D7Rx, 1) == HAL_OK){
+	  		  }
 
-	  					  			buffer[i-1] = *D7Rx;
-
-	  					  			//
-	  					  			/* check for the end of the GLL sentence and check if it's a GLL sentence */
-	  					  			if (buffer[0] == 'A' ) {
-	  					  				state = dash7_downlink;
-	  					  				message = 1;
-
-	  					  				i = 0;
-	  		  					  		buffer[0] = '0';
-
-	  					  			}
-
-	  					  			else if (buffer[0] == 'B') {
-	  					  				state = dash7_downlink;
-	  					  				message = 2;
-	  					  				i = 0;
-	  		  					  		buffer[0] = '0';
-
-	  					  			}
-
-	  					  			else if (buffer[0] == 'C' ) {
-	  					  			  					  				state = dash7_downlink;
-	  					  			  					  				message = 3;
-	  					  			  					  				i = 0;
-	  					  				  					  		buffer[0] = '0';
-
-	  					  			  					  			}
-	  					  		  else
-	  					  		  {
-	  					  			  i = 0;
-	  					  			HAL_UART_Transmit(&huart2, "Not an option\n", sizeof("Not an option\n")-1,
-	  					  				  			  						  					HAL_MAX_DELAY);
-
-	  					  		  }
-
-	  					  			i = i + 1;
-	  					  		__HAL_UART_FLUSH_DRREGISTER(&huart5);
+	  			//HAL_Delay(3000);
+	  			//getAndSendAltitude();
 
 
-	  					  		}
-
-	  			//state = in_danger_zone;
+				  //DASH7Message(0x01,1);
+	  			//HAL_Delay(3000);
+				  //state = safe_zone;
 
 	  			// Only for testing purpose
 	  			//state = in_danger_zone;
+		  			/* Refresh WWDG: update counter value to 255, he refresh window is:
+		  	    		~780 * (127-80) = 36.6ms < refresh window < ~780 * 64 = 49.9ms */
+
+		  		//resetWWDG();
 	  		break;
 	  		case in_danger_zone:
 
@@ -202,28 +233,37 @@ int main(void)
 	  			  				lora_gps_powered = true;
 	  			  			}
 	  			  			initLora();
+	  			  			resetWWDG();
 	  			  			loraTries = loraTries + 1;
 	  			  			if (loraTries >= 5) {
 	  			  				state = alarm_state;
 	  			  			}
+	  			  			resetWWDG();
+
 	  		break;
 	  		case lora_ready:
 	  			//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //power Lora and GPS-module
+	  			//HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6); //power dash7
+
 	  			HAL_Delay(5000);
 	  			initGPS();
 	  			state = lora_sending;
+	  			resetWWDG();
 	  			break;
 
 
 	  		case alarm_state:
 	  			HAL_UART_Transmit(&huart2, "Alarm\n", sizeof("Alarm\n")-1,
 	  					HAL_MAX_DELAY);
+	  			BuzzerAlert();
 	  			loraError();
 	  			HAL_Delay(2000);
+	  			resetWWDG();
 	  			break;
 
 	  		case lora_sending:
 	  			sendGPS();
+	  			resetWWDG();
 	  			break;
 
 
@@ -231,22 +271,16 @@ int main(void)
 	  			switch(message)
 	  			{
 	  			case 1:
-	  				HAL_UART_Transmit(&huart2, "Message 1\n", sizeof("Message 1\n")-1,
-	  						  					HAL_MAX_DELAY);
-	  				state = safe_zone;
+	  				state = in_danger_zone;
+
 	  			break;
 	  			case 2:
-		  			HAL_UART_Transmit(&huart2, "Message 2\n", sizeof("Message 2\n")-1,
-		  					HAL_MAX_DELAY);
-	  				state = safe_zone;
 	  			break;
 	  			case 3:
-	  				HAL_UART_Transmit(&huart2, "Message 3\n", sizeof("Message 3\n")-1,
-	  						  					HAL_MAX_DELAY);
-	  				state = safe_zone;
+	  			break;
+	  			case 4:
 	  			break;
 	  			}
-
 	  		break;
 
 
@@ -257,18 +291,7 @@ int main(void)
 	   * zie naar GPS zo is datook gedaan ;)
 	   *  */
 
-
-//
-//		  if (Rx_Buffer[1] == '1' & Rx_Buffer[0] == 'A') {
-//		  				//Alert
-//		  				HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-//		  				HAL_Delay(100);
-//		  				HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-//		  				//message = atoi(Rx_Buffer[15]);
-//		  			}
-
-
-  }
+	  }
 }
 
 /* Initializes LoRa Module */
@@ -304,8 +327,8 @@ void initLora() {
 
 		/* Check if the previous command has arrived */
 		HAL_UART_Receive(&huart3, init, 4, HAL_MAX_DELAY);
-		HAL_UART_Transmit(&huart2, "No or poor connection with Lora Module\n",
-				39, HAL_MAX_DELAY);
+		HAL_UART_Transmit(&huart2, "N0 OR POOR CONNECTION WITH MODULE, TRY AGAIN\n",
+						sizeof("N0 OR POOR CONNECTION WITH MODULE, TRY AGAIN\n") -1, HAL_MAX_DELAY);
 
 		if (init[2] == 'O' && init[3] == 'K') {
 
@@ -314,8 +337,8 @@ void initLora() {
 
 		}
 		else{
-			HAL_UART_Transmit(&huart2, "No or poor connection with Lora Module\n",
-							39, HAL_MAX_DELAY);
+			HAL_UART_Transmit(&huart2, "N0 OR POOR CONNECTION WITH MODULE, TRY AGAIN\n",
+					sizeof("N0 OR POOR CONNECTION WITH MODULE, TRY AGAIN\n") -1, HAL_MAX_DELAY);
 		}
 
 		/* When AT+COMMANDS are not getting an OK -> alarm state */
@@ -330,8 +353,6 @@ void checkNetwork() {
 	int check_joined = 0;
 	bool joined_lora;
 
-	HAL_UART_Transmit(&huart2, "Check Connection\n",
-					sizeof("Check Connection\n")-1, HAL_MAX_DELAY);
 	HAL_Delay(8000);
 
 	while (check_joined <50) {
@@ -367,8 +388,9 @@ void checkNetwork() {
 /* Function that sends an error message over Dash7 to the backend */
 void loraError() {
 	HAL_UART_Transmit(&huart2, "JOIN ERROR\n", 11, HAL_MAX_DELAY);
-	uint8_t join_error[] = { 0x65, 0x72, 0x72, 0x6f, 0x72 };
-	DASH7Message(join_error, 5);
+	uint8_t join_error[1] = { 0x45};
+
+	DASH7Message(join_error, 1);
 }
 
 /* Initializes the GPS module */
@@ -403,6 +425,22 @@ void initGPS() {
 
 }
 
+
+void BuzzerAlert(void){
+	  HAL_UART_Transmit(&huart2, "BUZZER GOING OFF\n", 11, HAL_MAX_DELAY);
+
+	    __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, 100);
+	   HAL_Delay(200);
+
+	    __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_1, 100);
+	    HAL_Delay(200);//hold for 400ms
+
+}
+
+void resetWWDG(void){
+	HAL_WWDG_Refresh(&WwdgHandle);
+}
+
 void sendGPS() {
 	uint8_t buffer[64];
 	uint8_t character[1];
@@ -419,7 +457,7 @@ __HAL_UART_FLUSH_DRREGISTER(&huart5);
 
 			//
 			/* check for the end of the GLL sentence and check if it's a GLL sentence */
-			if (*character == '\n' & buffer[1] =='G'  ) {
+			if (*character == '\n' ) {
 
 				//AT COMMAND: AT+SEND=2:<gps data><CR><LF>
 				uint8_t AT_COMMAND[] = { 0x41, 0x54, 0x2b, 0x53, 0x45, 0x4e,
@@ -477,17 +515,36 @@ void DASH7Message(uint8_t data[], int lengthDash7)
               ALP[CMD_LENGTH+k] = data[k];
           }
 
-HAL_UART_Transmit(&huart2, ALP, sizeof(ALP),HAL_MAX_DELAY);
 HAL_UART_Transmit(&huart4, ALP, sizeof(ALP),HAL_MAX_DELAY);
 
 }
 
-int * getDirections()
-{
-	int directions[] = {1,2,3};
+void getAndSendAltitude()   {
+    //Set one shot mode for barometer for low power consumption
+    Settings = LPS22HB_ONE__SHOT_ENABLE;
+    HAL_I2C_Mem_Write(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_CTRL_REG2, 1,&Settings, 1, 100);
+    //Read barometer dataRegister(LSB) and print
+    HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_PRESS_OUT_XL, 1,&LSBpressure, 1, 100);
+    //Read barometer dataRegister(MID) and print
+    HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_OUT_L, 1,&MIDpressure, 1, 100);
+    //Read barometer dataRegister(MSB) and print
+    HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_OUT_H, 1,&MSBpressure, 1, 100);
+    //Read temperature dataRegister(LSB) and print
+    HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_TEMP_OUT_L, 1,&LSBtemp, 1, 100);
+    //Read temperature dataRegister(MSB) and print
+    HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_TEMP_OUT_H, 1,&MSBtemp, 1, 100);
+    temperature = (((uint16_t) MSBtemp << 8 | LSBtemp));
+    int temperature2 = ((int) temperature) / 100;
+    if (temperature2 > 30 || temperature2 < 15) {
+        // TODO buzzerAlert();
+    }
+    uint8_t dataToSend[] = { 0x42, MSBpressure, MIDpressure, LSBpressure,
+            MSBtemp, LSBtemp };
+    DASH7Message(dataToSend, 6);
+	HAL_UART_Transmit(&huart2, "Sensor used!\n", sizeof("Sensor used!\n") - 1,HAL_MAX_DELAY);
 
-	return directions;
-	}
+
+}
 
 
 /** System Clock Configuration
@@ -636,6 +693,42 @@ static void MX_USART3_UART_Init(void)
 
 }
 
+static void MX_TIM3_Init(void)
+{
+
+  TIM_MasterConfigTypeDef sMasterConfig;
+  TIM_OC_InitTypeDef sConfigOC;
+
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 24;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 500;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  HAL_TIM_MspPostInit(&htim3);
+
+}
+
 /** Configure pins as 
         * Analog 
         * Input 
@@ -658,6 +751,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PC13 */
@@ -672,6 +768,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LD2_Pin */
+  GPIO_InitStruct.Pin = LD2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PB6 */
   GPIO_InitStruct.Pin = GPIO_PIN_6;

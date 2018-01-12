@@ -18,7 +18,8 @@ C_SRCS += \
 ../system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.c \
 ../system/src/stm32l1xx/stm32l1xx_hal_tim.c \
 ../system/src/stm32l1xx/stm32l1xx_hal_tim_ex.c \
-../system/src/stm32l1xx/stm32l1xx_hal_uart.c 
+../system/src/stm32l1xx/stm32l1xx_hal_uart.c \
+../system/src/stm32l1xx/stm32l1xx_hal_wwdg.c 
 
 OBJS += \
 ./system/src/stm32l1xx/stm32l1xx_hal.o \
@@ -35,7 +36,8 @@ OBJS += \
 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.o \
 ./system/src/stm32l1xx/stm32l1xx_hal_tim.o \
 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.o \
-./system/src/stm32l1xx/stm32l1xx_hal_uart.o 
+./system/src/stm32l1xx/stm32l1xx_hal_uart.o \
+./system/src/stm32l1xx/stm32l1xx_hal_wwdg.o 
 
 C_DEPS += \
 ./system/src/stm32l1xx/stm32l1xx_hal.d \
@@ -52,7 +54,8 @@ C_DEPS += \
 ./system/src/stm32l1xx/stm32l1xx_hal_rcc_ex.d \
 ./system/src/stm32l1xx/stm32l1xx_hal_tim.d \
 ./system/src/stm32l1xx/stm32l1xx_hal_tim_ex.d \
-./system/src/stm32l1xx/stm32l1xx_hal_uart.d 
+./system/src/stm32l1xx/stm32l1xx_hal_uart.d \
+./system/src/stm32l1xx/stm32l1xx_hal_wwdg.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

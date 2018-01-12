@@ -39,6 +39,7 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
+
 #include "LM303.H"
 #include <limits.h>
 #include <math.h>
@@ -50,6 +51,7 @@
 #define BUFSIZE 200
 #define CMD_LENGTH 19
 #define FRAME_LENGTH
+
 //functions
 void sendGPS(void);
 void initLora();
@@ -68,6 +70,15 @@ enum {
 //bool loraJoined;
 int loraTries;
 bool lora_gps_powered;
+uint8_t Data[6];
+uint8_t LSBpressure;
+uint8_t MIDpressure;
+uint8_t MSBpressure;
+uint8_t MSBtemp;
+uint8_t LSBtemp;
+uint32_t CompletePressure;
+uint16_t temperature;
+uint8_t Settings;
 
 
 enum states {
@@ -79,8 +90,8 @@ enum states {
   lora_sending,
   dash7_downlink
 };
-
 enum states state;
+
 #ifdef __cplusplus
  extern "C" {
 #endif
