@@ -133,7 +133,6 @@ class Backend:
             self.alert()
         elif str(msg.topic) == "/tb":
             self.dash7_topic(msg)
-
         elif str(msg.topic) == "/localisation/DASH7":
             self.knn_topic(msg)
             self.alert()
@@ -204,8 +203,7 @@ class Backend:
                 else:
                     # fill the array when messages from gateways completed
                     measurement = [value1, value2, value3, value4]
-                    print
-                    measurement
+                    print(measurement)
                     # check for neighbours
                     self.calculate(measurement)
                     newBatch = True
@@ -380,9 +378,6 @@ class Backend:
         if alert == 1:
             self.alert()
             self.sendRPC()
-        else:
-            alert = 0
-            self.alert()
 
         return xPixel, yPixel
 
@@ -564,7 +559,7 @@ class Backend:
                         referenceBaro = float(baro_value)/4096
                         print("Reference Barometer is: ", format(referenceBaro))
 
-                    elif value_type == "O": #LoRa ERROR
+                    elif value_type == "O": #D7 received
                         json_str = {"alert": "ALERT: D7 message received and patient outside"}
                         ThingsBoard.send_json(self.config, json_str)
                         alert = 3
