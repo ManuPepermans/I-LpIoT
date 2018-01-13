@@ -142,6 +142,8 @@ int main(void)
 
   /* Define the state to start with*/
   state = safe_zone;
+
+  // define some variables
   int message;
   int j;
   j = 0;
@@ -178,8 +180,8 @@ int main(void)
   int i;
   uint8_t buffer[200];
   uint8_t D7Rx[1];
-
-	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6); //power dash7
+//power dash7
+HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6); 
 	  HAL_Delay(3000);
 
 
@@ -189,14 +191,15 @@ int main(void)
 	  //HAL_Delay(1000);
 	  switch (state) {
 
+	  		//Check on '1', if '1' present enter dash7 state
+	  		// While checking for '1' read sensors and send over dash7
 	  		case safe_zone:
 	  			j = j + 1;
 	  			__HAL_UART_FLUSH_DRREGISTER(&huart4);
 	  		  if(HAL_UART_Receive_IT(&huart4,D7Rx, 1) == HAL_OK){
 	  		 	  			  					  			buffer[i] = *D7Rx;
 	  		 	  			  					  			if (buffer[i]== '1') {
-	  		 	  			  					  				DASH7Message(0x4FD,1);
-	  		 	  			  					  				state = in_danger_zone;
+	  		 	  			  					  				state = dash7_downlink;
 	  		 	  			  					  				message = 1;
 	  		 	  			  					  			__HAL_UART_FLUSH_DRREGISTER(&huart4);
 	  		 	  			  					  			}
@@ -208,31 +211,23 @@ int main(void)
 
 	  		  }
 
-	  			//HAL_Delay(3000);
-	  			//getAndSendAltitude();
-
-
-				  //DASH7Message(0x01,1);
-	  			//HAL_Delay(3000);
-				  //state = safe_zone;
-
-	  			// Only for testing purpose
-	  			//state = in_danger_zone;
 		  			/* Refresh WWDG: update counter value to 255, he refresh window is:
 		  	    		~780 * (127-80) = 36.6ms < refresh window < ~780 * 64 = 49.9ms */
 
-		  		//resetWWDG();
+		  		resetWWDG();
 	  		break;
 	  		case in_danger_zone:
 
 	  			  			HAL_UART_Transmit(&huart2, "Danger zone!\n",
 	  			  					sizeof("Danger zone!\n") -1, HAL_MAX_DELAY);
+	  			  			// toggle when LoRa is not powered
 	  			  			if (lora_gps_powered == false) {
 	  			  				HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //power Lora and GPS-module
 	  			  				lora_gps_powered = true;
 	  			  			}
 	  			  			initLora();
 	  			  			resetWWDG();
+	  			  			// when tried 5 times connecting to LoRa -> alarm!
 	  			  			loraTries = loraTries + 1;
 	  			  			if (loraTries >= 5) {
 	  			  				state = alarm_state;
@@ -241,9 +236,7 @@ int main(void)
 
 	  		break;
 	  		case lora_ready:
-	  			//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //power Lora and GPS-module
-	  			//HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6); //power dash7
-
+	  			// delay could be less, GPS must be running
 	  			HAL_Delay(5000);
 	  			initGPS();
 	  			state = lora_sending;
@@ -265,13 +258,12 @@ int main(void)
 	  			resetWWDG();
 	  			break;
 
-
+	  			// When dash7 downlink, message will be cheched to check what to do
 	  		case dash7_downlink:
 	  			switch(message)
 	  			{
 	  			case 1:
 	  				state = in_danger_zone;
-
 	  			break;
 	  			case 2:
 	  			break;
@@ -284,11 +276,6 @@ int main(void)
 
 
 	  		}
-
-	  /* Als er iets binnnen komt op uart zet die da in buffer tot deze vol is, dan = HAL_OK; goed altijd zelfde lengte is
-	   * Een andere optie is om een karakter in te laden en een buffer te laten vullen tot er een bepaald karakter verschijnt een delimiter
-	   * zie naar GPS zo is datook gedaan ;)
-	   *  */
 
 	  }
 }
