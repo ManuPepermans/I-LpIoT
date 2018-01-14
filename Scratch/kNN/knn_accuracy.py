@@ -11,7 +11,6 @@ import argparse
 
 import pickle
 
-import ThingsBoard
 import random
 
 firstRun = True
@@ -71,91 +70,6 @@ class knn:
         # print neighbors
         return neighbors
 
-    def getPixels(self, results):
-        global xPixel, yPixel
-
-        # Points on blueprint in pixels (blueprint = 1583 x 825 px)
-
-        if results == 25:
-            xPixel = 291
-            yPixel = 203
-        elif results == 24:
-            xPixel = 409
-            yPixel = 203
-        elif results == 23:
-            xPixel = 535
-            yPixel = 203
-        elif results == 22:
-            xPixel = 673
-            yPixel = 203
-        elif results == 21:
-            xPixel = 808
-            yPixel = 203
-        elif results == 20:
-            xPixel = 932
-            yPixel = 203
-        elif results == 19:
-            xPixel = 1055
-            yPixel = 203
-        elif results == 18:
-            xPixel = 347
-            yPixel = 328
-        elif results == 17:
-            xPixel = 471
-            yPixel = 328
-        elif results == 16:
-            xPixel = 595
-            yPixel = 328
-        elif results == 15:
-            xPixel = 746
-            yPixel = 328
-        elif results == 14:
-            xPixel = 870
-            yPixel = 328
-        elif results == 13:
-            xPixel = 994
-            yPixel = 328
-        elif results == 12:
-            xPixel = 341
-            yPixel = 409
-        elif results == 11:
-            xPixel = 449
-            yPixel = 409
-        elif results == 10:
-            xPixel = 556
-            yPixel = 409
-        elif results == 9:
-            xPixel = 664
-            yPixel = 409
-        elif results == 8:
-            xPixel = 772
-            yPixel = 409
-        elif results == 7:
-            xPixel = 879
-            yPixel = 409
-        elif results == 6:
-            xPixel = 290
-            yPixel = 536
-        elif results == 5:
-            xPixel = 397
-            yPixel = 536
-        elif results == 4:
-            xPixel = 503
-            yPixel = 536
-        elif results == 3:
-            xPixel = 611
-            yPixel = 536
-        elif results == 2:
-            xPixel = 718
-            yPixel = 536
-        elif results == 1:
-            xPixel = 829
-            yPixel = 536
-        elif results == 0:
-            xPixel = 937
-            yPixel = 536
-
-        return xPixel, yPixel
 
     def calculate(self, measurement, train, k):
         count = 0
@@ -166,14 +80,13 @@ class knn:
                 neighbors = self.getNeighbors(train, nodeSet[y], k)
                 #print("Get Neighbors: {}".format(neighbors))
                 result = self.getResponse(neighbors)
-                #print("Voting: {}".format(result))
-                xPixel, yPixel = self.getPixels(result)
-                #print("Pixels: x = {} and y = {}".format(xPixel, yPixel))
+                #print("Point: {} Voting: {}".format(x,result))
 
                 if x == result:
                     count += 1
-                    #print("correct")
+        #print(count)
         length = len(measurement[0])*len(measurement)
+        #print(length)
         procent = float(count)/length*100
         #print("Accuracy: {}%".format(procent))
         print("{}   |{}".format(k,procent))
@@ -186,7 +99,6 @@ class knn:
         input2 = raw_input("Split = ")
         splitProcent = int(input2)
 
-
         test = []
         train = []
         list = []
@@ -196,6 +108,7 @@ class knn:
             nodeSet = trainingSet[x]
             random.shuffle(nodeSet)
             split = len(nodeSet)*splitProcent/100
+
             for y in range(len(nodeSet)):
                 if y < split:
                     list2 = []
@@ -210,6 +123,7 @@ class knn:
 
 
         print("K   |Accuracy")
+
         for k in range(9):
             self.calculate(test, train, k+1)
 
