@@ -47,7 +47,7 @@ The backend is a Python script that parses the received data and communicates th
         -b BROKER, --broker BROKER              mqtt broker hostname
         -u URL, --url URL                       URL of the ThingsBoard server
         -t TOKEN, --token TOKEN                 token to access the ThingsBoard API
-        -tmqtt TOKENMQTT, --tokenmqtt TOKENMQTT token to access the ThingsBoard mqtt
+        -tmqtt TOKENMQTT, --tokenmqtt TOKENMQTT token to access the ThingsBoard MQTT
         -U USER, --user USER                    username for MQTT broker
         -P PASSWORD, --password PASSWORD        password for MQTT broker
         -n NODE, --node NODE                    node name
