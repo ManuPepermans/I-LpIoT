@@ -68,6 +68,8 @@ ThingsBoard gives us a visual enviroment to show all the parsed data. It showcas
 ## kNN
 We use kNN for fingerprinting. We build a database of the environment from different points in the room, this is our training dataset. The dataset is build by dividing the rooms in points and measure the RSSI values from the gateways multiple times while rotating.
 
+![alt text](https://i.imgur.com/q1v7Hrn.png "Blueprint with points")
+
 In the operational phase we compare a new measurement with our training dataset, this way we try to determin our location. For the comparison we wait for at least 3 gateways to send us the RSSI values within the second. 
 
 ![alt text](https://i.imgur.com/OkpY2O9.png "kNN")
