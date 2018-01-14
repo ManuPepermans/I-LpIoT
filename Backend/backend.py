@@ -333,8 +333,12 @@ class Backend:
                         print("Altitude is: ", format(altitude))
                         print("Reference Barometer is: ", format(referenceBaro))
 
+                        # Calculate level from altitude
+                        level = (altitude + 2) / 4
+                        
                         # Send to ThingsBoard using API
-                        json_str = {"level": altitude}
+                        #json_str = {"level": altitude}
+                        json_str = {"level": level}
                         ThingsBoard.send_json(self.config, json_str)
 
                     # D7 message received by node
