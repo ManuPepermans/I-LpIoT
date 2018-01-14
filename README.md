@@ -21,7 +21,7 @@ The following hardware is used for this project:
 - A few resistors and transistors to toggle the modules (LoRa, DASH7 & Buzzer)
 - Buzzer
 
-![alt text](https://i.imgur.com/644kHPR.png "Hardware setup")
+![alt text](https://i.imgur.com/1zn8pRF.png "Hardware setup")
 
 In this setup we used two small circuits to switch ON/OFF the pheriphals such as the GPS and LoRa modules with a transistor similar to this design.
 
