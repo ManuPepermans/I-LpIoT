@@ -1,4 +1,4 @@
-src/main.o: ../src/main.c ../include/main.h ../include/LM303.H \
+src/main.o: ../src/main.c ../include/main.h \
  ../system/include/stm32l1xx/stm32l1xx_hal.h \
  ../include/stm32l1xx_hal_conf.h ../include/main.h \
  ../system/include/stm32l1xx/stm32l1xx_hal_rcc.h \
@@ -28,8 +28,6 @@ src/main.o: ../src/main.c ../include/main.h ../include/LM303.H \
  ../system/include/stm32l1xx/stm32l1xx_hal_wwdg.h
 
 ../include/main.h:
-
-../include/LM303.H:
 
 ../system/include/stm32l1xx/stm32l1xx_hal.h:
 
