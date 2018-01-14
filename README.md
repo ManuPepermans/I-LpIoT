@@ -95,7 +95,16 @@ The frontend is split into two different modes: indoor and outdoor. When the mob
 ![alt text](https://i.imgur.com/vrYXFL3.png "Mobile node")
 
 ## Dash7
-The DASH7-module was flashed as a slave. We send ALP commands containing the data to the gateways. 
+
+The DASH7-module was flashed as a slave. We send ALP commands containing the data to the gateways. The DASH7 command is build as follows:
+- 0x41, 0x54, 0x24, 0x44, 0xc0, 0x00,                   // Serial interface
+- total_length,                                         // ALP CMD length from byte 8 to the end
+- 0xb4, 0x13, 0x32, 0xd7, 0x00, 0x00, 0x10, 0x01,       // Forward + operand
+- 0x20, 0x40, 0x00,	                                    // Return file data action, fileID 40, Offset 0
+- lengthDash7,                                          // Length of the data
+- Data                                                  // Data
+
+This format is set in a function **void DASH7Message(uint8_t data[], int lengthDash7)** where the data is given in **uint8_t** and the length in **int**.
 
 ## LoRa
 The I-CUBE-LRWAN package contains an AT-SLAVE, this was uploaded to the LoRa Board. In this way the LoRa module can be used by sending AT-commands over UART. 
