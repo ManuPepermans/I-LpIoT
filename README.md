@@ -35,7 +35,7 @@ A similar setup was used to toggle a buzzer.
 The mobile node is build in Eclipse. We suggest to use Mastering stm32 by Carmine Noviello to set up the IDE environment. The backend is build in PyCharm.
 
 # Backend
-The backend is a Python script that parses the received data and communicates this with with ThingsBoard.io. The Python script runs in a cloud enviroment constructed in Ubuntu.
+The backend is a Python script that parses the received data and communicates this with with ThingsBoard.io with the TB API of MQTT. The Python script runs in a cloud enviroment constructed in Ubuntu.
 
 The following functions are used in backend.py:
 
