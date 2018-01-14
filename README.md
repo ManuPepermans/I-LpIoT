@@ -30,11 +30,22 @@ A similar setup was used to toggle a buzzer.
 
 
 ## Software
+The mobile node is build in Eclipse. We suggest to use Mastering stm32 by Carmine Noviello to set up the IDE environment. The backend is build in PyCharm.
 ## Backend
-The backend is based on a Raspberry PI 3. The received data from the vmobile node will be parsed here and it handles the communication with Thingsboard.io.
+The backend is a cloud based container (similar to a Raspberry PI 3). The received data from the mobile node will be parsed here and it handles the communication with Thingsboard.io.
 
 ## Communication
 Dash7 will be used to send data indoors from the mobile node to the backend. It will also be used for sending data from our backend to the node (i.e. warning signales). When the person leaves the retirement home further communication will go via LoRa for sending the coördinates . periodically various kind of data will be send to the backend like the GPS coordinates, direction and the temperature.
+### Dash7
+The DASH7-module was flashed as a slave. We send ALP commands containing the data to the gateways. 
+
+### LoRa
+The I-CUBE-LRWAN package contains an AT-SLAVE, this was uploaded to the LoRa Board. In this way the LoRa module can be used by sending AT-commands over UART. 
+
+![alt text](https://i.imgur.com/hUEXywW.png "AT-slave")
+
+The different AT-commands can be found in the application node.
+
 
 ## GPS
 To get the position of the user the longtitude and latitude from the EM-506 GPS will be send to the Nucleo L152RE. The EM-506 GPS module uses uart to communicate with the Nucleo. In the datasheet we can find that the GPS uses NMEA commands. The NMEA commands has different formats.
