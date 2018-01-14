@@ -39,7 +39,7 @@ The backend is a cloud based container (similar to a Raspberry PI 3). The receiv
 ## kNN
 We use kNN for fingerprinting. We build a database of the environment where we track elderly people. The dataset is build by dividing the rooms in a grid and measure multiple times the RSSI values to the surroundig gateways. By sending sensor data to the backend we measure the RSSI value to four gateways. In this way we can compare the measurement with the dataset to locate the user.
 
-![alt text](https://imgur.com/a/bEsyI.png "kNN")
+![alt text](https://i.imgur.com/OkpY2O9.png "kNN")
 
 # Frontend (mobile node)
 The frontend is split into two different modes: indoor and outdoor. When the mobile node is indoors it will send sensordata over DASH7 to the backend. When the mobile node leaves the building the backend will send a message to the mobile node to switch over to LoRa communication and toggle the GPS to send coördinates periodically so that the backend can determine the outdoor position.
