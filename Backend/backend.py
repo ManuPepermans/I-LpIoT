@@ -54,7 +54,7 @@ class Backend:
         argparser.add_argument("-b", "--broker", help="mqtt broker hostname", default="localhost")
         argparser.add_argument("-u", "--url", help="URL of the ThingsBoard server", default="http://localhost:8080")
         argparser.add_argument("-t", "--token", help="token to access the ThingsBoard API", required=True)
-        argparser.add_argument("-tmqtt", "--tokenmqtt", help="token to access the ThingsBoard mqtt", required=True)
+        argparser.add_argument("-tmqtt", "--tokenmqtt", help="token to access the ThingsBoard MQTT", required=True)
         argparser.add_argument("-U", "--user", help="username for MQTT broker", required=True)
         argparser.add_argument("-P", "--password", help="password for MQTT broker", required=True)
         argparser.add_argument("-n", "--node", help="node name", default="4337313400210032")
@@ -335,7 +335,7 @@ class Backend:
 
                         # Calculate level from altitude
                         level = (altitude + 2) / 4
-                        
+
                         # Send to ThingsBoard using API
                         #json_str = {"level": altitude}
                         json_str = {"level": level}
