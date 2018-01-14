@@ -1,58 +1,55 @@
 /**
  ******************************************************************************
- * File Name          : main.c
- * Description        : Main program body
- ******************************************************************************
- ** This notice applies to any and all portions of this file
- * that are not between comment pairs USER CODE BEGIN and
- * USER CODE END. Other portions of this file, whether
- * inserted by the user or by software development tools
- * are owned by their respective copyright owners.
+ * @name main.c
+ * @brief this is the main program body for the project. The major part of the code exist of a Finite State Machine (FSM):
+ * - Safe Zone: The patient is in the predefined safe zone. The sensor data (barometer & ecompass) are send over DASH7 and when an interrupt is
+ * received over DASH7 the state will switch to the DASH7 Downlink state.
+ * - DASH7 Downlink: the next state will be decided on the received message. For now only 1 type of message is supported but this will be expand in the future.
+ * - Danger Zone: The patient is outside the predefined safe zone. The LORA and GPS module are turned on and depending on whether the system could connect to LORA
+ * the systems goes in Alarm state or to the Lora Ready state.
+ * - Alarm State: If the system couldn't connect to the LORA an alarm message over DASH7 will be send  and a buzzer will go off.
+ * - Lora Ready: LORA is ready and the GPS will be initialized.
+ * - Lora Sending: Sending the GPS coordinates of the patient over LORA.
+ * @dot
+ * digraph FSM {
+ * node [shape = box];
+ * SafeZone    [fillcolor=lightblue,style=filled,label="SafeZone" ];
+ * DangerZone [fillcolor=lightblue,style=filled,label="DangerZone" ];
+ * AlarmState [fillcolor=lightblue,style=filled,label="AlarmState"];
+ * LoraReady [fillcolor=lightblue,style=filled,label="LoraReady"];
+ * LoraSending [fillcolor=lightblue,style=filled,label="LoraSending"];
+ * DASH7Downlink [fillcolor=lightblue,style=filled,label="DASH7Downlink"];
+ * Future [fillcolor=lightblue,style=filled,label="Future"];
  *
- * COPYRIGHT(c) 2017 STMicroelectronics
+ * SafeZone -> SafeZone;
+ * SafeZone -> DASH7Downlink;
+ * DASH7Downlink -> DangerZone;
+ * DASH7Downlink -> Future;
+ * DangerZone -> AlarmState;
+ * AlarmState -> AlarmState;
+ * DangerZone -> LoraReady;
+ * LoraReady -> LoraSending;
+ * }
+ * @enddot
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *   1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
- *   2. Redistributions in binary form must reproduce the above copyright notice,
- *      this list of conditions and the following disclaimer in the documentation
- *      and/or other materials provided with the distribution.
- *   3. Neither the name of STMicroelectronics nor the names of its contributors
- *      may be used to endorse or promote products derived from this software
- *      without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
+ * @authors Imad Bouhadan, Dellafaille Lander, Marien Levi, Pepermans Manu, Van de Mieroop Kevin
  ******************************************************************************
  */
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes */
 #include "main.h"
 #include "stm32l1xx_hal.h"
 
+/* Handler declaration */
 I2C_HandleTypeDef hi2c1;
-
 TIM_HandleTypeDef htim2;
-
-/* WWDG handler declaration */
 WWDG_HandleTypeDef WwdgHandle;
-
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
-/* Private function prototypes -----------------------------------------------*/
+/* Private function prototypes */
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
@@ -60,32 +57,14 @@ static void MX_USART3_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_UART4_Init(void);
 static void MX_UART5_Init(void);
-
-/*Buzzer functions */
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
-/*
- *  The different states:
- *  	- safe_zone: the mobile node is in normal
- *  	mode, sending sensor data over DASH7, when receiving a uart interrupt
- *  	go to state: in_danger_zone
- *
- *		- in_danger_zone: mobile node is outside.
- *		The GSP and Lora module are powered and the
- *		lora is initialised. If the connection with the lora module is not working
- *		there will be an alarm after several tries.
- *
- *		- lora_ready: Lora is ready, so initialize the GPS
- *
- *		- alarm_state: sending an alarm message over DASH7
- *			* cannot join Lora
- *			* panic button
- *			* buzzer
- *
- * */
-
+/**
+ * @brief The main function of the program. The peripherals are initialized and than the program enters a finite state machine which was defined previously.
+ * @return
+ */
 int main(void) {
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -94,47 +73,50 @@ int main(void) {
 	/* Configure the system clock */
 	SystemClock_Config();
 
-	/*##-1- Check if the system has resumed from WWDG reset ####################*/
+	/* Check if the system has resumed from WWDG reset */
 	if (__HAL_RCC_GET_FLAG(RCC_FLAG_WWDGRST) != RESET) {
-		/* WWDGRST flag set*/
+		/* WWDGRST flag is set */
 		HAL_UART_Transmit(&huart2, "WWDGRST FLAG SET\n",
 				sizeof("WWDGRST FLAG SET\n") - 1, HAL_MAX_DELAY);
 
 		/* Clear reset flags */
 		__HAL_RCC_CLEAR_RESET_FLAGS();
 	} else {
-		/* WWDGRST flag is not set*/
+		/* WWDGRST flag is not set */
 		HAL_UART_Transmit(&huart2, "WWDGRST FLAG NOT SET\n",
 				sizeof("WWDGRST FLAG NOT SET\n") - 1, HAL_MAX_DELAY);
 	}
 
-	/*##-2- Configure the WWDG peripheral ######################################*/
-	/* WWDG clock counter = (PCLK1 (2MHz)/4096)/8) = 61 Hz (0.01639 s)
-	 WWDG Window value = 80 means that the WWDG counter should be refreshed only
-	 when the counter is below 254 (and greater than 64) otherwise a reset will
-	 be generated.
-	 WWDG Counter value = 255, WWDG timeout = ~0.01639s*64 = 1.04896 s
-
-
-	 This means: WWDG starts counting at 255*0.01639s=4.17945s, reset has to be between
-	 ~0.01639s*254=4.16306s and ~0.01639s*64=1.04896s.								*/
+	/*
+	 * Configure the WWDG peripheral
+	 * WWDG clock counter = (PCLK1 (2MHz)/4096)/8) = 61 Hz (0.01639 s)
+	 * WWDG Window value = 80 means that the WWDG counter should be refreshed only
+	 * when the counter is below 254 (and greater than 64) otherwise a reset will
+	 * be generated. WWDG Counter value = 255, WWDG timeout = ~0.01639s*64 = 1.04896 s
+	 *
+	 * This means: WWDG starts counting at 255*0.01639s=4.17945s, reset has to be between
+	 * ~0.01639s*254=4.16306s and ~0.01639s*64=1.04896s.
+	 */
 	WwdgHandle.Instance = WWDG;
 
 	WwdgHandle.Init.Prescaler = WWDG_PRESCALER_8;
 	WwdgHandle.Init.Window = 254;
 	WwdgHandle.Init.Counter = 255;
 
-	/* Initialize booleans*/
+	/* Initialize booleans */
 	loraTries = 0;
 	lora_gps_powered = false;
 
-	/* Define the state to start with*/
+	/* Define the state to start with */
 	state = safe_zone;
 
-	// define some variables
+	/* Define some variables */
 	int message;
 	int j;
 	j = 0;
+	int i;
+	uint8_t buffer[200];
+	uint8_t D7Rx[1];
 
 	HAL_Delay(5000);
 
@@ -149,31 +131,30 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_TIM2_Init();
 
-	//PWM timer Initialize
+	//LSM303AGR_init();
+
+	/* PWM Timer initialization */
 	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
 
 	HAL_UART_Transmit(&huart2, "Starting ElderTrack...\n",
 			sizeof("Starting ElderTrack...\n") - 1, HAL_MAX_DELAY);
 
-	/*##-5- Start the WWDG #####################################################*/
+	/* Start the WWDG */
 	if (HAL_WWDG_Init(&WwdgHandle) != HAL_OK) {
 		Error_Handler();
 	}
 
-	int i;
-	uint8_t buffer[200];
-	uint8_t D7Rx[1];
-//power dash7
+	/* Power of DASH7 */
 	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_6);
 	HAL_Delay(3000);
 
-	/* Infinite loop */
 	while (1) {
+
 		//HAL_Delay(1000);
 		switch (state) {
 
-		//Check on '1', if '1' present enter dash7 state
-		// While checking for '1' read sensors and send over dash7
+		/* Check on '1', if '1' present enter DASH7 state.
+		 * While checking for '1' read sensors and send over dash7 */
 		case safe_zone:
 			j = j + 1;
 			__HAL_UART_FLUSH_DRREGISTER(&huart4);
@@ -191,23 +172,30 @@ int main(void) {
 
 			}
 
+//			if (j == 50000) {
+//				getAndSendAltitude();
+//			} else if (j > 100000) {
+//				ecompassAlgorithm();
+//				j = 0;
+//			}
+
 			/* Refresh WWDG: update counter value to 255, he refresh window is:
 			 ~780 * (127-80) = 36.6ms < refresh window < ~780 * 64 = 49.9ms */
-
 			resetWWDG();
 			break;
-		case in_danger_zone:
 
+		case in_danger_zone:
 			HAL_UART_Transmit(&huart2, "Danger zone!\n",
 					sizeof("Danger zone!\n") - 1, HAL_MAX_DELAY);
-			// toggle when LoRa is not powered
+			/* Toggle the pin when LORA is not powered */
 			if (lora_gps_powered == false) {
-				HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //power Lora and GPS-module
+				/* Power LORA and the GPS module */
+				HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
 				lora_gps_powered = true;
 			}
 			initLora();
 			resetWWDG();
-			// when tried 5 times connecting to LoRa -> alarm!
+			/* Try to connect 5 times to LORA, if it's not successful enter alarm state */
 			loraTries = loraTries + 1;
 			if (loraTries >= 5) {
 				state = alarm_state;
@@ -215,8 +203,9 @@ int main(void) {
 			resetWWDG();
 
 			break;
+
 		case lora_ready:
-			// delay could be less, GPS must be running
+			/* Delay introduced to ensure GPS is up and running */
 			HAL_Delay(5000);
 			initGPS();
 			state = lora_sending;
@@ -237,7 +226,7 @@ int main(void) {
 			resetWWDG();
 			break;
 
-			// When dash7 downlink, message will be cheched to check what to do
+			/* When a DASH7 downlink message arrives, check the message to now what to do */
 		case dash7_downlink:
 			switch (message) {
 			case 1:
@@ -257,32 +246,33 @@ int main(void) {
 	}
 }
 
-/* Initializes LoRa Module */
+/**
+ * @brief Function for initializing the LORA module.
+ */
 void initLora() {
 	uint8_t init[4];
 	HAL_UART_Transmit(&huart2, "Init Lora\n", 10, HAL_MAX_DELAY);
 
-	/* Do until received an OK, after 10 times, send ERROR over Dash7*/
-
-	//reset the LoRa Module: <ATZ>
+	/* Do until received an OK, after 10 times, send ERROR over Dash7.
+	 * Reset the LoRa Module: <ATZ> */
 	uint8_t reset_cmd[] = { 0x41, 0x54, 0x5A, 0x0d, 0x0a };
 	HAL_UART_Transmit(&huart3, reset_cmd, 5, HAL_MAX_DELAY);
 	HAL_UART_Transmit(&huart2, "RESET\n", 6, HAL_MAX_DELAY);
 
-	//Delay until the module is reset
+	/* Delay until the module is reset */
 	HAL_Delay(2000);
 
-	//Sent message has not to be confirmed
+	/* Sent message has not to be confirmed */
 	uint8_t confirm_cmd[] = { 0x41, 0x54, 0x2b, 0x43, 0x46, 0x4d, 0x3d, 0x31,
 			0x0d, 0x0a };
 	HAL_UART_Transmit(&huart3, confirm_cmd, 10, HAL_MAX_DELAY);
 	HAL_UART_Transmit(&huart2, "CONFIRM MODE\n", 13, HAL_MAX_DELAY);
 	HAL_Delay(2000);
 
-	//flush the UART register
+	/* Flush the UART register */
 	__HAL_UART_FLUSH_DRREGISTER(&huart3);
 
-	// AT command to join a network: <AT+JOIN>
+	/* AT command to join a network: <AT+JOIN> */
 	uint8_t join_cmd[] =
 			{ 0x41, 0x54, 0x2b, 0x4a, 0x4f, 0x49, 0x4e, 0x0d, 0x0a };
 
@@ -310,9 +300,11 @@ void initLora() {
 
 }
 
-/* Check if a LoRa network is joined */
+/**
+ * @brief Check whether LORA has joined the network.
+ */
 void checkNetwork() {
-	// Delay to make sure the end node had enough time to join
+	/* Delay to make sure the end node had enough time to join */
 	uint8_t at_joined[1];
 	int check_joined = 0;
 	bool joined_lora;
@@ -320,7 +312,7 @@ void checkNetwork() {
 	HAL_Delay(8000);
 
 	while (check_joined < 50) {
-		// Check if joined: <AT+NJS=?>
+		/* Check if joined: <AT+NJS=?> */
 		uint8_t checkNetwork[] = { 0x41, 0x54, 0x2b, 0x4e, 0x4a, 0x53, 0x3d,
 				0x3f, 0x0d, 0x0a };
 		HAL_UART_Transmit(&huart3, checkNetwork, 10, HAL_MAX_DELAY);
@@ -344,7 +336,9 @@ void checkNetwork() {
 	HAL_UART_Transmit(&huart2, "COULD NOT JOIN, RESET!\n", 21, HAL_MAX_DELAY);
 }
 
-/* Function that sends an error message over Dash7 to the backend */
+/**
+ * @brief Sends an error message over DASH7 to the backend
+ */
 void loraError() {
 	HAL_UART_Transmit(&huart2, "JOIN ERROR\n", 11, HAL_MAX_DELAY);
 	uint8_t join_error[1] = { 0x45 };
@@ -352,13 +346,15 @@ void loraError() {
 	DASH7Message(join_error, 1);
 }
 
-/* Initializes the GPS module */
+/**
+ * @brief initialization of the GPS module
+ */
 void initGPS() {
 	uint8_t gga_off[] = { 0x24, 0x50, 0x53, 0x52, 0x46, 0x31, 0x30, 0x33, 0x2c,
 			0x30, 0x30, 0x2c, 0x30, 0x30, 0x2c, 0x30, 0x30, 0x2c, 0x30, 0x31,
 			0x2a, 0x32, 0x34, 0x0d, 0x0a };
 	HAL_UART_Transmit(&huart5, gga_off, 25, HAL_MAX_DELAY);
-	// NMAE cmd to receive every minute
+	/* NMAE cmd to receive every minute */
 	uint8_t ggl_on[] = { 0x24, 0x50, 0x53, 0x52, 0x46, 0x31, 0x30, 0x33, 0x2c,
 			0x30, 0x31, 0x2c, 0x30, 0x30, 0x2c, 0x36, 0x30, 0x2c, 0x30, 0x31,
 			0x2a, 0x32, 0x33, 0x0d, 0x0a };
@@ -385,6 +381,9 @@ void initGPS() {
 
 }
 
+/**
+ * @brief activating buzzer
+ */
 void BuzzerAlert(void) {
 	__HAL_TIM_SetCompare(&htim2, TIM_CHANNEL_2, 154);
 	HAL_Delay(200);
@@ -404,10 +403,16 @@ void BuzzerAlert(void) {
 	return;
 }
 
+/**
+ * @brief Performs a reset of the WWDG
+ */
 void resetWWDG(void) {
 	HAL_WWDG_Refresh(&WwdgHandle);
 }
 
+/**
+ * @brief Sends the GPS coordinates over LORA
+ */
 void sendGPS() {
 	uint8_t buffer[64];
 	uint8_t character[1];
@@ -420,23 +425,21 @@ void sendGPS() {
 		 * The first part: <$GPGLL,> of the buffer is deleted before sending  */
 		if (HAL_UART_Receive_IT(&huart5, character, 1) == HAL_OK) {
 			buffer[i - 1] = *character;
-
-			//
 			/* check for the end of the GLL sentence and check if it's a GLL sentence */
 			if (*character == '\n') {
 
-				//AT COMMAND: AT+SEND=2:<gps data><CR><LF>
+				/* AT COMMAND: AT+SEND=2:<gps data><CR><LF> */
 				uint8_t AT_COMMAND[] = { 0x41, 0x54, 0x2b, 0x53, 0x45, 0x4e,
 						0x44, 0x3d, 0x32, 0x3a };
 				for (int j = 0; j <= i; j++) {
 					AT_COMMAND[10 + j] = buffer[j];
 				}
 
-				// Add <CR><LF>
+				/* Add <CR><LF> */
 				AT_COMMAND[i + 11] = 0x0d;
 				AT_COMMAND[i + 12] = 0x0a;
 
-				// Send over LoRa
+				/* Send over LoRa */
 				HAL_UART_Transmit(&huart2, AT_COMMAND, i + 10, HAL_MAX_DELAY);
 				HAL_UART_Transmit(&huart3, AT_COMMAND, i + 10, HAL_MAX_DELAY);
 				i = 0;
@@ -447,33 +450,36 @@ void sendGPS() {
 
 		}
 	}
-	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7); //Toggle the state of pin PC9
+	/* Toggle pin PC9 */
+	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
 
 	return;
 }
 
-/* Function to send Dash7 messages with a variable length
- * 0x41 0x54 0x24 0x44 0xc0 0x00 0x0d
- * 0xb4 0x13 0x32 0xd7 0x00 0x00 0x10 0x01 0x20 0x40
- * 0x00 0x01 0x01
- *
- * */
+/**
+ * @brief Function to send a DASH7 message with a variable length:
+ * - 0x41 0x54 0x24 0x44 0xc0 0x00 0x0d
+ * - 0xb4 0x13 0x32 0xd7 0x00 0x00 0x10 0x01 0x20 0x40
+ * - 0x00 0x01 0x01
+ * @param data the data to be sends.
+ * @param lengthDash7 the length of the data to be send.
+ */
 void DASH7Message(uint8_t data[], int lengthDash7) {
 	int total_length = CMD_LENGTH - 7 + lengthDash7;
 	uint8_t CMD[] = { 0x41, 0x54, 0x24, 0x44, 0xc0, 0x00, total_length, 0xb4,
 			0x13, 0x32, 0xd7, 0x00, 0x00, 0x10, 0x01, 0x20, 0x40, 0x00,
 			lengthDash7, };
 
-	//create the ALP array with the right length
+	/* Create the ALP array with the right length */
 	uint8_t ALP[total_length + 7];
 
 	for (int i = 0; i <= CMD_LENGTH; i++) {
 		ALP[i] = CMD[i];
 	}
 
-	//put the data in de ALP command
+	/* Put the data in de ALP command */
 	for (int k = 0; k <= lengthDash7; k++) {
-		//ALP length is 16 and + 1 for lengthDash7 field
+		/* ALP length is 16 and + 1 for lengthDash7 field */
 		ALP[CMD_LENGTH + k] = data[k];
 	}
 
@@ -481,26 +487,27 @@ void DASH7Message(uint8_t data[], int lengthDash7) {
 
 }
 
+/**
+ * @brief Reads the output registers of the LPS22HB sensor and sends them over DASH7.
+ */
 void getAndSendAltitude() {
-	//Set one shot mode for barometer for low power consumption
+
+	/* Set one shot mode for barometer for low power consumption */
 	Settings = LPS22HB_ONE__SHOT_ENABLE;
 	HAL_I2C_Mem_Write(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_CTRL_REG2, 1,
 			&Settings, 1, 100);
-	//Read barometer dataRegister(LSB) and print
+	/* Read the output registers of the LPS22HB */
 	HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_PRESS_OUT_XL, 1,
 			&LSBpressure, 1, 100);
-	//Read barometer dataRegister(MID) and print
 	HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_OUT_L, 1,
 			&MIDpressure, 1, 100);
-	//Read barometer dataRegister(MSB) and print
 	HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_OUT_H, 1,
 			&MSBpressure, 1, 100);
-	//Read temperature dataRegister(LSB) and print
 	HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_TEMP_OUT_L, 1,
 			&LSBtemp, 1, 100);
-	//Read temperature dataRegister(MSB) and print
 	HAL_I2C_Mem_Read(&hi2c1, LPS22HB_BARO_ADDRESS, LPS22HB_TEMP_OUT_H, 1,
 			&MSBtemp, 1, 100);
+
 	temperature = (((uint16_t) MSBtemp << 8 | LSBtemp));
 	int temperature2 = ((int) temperature) / 100;
 	if (temperature2 > 30 || temperature2 < 15) {
@@ -510,23 +517,222 @@ void getAndSendAltitude() {
 			MSBtemp, LSBtemp };
 	DASH7Message(dataToSend, 6);
 	HAL_UART_Transmit(&huart2, "Sensor used!\n", sizeof("Sensor used!\n") - 1,
-			HAL_MAX_DELAY);
+	HAL_MAX_DELAY);
 
 }
 
-/** System Clock Configuration
+///**
+// * @brief Read a certain register of the LSM303AGR depending on the value of ACC_MAG:
+// * 		- if this value is 0: read out a register of the accelerometer
+// * 		- if this value is 1: read out a register of the magnetormeter
+// * The standard HAL library values are used for the size of the register and time-out.
+// * @param LSM303AGR_reg: the register that needs to be read of the LSM303AGR
+// * @param LSM303AGR_data: a pointer where the data of the register needs to be stored
+// * @param ACC_MAG: depending on the value a value a register of the accelerometer of magnetometer are read
+// * @return returns the status of the I2C transfer
+// */
+//void LSM303AGR_readRegister(uint8_t LSM303AGR_reg, uint8_t LSM303AGR_data,
+//		uint8_t ACC_MAG) {
+//
+//	if (ACC_MAG == 0) {
+//		HAL_I2C_Mem_Read(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS, LSM303AGR_reg,
+//		I2C_MEMADD_SIZE_8BIT, &LSM303AGR_data, sizeof(LSM303AGR_data),
+//		HAL_MAX_DELAY);
+//	} else {
+//		HAL_I2C_Mem_Read(&hi2c1, LSM303AGR_MAG_I2C_ADDRESS, LSM303AGR_reg,
+//		I2C_MEMADD_SIZE_8BIT, &LSM303AGR_data, sizeof(LSM303AGR_data),
+//		HAL_MAX_DELAY);
+//	}
+//
+//}
+//
+///**
+// * @brief Writes a cerain value to a certain register of the LSM303AGR depending on the value of ACC_MAG:
+// *   	- if this value is 0: write to a register of the accelerometer
+// * 		- if this value is 1: write to a register of the magnetormeter
+// * the standard HAL library values are used for the size of the register and time-out.
+// * @param LSM303AGR_reg: the register where data needs to be written to
+// * @param LSM303AGR_data: a pointer to the data that needs to be written
+// * @param ACC_MAG: depending on the value, a write is performed to the accelerometer of magnetometer
+// * @return returns the status of the I2C transfer
+// */
+//void LSM303AGR_writeRegister(uint8_t LSM303AGR_reg, uint8_t LSM303AGR_data,
+//		uint8_t ACC_MAG) {
+//
+//	if (ACC_MAG == 0) {
+//		HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS, LSM303AGR_reg,
+//		I2C_MEMADD_SIZE_8BIT, &LSM303AGR_data, sizeof(LSM303AGR_data),
+//		HAL_MAX_DELAY);
+//	} else {
+//		HAL_I2C_Mem_Write(&hi2c1, LSM303AGR_MAG_I2C_ADDRESS, LSM303AGR_reg,
+//		I2C_MEMADD_SIZE_8BIT, &LSM303AGR_data, sizeof(LSM303AGR_setting),
+//		HAL_MAX_DELAY);
+//	}
+//
+//}
+//
+///**
+// * @brief initialization of the LSM303AGR
+// */
+//void LSM303AGR_init() {
+//
+//	LSM303AGR_setting = LSM303AGR_ACC_BOOT;
+//	LSM303AGR_writeRegister(LSM303AGR_ACC_CTRL_REG5, LSM303AGR_setting, 0);
+//
+//	LSM303AGR_setting = LSM303AGR_MAG_SOFT_RST;
+//	LSM303AGR_writeRegister(LSM303AGR_MAG_CFG_REG_A, LSM303AGR_setting, 1);
+//
+//	LSM303AGR_setting = LSM303AGR_ACC_ODR_1HZ | LSM303AGR_ACC_X_EN
+//			| LSM303AGR_ACC_Y_EN | LSM303AGR_ACC_Z_EN;
+//	LSM303AGR_writeRegister(LSM303AGR_ACC_CTRL_REG1, LSM303AGR_setting, 0);
+//
+//	LSM303AGR_setting = LSM303AGR_ACC_BDU_EN;
+//	LSM303AGR_writeRegister(LSM303AGR_ACC_CTRL_REG4, LSM303AGR_setting, 0);
+//
+//	LSM303AGR_setting = LSM303AGR_MAG_COMP_TEMP_EN | LSM303AGR_MAG_LP_EN
+//			| LSM303AGR_MAG_ODR_10HZ;
+//	LSM303AGR_writeRegister(LSM303AGR_MAG_CFG_REG_A, LSM303AGR_setting, 1);
+//
+//	LSM303AGR_setting = LSM303AGR_MAG_OFF_CANC | LSM303AGR_MAG_LPF;
+//	LSM303AGR_writeRegister(LSM303AGR_MAG_CFG_REG_B, LSM303AGR_setting, 1);
+//
+//	LSM303AGR_setting = LSM303AGR_MAG_BDU;
+//	LSM303AGR_writeRegister(LSM303AGR_MAG_CFG_REG_C, LSM303AGR_setting, 1);
+//
+//}
+//
+///**
+// * @brief Reads the output registers of the accelerometer
+// * @param pData: a pointer to where the data needs to be stored
+// */
+//void LSM303AGR_ACC_readAccelerationData(int32_t *pData) {
+//
+//	LSM303AGR_ACC_TEMP_DATA rawData;
+//
+//	HAL_I2C_Mem_Read(&hi2c1, LSM303AGR_ACC_I2C_ADDRESS,
+//			LSM303AGR_ACC_MULTI_READ, I2C_MEMADD_SIZE_8BIT,
+//			rawData.registerData, sizeof(rawData.registerData), HAL_MAX_DELAY);
+//
+//	rawData.rawData[0] = (rawData.registerData[1] << 8)
+//			| rawData.registerData[0];
+//	rawData.rawData[1] = (rawData.registerData[3] << 8)
+//			| rawData.registerData[2];
+//	rawData.rawData[2] = (rawData.registerData[5] << 8)
+//			| rawData.registerData[4];
+//
+//	/* Apply proper shift and sensitivity */
+//	// Normal mode 10-bit, shift = 6 and FS = 2
+//	pData[0] = (int32_t) (((rawData.rawData[0] >> 6) * 3900 + 500) / 1000);
+//	pData[1] = (int32_t) (((rawData.rawData[1] >> 6) * 3900 + 500) / 1000);
+//	pData[2] = (int32_t) (((rawData.rawData[2] >> 6) * 3900 + 500) / 1000);
+//
+//}
+//
+///**
+// * @brief Reads the output registers of the magnetometer and applies the sensitivity
+// * @param pData: a pointer to where the data needs to be stored
+// */
+//void LSM303AGR_MAG_readMagneticData(int32_t *pData) {
+//
+//	LSM303AGR_MAG_TEMP_DATA rawData;
+//
+//	HAL_I2C_Mem_Read(&hi2c1, LSM303AGR_MAG_I2C_ADDRESS,
+//			LSM303AGR_MAG_MULTI_READ, I2C_MEMADD_SIZE_8BIT,
+//			rawData.registerData, sizeof(rawData.registerData), HAL_MAX_DELAY);
+//
+//	rawData.rawData[0] = (rawData.registerData[1] << 8)
+//			| rawData.registerData[0];
+//	rawData.rawData[1] = (rawData.registerData[3] << 8)
+//			| rawData.registerData[2];
+//	rawData.rawData[2] = (rawData.registerData[5] << 8)
+//			| rawData.registerData[4];
+//
+//	/* Calculate the data. */
+//	pData[0] = (int32_t) (rawData.rawData[0] * 1.5f);
+//	pData[1] = (int32_t) (rawData.rawData[1] * 1.5f);
+//	pData[2] = (int32_t) (rawData.rawData[2] * 1.5f);
+//
+//}
+//
+///**
+// * @brief The ecompass algorithm, it does the following:
+// * 		1. Read the data from the accelerometer and magnetomerer
+// * 		2. Convert the data from integer to float
+// * 		3. Apply the resolution on the accelerometer data
+// * 		4. Calculate the phi (roll angle) value
+// * 		5. Calculate the  theta (pitch angle or attitude) value
+// * 		6. Calculate of the Psi (yaw angle or heading) value
+// *
+// * @return the value of the heading in uint16_t format.
+// */
+//void ecompassAlgorithm() {
+//
+//	LSM303AGR_ACC_readAccelerationData(lsm303agrAccData);
+//	LSM303AGR_MAG_readMagneticData(lsm303agrMagData);
+//
+////Casting from integer to float (6 castings necessary)
+//	lsm303agrAccDataFloat[0] = lsm303agrAccData[0];
+//	lsm303agrAccDataFloat[1] = lsm303agrAccData[1];
+//	lsm303agrAccDataFloat[2] = lsm303agrAccData[2];
+//
+//	lsm303agrMagDataFloat[0] = lsm303agrMagData[0];
+//	lsm303agrMagDataFloat[1] = lsm303agrMagData[1];
+//	lsm303agrMagDataFloat[2] = lsm303agrMagData[2];
+//
+//	lsm303agrAccDataFloat[0] = (lsm303agrAccDataFloat[0] * 2)
+//			/ pow(2, (resolution - 1));
+//	lsm303agrAccDataFloat[1] = (lsm303agrAccDataFloat[1] * 2)
+//			/ pow(2, (resolution - 1));
+//	lsm303agrAccDataFloat[2] = (lsm303agrAccDataFloat[2] * 2)
+//			/ pow(2, (resolution - 1));
+//
+//	//Computation of Phi (roll angle) in radians and degrees
+//	rollRad = atan2f(lsm303agrAccDataFloat[1], lsm303agrAccDataFloat[2]);
+//	rollDegree = rollRad * (180 / PI);
+//
+//	//Computation of Theta (pitch angle or attitude) in radians and degrees
+//	lsm303agrAccDataTemp = lsm303agrAccData[1] * sinf(rollRad)
+//			+ lsm303agrAccData[2] * cosf(rollRad);
+//	pitchRad = atan2f(-lsm303agrAccData[0], lsm303agrAccDataTemp);
+//	pitchDegree = pitchRad * (180 / PI);
+//
+//	//Computation of Psi (yaw angle, or heading)
+//	yawTemp[0] = lsm303agrMagDataFloat[2] * sinf(rollRad)
+//			- lsm303agrMagDataFloat[1] * cosf(rollRad);
+//	yawTemp[1] = lsm303agrMagDataFloat[1] * sinf(rollRad)
+//			+ lsm303agrMagDataFloat[2] * cosf(rollRad);
+//	yawTemp[2] = lsm303agrMagDataFloat[0] * cosf(pitchRad)
+//			+ yawTemp[1] * sinf(pitchRad);
+//	yawRad = atan2f(yawTemp[0], yawTemp[2]);
+//	yawDegree = yawRad * (180 / PI);
+//
+//	if (yawDegree < 0)
+//		yawDegree += 360;
+//
+//	dir = (uint16_t) yawDegree;
+//
+//	uint8_t highPart = (uint8_t) (dir >> 8);
+//	uint8_t lowPart = (uint8_t) dir;
+//
+//	uint8_t dataToSend[] = { 0x4D, highPart, lowPart };
+//	DASH7Message(dataToSend, 3);
+//	HAL_UART_Transmit(&huart2, "Sensor used!\n", sizeof("Sensor used!\n") - 1,
+//	HAL_MAX_DELAY);
+//
+//}
+
+/**
+ * @brief System clock configuration
  */
 void SystemClock_Config(void) {
 
 	RCC_OscInitTypeDef RCC_OscInitStruct;
 	RCC_ClkInitTypeDef RCC_ClkInitStruct;
 
-	/**Configure the main internal regulator output voltage
-	 */
+	/* Configure the main internal regulator output voltage */
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-	/**Initializes the CPU, AHB and APB busses clocks
-	 */
+	/*Initializes the CPU, AHB and APB busses clocks */
 	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
 	RCC_OscInitStruct.MSIState = RCC_MSI_ON;
 	RCC_OscInitStruct.MSICalibrationValue = 0;
@@ -536,8 +742,7 @@ void SystemClock_Config(void) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 
-	/**Initializes the CPU, AHB and APB busses clocks
-	 */
+	/* Initializes the CPU, AHB and APB busses clocks */
 	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
 			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
 	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
@@ -549,19 +754,19 @@ void SystemClock_Config(void) {
 		_Error_Handler(__FILE__, __LINE__);
 	}
 
-	/**Configure the Systick interrupt time
-	 */
+	/* Configure the Systick interrupt time */
 	HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / 1000);
 
-	/**Configure the Systick
-	 */
+	/*Configure the Systick */
 	HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
 
 	/* SysTick_IRQn interrupt configuration */
 	HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
-/* I2C1 init function */
+/**
+ * @brief IC21 initialization function
+ */
 static void MX_I2C1_Init(void) {
 
 	hi2c1.Instance = I2C1;
@@ -579,7 +784,9 @@ static void MX_I2C1_Init(void) {
 
 }
 
-/* UART4 init function */
+/**
+ * brief USART4 initialization function
+ */
 static void MX_UART4_Init(void) {
 
 	huart4.Instance = UART4;
@@ -596,7 +803,9 @@ static void MX_UART4_Init(void) {
 
 }
 
-/* GPS UART*/
+/**
+ * brief USART5 initialization function, this USART is used by the GPS module
+ */
 static void MX_UART5_Init(void) {
 
 	huart5.Instance = UART5;
@@ -613,7 +822,9 @@ static void MX_UART5_Init(void) {
 
 }
 
-/* Debug UART */
+/**
+ * @brief USART2 initialization function, this USART is used for debugging
+ */
 static void MX_USART2_UART_Init(void) {
 
 	huart2.Instance = USART2;
@@ -630,7 +841,9 @@ static void MX_USART2_UART_Init(void) {
 
 }
 
-/* USART3 init function */
+/**
+ * @brief USART3 initialization function
+ */
 static void MX_USART3_UART_Init(void) {
 
 	huart3.Instance = USART3;
@@ -647,6 +860,9 @@ static void MX_USART3_UART_Init(void) {
 
 }
 
+/**
+ * @brief TIMER2 initialization function
+ */
 static void MX_TIM2_Init(void) {
 
 	TIM_MasterConfigTypeDef sMasterConfig;
@@ -681,12 +897,12 @@ static void MX_TIM2_Init(void) {
 
 }
 
-/** Configure pins as 
- * Analog
- * Input
- * Output
- * EVENT_OUT
- * EXTI
+/** @brief Configure the GPIO pins as follow:
+ * - Analog
+ * - Input
+ * - Output
+ * - EVENT_OUT
+ * - EXTI
  */
 static void MX_GPIO_Init(void) {
 
@@ -748,14 +964,8 @@ static void MX_GPIO_Init(void) {
 
 }
 
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
-
 /**
  * @brief  This function is executed in case of error occurrence.
- * @param  None
- * @retval None
  */
 void _Error_Handler(char * file, int line) {
 	/* USER CODE BEGIN Error_Handler_Debug */
@@ -772,7 +982,6 @@ void _Error_Handler(char * file, int line) {
  * where the assert_param error has occurred.
  * @param file: pointer to the source file name
  * @param line: assert_param error line source number
- * @retval None
  */
 void assert_failed(uint8_t* file, uint32_t line)
 {
@@ -793,4 +1002,4 @@ void assert_failed(uint8_t* file, uint32_t line)
  * @}
  */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/* *********************** (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
