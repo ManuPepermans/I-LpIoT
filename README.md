@@ -37,6 +37,21 @@ The mobile node is build in Eclipse. We suggest to use Mastering stm32 by Carmin
 # Backend
 The backend is a Python script that parses the received data and communicates this with with ThingsBoard.io with the TB API of MQTT. The Python script runs in a cloud enviroment constructed in Ubuntu.
 
+    $ PYTHONPATH=lib/pyd7a/ python2 backend.py --help
+    usage: backend.py [-h] [-v] [-b BROKER] [-u URL] -t TOKEN -tmqtt TOKENMQTT -U
+                    USER -P PASSWORD [-n NODE]
+
+    optional arguments:
+        -h, --help                              show this help message and exit
+        -v, --verbose                           verbose
+        -b BROKER, --broker BROKER              mqtt broker hostname
+        -u URL, --url URL                       URL of the ThingsBoard server
+        -t TOKEN, --token TOKEN                 token to access the ThingsBoard API
+        -tmqtt TOKENMQTT, --tokenmqtt TOKENMQTT token to access the ThingsBoard mqtt
+        -U USER, --user USER                    username for MQTT broker
+        -P PASSWORD, --password PASSWORD        password for MQTT broker
+        -n NODE, --node NODE                    node name
+
 The following functions are used in backend.py:
 
 - The "init" function will initiate the backend program with the correct MQTT config settings.
