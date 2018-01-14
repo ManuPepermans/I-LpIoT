@@ -44,7 +44,7 @@ The backend is a Python script that parses the received data and communicates th
     optional arguments:
         -h, --help                              show this help message and exit
         -v, --verbose                           verbose
-        -b BROKER, --broker BROKER              mqtt broker hostname
+        -b BROKER, --broker BROKER              MQTT broker hostname
         -u URL, --url URL                       URL of the ThingsBoard server
         -t TOKEN, --token TOKEN                 token to access the ThingsBoard API
         -tmqtt TOKENMQTT, --tokenmqtt TOKENMQTT token to access the ThingsBoard MQTT
