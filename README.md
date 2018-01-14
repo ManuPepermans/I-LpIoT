@@ -10,7 +10,7 @@ The buildup of the project is as follow:
 ## Project description
 The project is a tracking/monitor system for the elderly in retirement homes. This system is capapble to track somebody indoors on multiple floors by using the kNN algorithm on the RSSI values from dash7 messages to different gateways. These dash7 messages contains sensordata. To know on which floor the person is we use a barometer. When the person is leaving the building the system will automatically switch to using a GPS for localization. The coordinates are send over LoRa instead over Dash7. Besides tracking a person the system will be able to check the temperature and direction that the person is going to via the ecompass. The nurse can monitor all the parameters on a backend and every mobile node has an alarm function where the user can activate an alarm for the nurse. 
 
-![alt text] (https://i.imgur.com/coyWfID.png "System setup")
+![alt text](https://i.imgur.com/coyWfID.png "System setup")
 
 ## Hardware
 The following hardware is used for this project:
@@ -42,7 +42,7 @@ We use kNN for fingerprinting. We build a database of the environment where we t
 # Frontend (mobile node)
 The frontend is split into two different modes: indoor and outdoor. When the mobile node is indoors it will send sensordata over DASH7 to the backend. When the mobile node leaves the building the backend will send a message to the mobile node to switch over to LoRa communication and toggle the GPS to send coördinates periodically so that the backend can determine the outdoor position.
 
-![alt text] (https://i.imgur.com/kz0cJbu.png "Mobile node")
+![alt text](https://i.imgur.com/kz0cJbu.png "Mobile node")
 
 ## Dash7
 The DASH7-module was flashed as a slave. We send ALP commands containing the data to the gateways. 
