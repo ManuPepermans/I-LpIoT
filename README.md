@@ -33,11 +33,42 @@ A similar setup was used to toggle a buzzer.
 
 ## Software
 The mobile node is build in Eclipse. We suggest to use Mastering stm32 by Carmine Noviello to set up the IDE environment. The backend is build in PyCharm.
+
 # Backend
-The backend is a cloud based container (similar to a Raspberry PI 3). The received data from the mobile node will be parsed here and it handles the communication with Thingsboard.io.
+The backend is a Python script that parses the received data and communicates this with with ThingsBoard.io. The Python script runs in a cloud enviroment constructed in Ubuntu.
+
+The following functions are used in backend.py:
+
+- The "init" function will initiate the backend program with the correct MQTT config settings.
+- The "connect_to_mqtt" function starts the MQTT connection.
+- The "on_mqtt_connect" function subscribes to the topics: /tb, /localisation and /loriot.
+- The "on_mqtt_message" function runs when a new message is received on one of the MQTT topics. The function starts the right parsing function for the different topics.
+- The "alert" function sends the correct JSON string to ThingsBoard for the different alert states.
+- The "knn_topic" function will be run if message is received from the /localisation topic. The function checks if it received the RSSI values from our node within the second.
+- The "dash7_topic" function will be run if message is received from the /tb topic. The function parses the message if it has the correct NODE ID.
+- The "lorawan_topic" function will be run if message is received from the /loriot topic. The function parses the message if it has the correct EUI.
+- The "loadDataset" function will load the trainingdata and put it in the right format.
+- The "euclideanDistance" function will calculate the euclidean distance between two instances and returns the calculated distance.
+- The "getResponse" function is the voting algorithm of the kNN function. It will count how many times the measurement was on a specific place.
+- The "getNeighbors" function compares the measurement with the training dataset, calculates distance and sorts the array from smallest to biggest.
+- The "getPixels" function gives the pixels from a corresponding point.
+- The "calculate" function calculates kNN.
+- The "barometer_calculate" function will calculate the altitude form the raw barometer information.
+- The "magnetometer_to_direction" function will change the degrees data to cardinal direction.
+- The "sendRPC" function will send a remote procedure call from every gateway to the node.
+- The "del" function will stop the MQTT loop.
+- The "run" function will start the backend and also stop it when a keyboard interrupt is given.
+    
+## ThingsBoard.io
+ThingsBoard gives us a visual enviroment to show all the parsed data. It showcases the data in a direct and informing way:
+
+![alt text](https://i.imgur.com/z0H81kY.png "ThingsBoard.io")
+
 
 ## kNN
-We use kNN for fingerprinting. We build a database of the environment where we track elderly people. The dataset is build by dividing the rooms in a grid and measure multiple times the RSSI values to the surroundig gateways. By sending sensor data to the backend we measure the RSSI value to four gateways. In this way we can compare the measurement with the dataset to locate the user.
+We use kNN for fingerprinting. We build a database of the environment from different points in the room, this is our training dataset. The dataset is build by dividing the rooms in points and measure the RSSI values from the gateways multiple times while rotating.
+
+In the operational phase we compare a new measurement with our training dataset, this way we try to determin our location. For the comparison we wait for at least 3 gateways to send us the RSSI values within the second. 
 
 ![alt text](https://i.imgur.com/OkpY2O9.png "kNN")
 
