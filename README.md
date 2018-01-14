@@ -21,7 +21,7 @@ The following hardware is used for this project:
 - A few resistors and transistors to toggle the modules (LoRa, DASH7 & Buzzer)
 - Buzzer
 
-![alt text](https://i.imgur.com/m5MR2cx.png "Hardware setup")
+![alt text](https://i.imgur.com/644kHPR.png "Hardware setup")
 
 In this setup we used two small circuits to switch ON/OFF the pheriphals such as the GPS and LoRa modules with a transistor similar to this design.
 
@@ -42,7 +42,7 @@ We use kNN for fingerprinting. We build a database of the environment where we t
 # Frontend (mobile node)
 The frontend is split into two different modes: indoor and outdoor. When the mobile node is indoors it will send sensordata over DASH7 to the backend. When the mobile node leaves the building the backend will send a message to the mobile node to switch over to LoRa communication and toggle the GPS to send coördinates periodically so that the backend can determine the outdoor position.
 
-![alt text](https://i.imgur.com/kz0cJbu.png "Mobile node")
+![alt text](https://i.imgur.com/vrYXFL3.png "Mobile node")
 
 ## Dash7
 The DASH7-module was flashed as a slave. We send ALP commands containing the data to the gateways. 
