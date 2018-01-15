@@ -77,7 +77,7 @@ The following functions are used in backend.py:
 ## ThingsBoard.io
 ThingsBoard gives us a visual enviroment to show all the parsed data. It showcases the data in a direct and informing way:
 
-![alt text](https://i.imgur.com/z0H81kY.png "ThingsBoard.io")
+![alt text](https://i.imgur.com/HmVFy9Z.png "ThingsBoard.io")
 
 
 ## kNN
