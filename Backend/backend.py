@@ -336,6 +336,7 @@ class Backend:
 
                         # Calculate level from altitude
                         level = (altitude + 2) / 4
+                        level = math.floor(level)
 
                         # Send to ThingsBoard using API
                         #json_str = {"level": altitude}
