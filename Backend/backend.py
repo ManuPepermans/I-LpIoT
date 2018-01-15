@@ -620,7 +620,7 @@ class Backend:
 
     # The magnetometer_to_direction function will change the degrees data to cardinal direction
     def magnetometer_to_direction(self, magn_value):
-        if 338 < magn_value and magn_value <= 23:
+        if 338 < magn_value or magn_value <= 23:
             direction = "N"
         elif 23 < magn_value and magn_value <= 68:
             direction = "NE"
